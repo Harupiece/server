@@ -28,4 +28,16 @@ public class Certification {
     @ManyToOne
     private Point point;
 
+    public Certification(Member member, Posting posting) {
+        this.member=member;
+        this.posting=posting;
+    }
+
+    public static Certification createCertification(Member member, Posting posting) {
+
+        Certification certification =new Certification(member,posting);
+
+        return certification;
+
+    }
 }

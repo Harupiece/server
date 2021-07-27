@@ -3,7 +3,8 @@ package com.example.onedaypiece.web.domain.posting;
 import com.example.onedaypiece.web.domain.challenge.Challenge;
 import com.example.onedaypiece.web.domain.common.Timestamped;
 import com.example.onedaypiece.web.domain.member.Member;
-import com.example.onedaypiece.web.dto.request.PostingRequestDto;
+import com.example.onedaypiece.web.dto.request.posting.PostingRequestDto;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -38,6 +39,7 @@ public class Posting extends Timestamped {
     @ManyToOne
     private Challenge challenge;
 
+    @Builder
     public Posting(String postingImg, String postingContent, Member member, Challenge challenge) {
         this.postingImg = postingImg;
         this.postingContent =postingContent;
@@ -51,13 +53,26 @@ public class Posting extends Timestamped {
     }
 
 
-    public static Posting createPosting(PostingRequestDto postingRequestDto, Member member, Challenge challenge) {
+    //==생성 메서드==//
 
+    public static Posting createPosting(PostingRequestDto postingRequestDto, Member member, Challenge challenge) {
         return new Posting(
                 postingRequestDto.getPostingImg(),
                 postingRequestDto.getPostingContent(),
                 member,
                 challenge
         );
+    }
+
+    //== 비지니스 로직 ==//
+
+    public void updatePosting(PostingRequestDto postingRequestDto) {
+        this.postingImg = postingRequestDto.getPostingImg();
+        this.postingContent = postingRequestDto.getPostingContent();
+
+    }
+
+    public void deletePosting() {
+        this.postingStatus =false;
     }
 }
