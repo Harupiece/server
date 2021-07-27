@@ -4,6 +4,7 @@ package com.example.onedaypiece.web.domain.member;
 
 import com.example.onedaypiece.web.domain.common.Timestamped;
 import com.example.onedaypiece.web.domain.point.Point;
+import com.example.onedaypiece.web.dto.request.signup.SignupRequestDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -30,6 +31,10 @@ public class Member extends Timestamped {
     private String nickname;
 
     @Column
+    @Enumerated(value = EnumType.STRING)
+    private MemberRole role;
+
+    @Column
     private String profileImg;
 
     @Column
@@ -40,12 +45,26 @@ public class Member extends Timestamped {
     private List<Point> points = new ArrayList<>();
 
 
-    @Column(nullable = true)
-    private String kakaoEmail;
+//    @Column(nullable = true)
+//    private String kakaoEmail;
 
 
+    public Member(SignupRequestDto requestDto){
+        this.email = requestDto.getEmail();
+        this.password = requestDto.getPassword();
+        this.nickname = requestDto.getNickname();
+        this.profileImg = requestDto.getProfileImg();
+        this.memberStatus = requestDto.getMemberStatus();
+        this.role = MemberRole.MEMBER;
+    }
 
-    public Member(String email, String password, String nickname){
-
+    public Member(String email, String password, String nickname, String profileImg, Long memberStatus){
+        this.email = email;
+        this.password = password;
+        this.nickname = nickname;
+        this.profileImg = profileImg;
+        this.memberStatus = memberStatus;
+        this.role = MemberRole.MEMBER;
     }
 }
+
