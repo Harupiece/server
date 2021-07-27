@@ -15,4 +15,7 @@ public interface ChallengeRepository extends JpaRepository<Challenge, Long> {
     List<Challenge> findAllByMember(Member member);
 
     Page<Challenge> findAllByCategoryNameOrderByModifiedAtDesc(CategoryName categoryName, Pageable pageable);
+
+    @Query("select c from Challenge c where c.challengeId =:challengeId and c.challengeStatus = true")
+    Challenge findChallengeStatusTrue(Long challengeId);
 }
