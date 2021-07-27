@@ -118,14 +118,11 @@ public class ChallengeService {
     // Guest 메인 페이지
     public ChallengeGuestMainResponseDto getGuestMainChallengeDetail() {
         ChallengeGuestMainResponseDto mainRequestDto = new ChallengeGuestMainResponseDto();
-        System.out.println(1);
         responseDtoRefactor(mainRequestDto, 0);
-        System.out.println(2);
         categoryCollector(EXERCISE).forEach(mainRequestDto::addExercise);
         categoryCollector(LIVINGHABITS).forEach(mainRequestDto::addLivingHabits);
         categoryCollector(STUDY).forEach(mainRequestDto::addStudy);
         categoryCollector(MONEY).forEach(mainRequestDto::addMoney);
-        System.out.println(3);
         return mainRequestDto;
     }
 
