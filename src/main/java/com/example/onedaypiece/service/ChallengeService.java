@@ -3,7 +3,6 @@ package com.example.onedaypiece.service;
 import com.example.onedaypiece.web.domain.challenge.Challenge;
 import com.example.onedaypiece.web.domain.challenge.ChallengeRepository;
 import com.example.onedaypiece.web.domain.challengeRecord.ChallengeRecordRepository;
-import com.example.onedaypiece.web.domain.member.MemberRepository;
 import com.example.onedaypiece.web.dto.response.challenge.ChallengeResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
