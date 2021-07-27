@@ -2,6 +2,7 @@ package com.example.onedaypiece.web.domain.certification;
 
 
 import com.example.onedaypiece.web.domain.member.Member;
+import com.example.onedaypiece.web.domain.point.Point;
 import com.example.onedaypiece.web.domain.posting.Posting;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
