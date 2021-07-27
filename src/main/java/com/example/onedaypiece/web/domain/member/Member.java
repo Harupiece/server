@@ -54,7 +54,7 @@ public class Member extends Timestamped {
         this.password = requestDto.getPassword();
         this.nickname = requestDto.getNickname();
         this.profileImg = requestDto.getProfileImg();
-        this.memberStatus = requestDto.getMemberStatus();
+        this.memberStatus = 1L;
         this.role = MemberRole.MEMBER;
     }
 
@@ -63,7 +63,7 @@ public class Member extends Timestamped {
         this.password = password;
         this.nickname = nickname;
         this.profileImg = profileImg;
-        this.memberStatus = memberStatus;
+        this.memberStatus = 1L;
         this.role = MemberRole.MEMBER;
     }
 }

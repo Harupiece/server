@@ -14,7 +14,6 @@ public class SignupRequestDto {
     private String password;
     private String passwordConfirm;
     private String profileImg;
-    private Long memberStatus;
 
 
     public SignupRequestDto(String email,  String password, String nickname, String passwordConfirm,
@@ -46,6 +45,5 @@ public class SignupRequestDto {
         this.password = password;
         this.passwordConfirm = passwordConfirm;
         this.profileImg = profileImg;
-        this.memberStatus = 1L;
     }
 }
