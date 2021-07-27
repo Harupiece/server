@@ -4,11 +4,15 @@ import com.example.onedaypiece.exception.ApiRequestException;
 import com.example.onedaypiece.security.TokenProvider;
 import com.example.onedaypiece.web.domain.member.Member;
 import com.example.onedaypiece.web.domain.member.MemberRepository;
+import com.example.onedaypiece.web.domain.point.Point;
+import com.example.onedaypiece.web.domain.point.PointRepository;
 import com.example.onedaypiece.web.domain.token.RefreshToken;
 import com.example.onedaypiece.web.domain.token.RefreshTokenRepository;
 import com.example.onedaypiece.web.dto.request.login.LoginRequestDto;
+import com.example.onedaypiece.web.dto.request.mypage.MyPageRequestDto;
 import com.example.onedaypiece.web.dto.request.signup.SignupRequestDto;
 import com.example.onedaypiece.web.dto.request.token.TokenRequestDto;
+import com.example.onedaypiece.web.dto.response.mypage.MyPageResponseDto;
 import com.example.onedaypiece.web.dto.response.token.TokenDto;
 import lombok.RequiredArgsConstructor;
 
@@ -19,6 +23,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -31,6 +36,8 @@ public class MemberService {
     private final TokenProvider tokenProvider;
     private final RefreshTokenRepository refreshTokenRepository;
 
+
+    // 회원가입
     @Transactional
     public void registMember(SignupRequestDto requestDto){
         String email = requestDto.getEmail();
@@ -55,12 +62,17 @@ public class MemberService {
         String password= passwordEncoder.encode(requestDto.getPassword());
         requestDto.setPassword(password);
 
+
+
         Member member = new Member(requestDto);
+        Point point = new Point(member);
+        member.add(point);
         memberRepository.save(member);
 
     }
 
 
+    // 로그인
     @Transactional
     public TokenDto loginMember(LoginRequestDto requestDto){
 
@@ -85,6 +97,7 @@ public class MemberService {
         return tokenDto;
     }
 
+    // 토큰 재발급
     @Transactional
     public TokenDto reissue(TokenRequestDto tokenRequestDto) {
         // 1. Refresh Token 검증
@@ -115,5 +128,39 @@ public class MemberService {
         return tokenDto;
     }
 
+
+    // 마이 페이지 상세
+    @Transactional
+    public MyPageResponseDto getMypageInfo(String email){
+        Member member = memberRepository.findByEmail(email).orElseThrow(
+                ()-> new ApiRequestException("마이페이지 상세에서 찾는 이메일 존재하지않음")
+        );
+
+        // 오류나면 PointRepository로 해결하기
+        List<Point> pointList = member.getPoints();
+        Long pointSum = 0L;
+        for(int i = 0 ; i< pointList.size(); i++){
+            pointSum =  pointSum + pointList.get(i).getAcquiredPoint();
+        }
+        System.out.println("포인트합 적히는지 실험: "+pointSum);
+        MyPageResponseDto responseDto = new MyPageResponseDto(member, pointSum);
+        return responseDto;
+    }
+
+
+    // 마이 페이지 수정
+    @Transactional
+    public void updateMember(MyPageRequestDto requestDto, String email){
+        Member member = memberRepository.findByEmail(email).orElseThrow(
+                ()-> new ApiRequestException("마이페이지수정에서 멤버 수정하는 아이디찾는거실패")
+        );
+
+        System.out.println("인코드 되기전: "+requestDto.getPassword());
+        String password = passwordEncoder.encode(requestDto.getPassword());
+        requestDto.setPassword(password);
+        System.out.println("인코드된 후: "+requestDto.getPassword());
+
+        member.update(requestDto);
+    }
 }
 
