@@ -1,11 +1,13 @@
-package com.example.onedaypiece.web.dto.request;
+package com.example.onedaypiece.web.dto.request.posting;
 
 
 import com.example.onedaypiece.web.domain.challenge.Challenge;
 import com.example.onedaypiece.web.domain.member.Member;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@NoArgsConstructor
 public class PostingRequestDto {
 
     private String postingImg;
