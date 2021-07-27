@@ -1,5 +1,6 @@
 package com.example.onedaypiece.web.domain.challenge;
 
+
 import com.example.onedaypiece.web.domain.common.Timestamped;
 import lombok.Getter;
 
@@ -58,4 +59,5 @@ public class Challenge extends Timestamped {
 //    @ManyToOne
 //    @JoinColumn(name = "point_id")
 //    private Point point;
+
 }
