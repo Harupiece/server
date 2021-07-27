@@ -118,14 +118,14 @@ public class ChallengeService {
     // Guest 메인 페이지
     public ChallengeGuestMainResponseDto getGuestMainChallengeDetail() {
         ChallengeGuestMainResponseDto mainRequestDto = new ChallengeGuestMainResponseDto();
-
+        System.out.println(1);
         responseDtoRefactor(mainRequestDto, 0);
-
+        System.out.println(2);
         categoryCollector(EXERCISE).forEach(mainRequestDto::addExercise);
         categoryCollector(LIVINGHABITS).forEach(mainRequestDto::addLivingHabits);
         categoryCollector(STUDY).forEach(mainRequestDto::addStudy);
         categoryCollector(MONEY).forEach(mainRequestDto::addMoney);
-
+        System.out.println(3);
         return mainRequestDto;
     }
 
@@ -136,6 +136,14 @@ public class ChallengeService {
                 .orElseThrow(() -> new NullPointerException("존재하지 않는 유저입니다."));
 
         List<ChallengeRecord> myChallengeList = challengeRecordRepository.findAllByMember(member);
+
+        // myList 추가
+        for (ChallengeRecord mine : myChallengeList) {
+            List<Long> myChallengeMemberList = new ArrayList<>();
+            challengeRecordRepository.findAllByChallenge(mine.getChallenge()).forEach(
+                    record -> myChallengeMemberList.add(record.getMember().getMemberId()));
+            mainRequestDto.addMyList(new ChallengeSliderSourceResponseDto(mine.getChallenge(), myChallengeMemberList));
+        }
 
         final int userSliderSize = myChallengeList.size();
 
@@ -203,5 +211,9 @@ public class ChallengeService {
                 break;
             }
         }
+    }
+
+    public List<Challenge> getAllChallenge() {
+        return challengeRepository.findAll();
     }
 }

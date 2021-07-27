@@ -1,6 +1,7 @@
 package com.example.onedaypiece.web.controller;
 
 import com.example.onedaypiece.service.ChallengeService;
+import com.example.onedaypiece.web.domain.challenge.Challenge;
 import com.example.onedaypiece.web.dto.request.challenge.ChallengeRequestDto;
 import com.example.onedaypiece.web.dto.request.challenge.PutChallengeRequestDto;
 import com.example.onedaypiece.web.dto.response.challenge.ChallengeGuestMainResponseDto;
@@ -11,6 +12,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @RequiredArgsConstructor
@@ -52,5 +54,10 @@ public class ChallengeController {
     @DeleteMapping("/api/admin/challenge/{challengeId}")
     public void deleteChallengeByAdmin(@PathVariable Long challengeId) {
         challengeService.deleteChallengeByAdmin(challengeId);
+    }
+
+    @GetMapping("/api/admin/challenge")
+    public List<Challenge> getAllChallenge() {
+        return challengeService.getAllChallenge();
     }
 }
