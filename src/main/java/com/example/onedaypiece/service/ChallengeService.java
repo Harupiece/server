@@ -135,7 +135,7 @@ public class ChallengeService {
         Member member = memberRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new NullPointerException("존재하지 않는 유저입니다."));
 
-        List<ChallengeRecord> myChallengeList = challengeRecordRepository.findAllByMemberId(member.getMemberId());
+        List<ChallengeRecord> myChallengeList = challengeRecordRepository.findAllByMember(member);
 
         final int userSliderSize = myChallengeList.size();
 

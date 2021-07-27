@@ -26,9 +26,7 @@ public class TestDataRunner implements ApplicationRunner {
 
     @Autowired
     PointRepository pointRepository;
-
-
-
+    
     @Override
     public void run(ApplicationArguments args) throws Exception {
         Member testMember1 = new Member("test1@naver.com", passwordEncoder.encode("1234"),"닉네임1","프로필1" );
@@ -41,6 +39,5 @@ public class TestDataRunner implements ApplicationRunner {
         Point pointTest2 = new Point(testMember1);
         pointTest2.setAcquiredPoint(30L);
         pointRepository.save(pointTest2);
-
     }
 }
