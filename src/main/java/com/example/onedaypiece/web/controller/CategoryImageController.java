@@ -3,7 +3,7 @@ package com.example.onedaypiece.web.controller;
 import com.example.onedaypiece.service.CategoryImageService;
 import com.example.onedaypiece.web.domain.challenge.CategoryName;
 import com.example.onedaypiece.web.dto.request.categoryImage.CategoryImageRequestDto;
-import com.example.onedaypiece.web.dto.response.category.CategoryResponseDto;
+import com.example.onedaypiece.web.dto.response.category.CategoryImageResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,7 +19,7 @@ public class CategoryImageController {
     }
 
     @GetMapping("/api/category-image/{categoryName}")
-    public CategoryResponseDto getCategoryImage(@PathVariable CategoryName categoryName) {
+    public CategoryImageResponseDto getCategoryImage(@PathVariable CategoryName categoryName) {
         return categoryImageService.getCategoryImage(categoryName);
     }
 }

@@ -4,7 +4,7 @@ import com.example.onedaypiece.web.domain.categoryImage.CategoryImage;
 import com.example.onedaypiece.web.domain.categoryImage.CategoryImageRepository;
 import com.example.onedaypiece.web.domain.challenge.CategoryName;
 import com.example.onedaypiece.web.dto.request.categoryImage.CategoryImageRequestDto;
-import com.example.onedaypiece.web.dto.response.category.CategoryResponseDto;
+import com.example.onedaypiece.web.dto.response.category.CategoryImageResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -20,10 +20,10 @@ public class CategoryImageService {
         }
     }
 
-    public CategoryResponseDto getCategoryImage(CategoryName categoryName) {
-        CategoryResponseDto categoryResponseDto = new CategoryResponseDto();
+    public CategoryImageResponseDto getCategoryImage(CategoryName categoryName) {
+        CategoryImageResponseDto categoryImageResponseDto = new CategoryImageResponseDto();
         categoryImageRepository.findAllByCategoryName(categoryName).forEach(
-                value -> categoryResponseDto.addCategoryImageUrl(value.getCategoryImageUrl()));
-        return categoryResponseDto;
+                value -> categoryImageResponseDto.addCategoryImageUrl(value.getCategoryImageUrl()));
+        return categoryImageResponseDto;
     }
 }

@@ -7,7 +7,7 @@ import java.util.List;
 
 @NoArgsConstructor
 @Getter
-public class CategoryResponseDto {
+public class CategoryImageResponseDto {
 
     private List<String> categoryImageUrl;
 
