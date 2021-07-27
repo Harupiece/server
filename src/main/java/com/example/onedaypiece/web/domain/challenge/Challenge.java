@@ -3,6 +3,7 @@ package com.example.onedaypiece.web.domain.challenge;
 import com.example.onedaypiece.web.domain.common.Timestamped;
 import com.example.onedaypiece.web.domain.member.Member;
 import com.example.onedaypiece.web.dto.request.challenge.ChallengeRequestDto;
+import com.example.onedaypiece.web.dto.request.challenge.PutChallengeRequestDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -64,6 +65,19 @@ public class Challenge extends Timestamped {
 
     public void setChallengeProgress(Long challengeProgress) {
         this.challengeProgress = challengeProgress;
+    }
+
+    public void putChallenge(PutChallengeRequestDto requestDto) {
+        this.challengeTitle = requestDto.getChallengeTitle();
+        this.challengeContent = requestDto.getChallengeContent();
+        this.categoryName = requestDto.getCategoryName();
+        this.challengePassword = requestDto.getChallengePassword();
+        this.challengeStartDate = requestDto.getChallengeStartDate();
+        this.challengeEndDate = requestDto.getChallengeEndDate();
+        this.challengeImgUrl = requestDto.getChallengeImgUrl();
+        this.challengeGood = requestDto.getChallengeGood();
+        this.challengeBad = requestDto.getChallengeBad();
+        this.challengeHoliday = requestDto.getChallengeHoliday();
     }
 
     public Challenge(ChallengeRequestDto requestDto, Member member) {
