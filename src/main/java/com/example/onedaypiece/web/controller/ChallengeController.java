@@ -2,12 +2,10 @@ package com.example.onedaypiece.web.controller;
 
 import com.example.onedaypiece.service.ChallengeService;
 import com.example.onedaypiece.web.domain.challenge.Challenge;
+import com.example.onedaypiece.web.dto.request.ChallengeRequestDto;
 import com.example.onedaypiece.web.dto.response.challenge.ChallengeResponseDto;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
@@ -20,6 +18,11 @@ public class ChallengeController {
     @GetMapping("/api/member/challenge/{challengeId}")
     public ChallengeResponseDto getChallengeDetail(@PathVariable Long challengeId) {
         return challengeService.getChallengeDetail(challengeId);
+    }
+
+    @PostMapping("/api/member/challenge")
+    public Map<String, String> createChallenge(@RequestBody ChallengeRequestDto requestDto) {
+        return challengeService.createChallenge(requestDto);
     }
 
     @DeleteMapping("/api/member/challenge/{challengeId}")
