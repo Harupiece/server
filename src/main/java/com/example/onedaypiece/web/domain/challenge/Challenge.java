@@ -2,6 +2,7 @@ package com.example.onedaypiece.web.domain.challenge;
 
 import com.example.onedaypiece.web.domain.common.Timestamped;
 import com.example.onedaypiece.web.domain.member.Member;
+import com.example.onedaypiece.web.dto.request.challenge.ChallengeRequestDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -16,29 +17,29 @@ public class Challenge extends Timestamped {
     @Id
     private Long challengeId;
 
-    @Column
+    @Column(nullable = false)
     private String challengeTitle;
 
-    @Column
+    @Column(nullable = false)
     private String challengeContent;
 
     @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
     private CategoryName categoryName;
 
-    @Column
+    @Column(nullable = false)
     private String challengePassword;
 
-    @Column
+    @Column(nullable = false)
     private LocalDateTime challengeStartDate;
 
-    @Column
+    @Column(nullable = false)
     private LocalDateTime challengeEndDate;
 
-    @Column
+    @Column(nullable = false)
     private boolean challengeStatus; // 삭제 여부
 
-    @Column
+    @Column(nullable = false)
     private Long challengeProgress;
 
     @Column
@@ -65,31 +66,19 @@ public class Challenge extends Timestamped {
         this.challengeProgress = challengeProgress;
     }
 
-    public Challenge(Long challengeId,
-                     String challengeTitle,
-                     String challengeContent,
-                     CategoryName categoryName,
-                     String challengePassword,
-                     LocalDateTime challengeStartDate,
-                     LocalDateTime challengeEndDate,
-                     String challengeImgUrl,
-                     String challengeGood,
-                     String challengeBad,
-                     String challengeHoliday,
-                     Member member) {
-        this.challengeId = challengeId;
-        this.challengeTitle = challengeTitle;
-        this.challengeContent = challengeContent;
-        this.categoryName = categoryName;
-        this.challengePassword = challengePassword;
-        this.challengeStartDate = challengeStartDate;
-        this.challengeEndDate = challengeEndDate;
+    public Challenge(ChallengeRequestDto requestDto, Member member) {
+        this.challengeTitle = requestDto.getChallengeTitle();
+        this.challengeContent = requestDto.getChallengeContent();
+        this.categoryName = requestDto.getCategoryName();
+        this.challengePassword = requestDto.getChallengePassword();
+        this.challengeStartDate = requestDto.getChallengeStartDate();
+        this.challengeEndDate = requestDto.getChallengeEndDate();
         this.challengeStatus = true;
         this.challengeProgress = 1L;
-        this.challengeImgUrl = challengeImgUrl;
-        this.challengeGood = challengeGood;
-        this.challengeBad = challengeBad;
-        this.challengeHoliday = challengeHoliday;
+        this.challengeImgUrl = requestDto.getChallengeImgUrl();
+        this.challengeGood = requestDto.getChallengeGood();
+        this.challengeBad = requestDto.getChallengeBad();
+        this.challengeHoliday = requestDto.getChallengeHoliday();
         this.member = member;
     }
 }

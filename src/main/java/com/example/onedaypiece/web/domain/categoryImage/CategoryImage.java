@@ -11,16 +11,16 @@ import javax.persistence.*;
 @Entity
 @Getter
 @NoArgsConstructor
-public class CategoryImage extends Timestamped {
+public class CategoryImage {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     private Long categoryImageId;
 
-    @Column
+    @Column(nullable = false)
     private CategoryName categoryName;
 
-    @Column
+    @Column(nullable = false, unique = true)
     private String categoryImageUrl;
 
     public CategoryImage(CategoryImageRequestDto requestDto) {

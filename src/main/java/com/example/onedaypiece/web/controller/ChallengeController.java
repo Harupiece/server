@@ -4,6 +4,8 @@ import com.example.onedaypiece.service.ChallengeService;
 import com.example.onedaypiece.web.dto.request.challenge.ChallengeRequestDto;
 import com.example.onedaypiece.web.dto.response.challenge.ChallengeResponseDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -20,8 +22,8 @@ public class ChallengeController {
     }
 
     @PostMapping("/api/member/challenge")
-    public Map<String, String> createChallenge(@RequestBody ChallengeRequestDto requestDto) {
-        return challengeService.createChallenge(requestDto);
+    public void createChallenge(@RequestBody ChallengeRequestDto requestDto, @AuthenticationPrincipal UserDetails userDetails) {
+        challengeService.createChallenge(requestDto, userDetails.getUsername());
     }
 
     @DeleteMapping("/api/member/challenge/{challengeId}")

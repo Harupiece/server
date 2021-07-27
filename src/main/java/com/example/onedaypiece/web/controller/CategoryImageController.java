@@ -22,4 +22,9 @@ public class CategoryImageController {
     public CategoryImageResponseDto getCategoryImage(@PathVariable CategoryName categoryName) {
         return categoryImageService.getCategoryImage(categoryName);
     }
+
+    @DeleteMapping("/api/category-image/{imgUrl}")
+    public void deleteCategoryImage(@PathVariable String imgUrl) {
+        categoryImageService.deleteCategoryImage(imgUrl);
+    }
 }
