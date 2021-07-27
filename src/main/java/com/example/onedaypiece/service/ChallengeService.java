@@ -35,13 +35,10 @@ public class ChallengeService {
         }
 
         List<Long> challengeMember = new ArrayList<>();
-        challengeRecordRepository.findAllByChallenge(challenge).forEach(value -> challengeMember.add(value.getMember().getMemberId()));
+        challengeRecordRepository.findAllByChallenge(challenge).forEach(
+                value -> challengeMember.add(value.getMember().getMemberId()));
 
-        return new ChallengeResponseDto(challenge.getMember().getNickname(),
-                challenge.getChallengeTitle(), challenge.getChallengeContent(), challenge.getCategoryName(),
-                challenge.getChallengePassword(), challenge.getChallengeStartDate(), challenge.getChallengeEndDate(),
-                challenge.getChallengeProgress(), challenge.getChallengeImgUrl(), challenge.getChallengeGood(),
-                challenge.getChallengeBad(), challenge.getChallengeHoliday(), challengeMember);
+        return new ChallengeResponseDto(challenge, challengeMember);
     }
 
     public Map<String, String> deleteChallenge(Long challengeId) {
