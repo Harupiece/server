@@ -1,6 +1,7 @@
 package com.example.onedaypiece.web.domain.member;
 
 
+
 import com.example.onedaypiece.web.domain.common.Timestamped;
 import com.example.onedaypiece.web.domain.point.Point;
 import lombok.Getter;
@@ -47,9 +48,4 @@ public class Member extends Timestamped {
     public Member(String email, String password, String nickname){
 
     }
-
-
-
-
-
 }
