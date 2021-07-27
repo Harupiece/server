@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
-@RequestMapping("/api/posting")
+@RequestMapping("/api/certification")
 @RestController
 public class CertificationController {
 
@@ -20,6 +20,5 @@ public class CertificationController {
     public ResponseEntity<Long> createCertification(CertificationRequestDto certificationRequestDto){
 
         return ResponseEntity.ok().body(certificationService.createCertification(certificationRequestDto));
-
     }
 }

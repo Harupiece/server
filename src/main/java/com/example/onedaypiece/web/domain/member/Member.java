@@ -4,6 +4,7 @@ package com.example.onedaypiece.web.domain.member;
 
 import com.example.onedaypiece.web.domain.common.Timestamped;
 import com.example.onedaypiece.web.domain.point.Point;
+import com.example.onedaypiece.web.dto.request.mypage.MyPageRequestDto;
 import com.example.onedaypiece.web.dto.request.signup.SignupRequestDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -41,13 +42,18 @@ public class Member extends Timestamped {
     private Long memberStatus;
 
 
-    @OneToMany
+    // 관계의주인이 저쪽이다 라고알려주는것것 포인트에서 자기자신을 member라고참조하고있다 관계의 주인은 point다
+   @OneToMany(mappedBy = "member")
     private List<Point> points = new ArrayList<>();
-
 
 //    @Column(nullable = true)
 //    private String kakaoEmail;
 
+
+    public void add(Point point){
+        point.setMember(this);  // 애가주인인데
+        this.points.add(point); // 이걸하는이유 이이유는 jpa를왜쓰냐 이런질문임 객체지향적으로 하기위해서 쓰는거임
+    }
 
     public Member(SignupRequestDto requestDto){
         this.email = requestDto.getEmail();
@@ -58,7 +64,7 @@ public class Member extends Timestamped {
         this.role = MemberRole.MEMBER;
     }
 
-    public Member(String email, String password, String nickname, String profileImg, Long memberStatus){
+    public Member(String email, String password, String nickname, String profileImg){
         this.email = email;
         this.password = password;
         this.nickname = nickname;
@@ -66,5 +72,16 @@ public class Member extends Timestamped {
         this.memberStatus = 1L;
         this.role = MemberRole.MEMBER;
     }
+
+    // 마이페이지 수정
+    public void update(MyPageRequestDto requestDto){
+        this.password = requestDto.getPassword();
+        this.nickname = requestDto.getNickname();
+        this.profileImg = requestDto.getProfileImg();
+    }
+
+
+
+
 }
 
