@@ -1,4 +1,4 @@
-package com.example.onedaypiece.web.dto.request;
+package com.example.onedaypiece.web.dto.request.challenge;
 
 import lombok.Getter;
 

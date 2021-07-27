@@ -1,8 +1,7 @@
 package com.example.onedaypiece.web.controller;
 
 import com.example.onedaypiece.service.ChallengeService;
-import com.example.onedaypiece.web.domain.challenge.Challenge;
-import com.example.onedaypiece.web.dto.request.ChallengeRequestDto;
+import com.example.onedaypiece.web.dto.request.challenge.ChallengeRequestDto;
 import com.example.onedaypiece.web.dto.response.challenge.ChallengeResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
