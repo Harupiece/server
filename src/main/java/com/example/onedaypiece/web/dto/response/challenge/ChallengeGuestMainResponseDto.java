@@ -3,17 +3,18 @@ package com.example.onedaypiece.web.dto.response.challenge;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @NoArgsConstructor
 @Getter
 public class ChallengeGuestMainResponseDto {
 
-    private List<ChallengeSliderSourceResponseDto> popular;
-    private List<ChallengeSliderSourceResponseDto> exercise;
-    private List<ChallengeSliderSourceResponseDto> livingHabits;
-    private List<ChallengeSliderSourceResponseDto> study;
-    private List<ChallengeSliderSourceResponseDto> money;
+    private final List<ChallengeSliderSourceResponseDto> popular = new ArrayList<>();
+    private final List<ChallengeSliderSourceResponseDto> exercise = new ArrayList<>();
+    private final List<ChallengeSliderSourceResponseDto> livingHabits = new ArrayList<>();
+    private final List<ChallengeSliderSourceResponseDto> study = new ArrayList<>();
+    private final List<ChallengeSliderSourceResponseDto> money = new ArrayList<>();
 
     public void addPopular(ChallengeSliderSourceResponseDto responseDto) {
         popular.add(responseDto);
