@@ -13,6 +13,6 @@ import java.util.Optional;
 public interface ChallengeRepository extends JpaRepository<Challenge, Long> {
     Optional<Challenge> findByChallengeIdAndMember(Long challengeId, Member member);
     List<Challenge> findAllByMember(Member member);
-
     Page<Challenge> findAllByCategoryNameOrderByModifiedAtDesc(CategoryName categoryName, Pageable pageable);
+    Page<Challenge> findAllByChallengeTitleContaining(String searchWords, Pageable pageable);
 }
