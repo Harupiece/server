@@ -12,6 +12,7 @@ import java.util.List;
 @Getter
 public class ChallengeResponseDto {
 
+    private Long challengeId;
     private String memberName; // 챌린지 만든 사람
     private String challengeTitle;
     private String challengeContent;
@@ -28,6 +29,7 @@ public class ChallengeResponseDto {
 
     public ChallengeResponseDto(Challenge challenge,
                                 List<Long> challengeMember) {
+        this.challengeId = challenge.getChallengeId();
         this.memberName = challenge.getMember().getNickname();
         this.challengeTitle = challenge.getChallengeTitle();
         this.challengeContent = challenge.getChallengeContent();
