@@ -220,7 +220,7 @@ public class ChallengeService {
         final int pageSize = 6;
 
         Page<Challenge> challengeList = challengeRepository.
-                findAllByChallengeTitleContaining(searchWords, PageRequest.of(page - 1, pageSize));
+                findAllByChallengeTitleContaining(searchWords.trim(), PageRequest.of(page - 1, pageSize));
         return listResponseDtoSource(challengeList);
     }
 

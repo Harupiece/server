@@ -64,7 +64,7 @@ public class ChallengeController {
         return challengeService.getChallengeByCategoryName(categoryName, page);
     }
 
-    @GetMapping("/api/guest/search/{page}/{searchWords})")
+    @GetMapping("/api/guest/search/{page}/{searchWords}") // 제목 검색
     public ChallengeListResponseDto getChallengeSearchResult(@PathVariable int page,
                                                              @PathVariable String searchWords) {
         return challengeService.getChallengeSearchResult(searchWords, page);
