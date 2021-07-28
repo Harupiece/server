@@ -9,10 +9,7 @@ import com.example.onedaypiece.web.domain.member.Member;
 import com.example.onedaypiece.web.domain.member.MemberRepository;
 import com.example.onedaypiece.web.dto.request.challenge.ChallengeRequestDto;
 import com.example.onedaypiece.web.dto.request.challenge.PutChallengeRequestDto;
-import com.example.onedaypiece.web.dto.response.challenge.ChallengeGuestMainResponseDto;
-import com.example.onedaypiece.web.dto.response.challenge.ChallengeMemberMainResponseDto;
-import com.example.onedaypiece.web.dto.response.challenge.ChallengeResponseDto;
-import com.example.onedaypiece.web.dto.response.challenge.ChallengeSliderSourceResponseDto;
+import com.example.onedaypiece.web.dto.response.challenge.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -62,7 +59,6 @@ public class ChallengeService {
         if (challenge.getMember().getEmail().equals(username)) {
             throw new IllegalArgumentException("작성자가 아닙니다.");
         }
-
 
         Map<String, String> deleteResultMap = new HashMap<>();
 
@@ -212,5 +208,32 @@ public class ChallengeService {
 
     public List<Challenge> getAllChallenge() {
         return challengeRepository.findAll();
+    }
+
+    public ChallengeListResponseDto getChallengeByCategoryName(CategoryName categoryName, int page) {
+        final int pageSize = 6;
+
+        Page<Challenge> challengeList = challengeRepository.
+                findAllByCategoryNameOrderByModifiedAtDesc(categoryName, PageRequest.of(page - 1, pageSize));
+        return listResponseDtoSource(challengeList);
+    }
+
+    public ChallengeListResponseDto getChallengeSearchResult(String searchWords, int page) {
+        final int pageSize = 6;
+
+        Page<Challenge> challengeList = challengeRepository.
+                findAllByChallengeTitleContaining(searchWords, PageRequest.of(page - 1, pageSize));
+        return listResponseDtoSource(challengeList);
+    }
+
+    private ChallengeListResponseDto listResponseDtoSource(Page<Challenge> challengeList) {
+        ChallengeListResponseDto listResponseDto = new ChallengeListResponseDto();
+        for (Challenge challenge : challengeList) {
+            List<Long> memberIdList = new ArrayList<>();
+            challengeRecordRepository.findAllByChallenge(challenge).forEach(
+                    record -> memberIdList.add(record.getMember().getMemberId()));
+            listResponseDto.addResult(new ChallengeResponseDto(challenge, memberIdList));
+        }
+        return listResponseDto;
     }
 }
