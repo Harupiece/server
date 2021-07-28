@@ -9,5 +9,6 @@ import lombok.ToString;
 public class CertificationRequestDto {
 
     private Long postingId;
+    private Long totalNumber;
 
 }

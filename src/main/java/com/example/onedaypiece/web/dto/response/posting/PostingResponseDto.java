@@ -21,6 +21,7 @@ public class PostingResponseDto {
 
 
     public PostingResponseDto(Posting posting) {
+        this.postingId =posting.getPostingId();
         this.postingContent = posting.getPostingContent();
         this.postingImg = posting.getPostingImg();
         this.postingCount=posting.getPostingCount();
