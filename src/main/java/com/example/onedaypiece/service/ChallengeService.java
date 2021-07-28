@@ -141,12 +141,10 @@ public class ChallengeService {
         final int userSliderSize = myChallengeList.size();
 
         responseDtoRefactor(mainRequestDto, userSliderSize);
-
         categoryCollector(EXERCISE).forEach(mainRequestDto::addExercise);
         categoryCollector(LIVINGHABITS).forEach(mainRequestDto::addLivingHabits);
         categoryCollector(STUDY).forEach(mainRequestDto::addStudy);
         categoryCollector(MONEY).forEach(mainRequestDto::addMoney);
-
         return mainRequestDto;
     }
 
