@@ -13,6 +13,7 @@ import java.util.List;
 public class ChallengeResponseDto {
 
     private Long challengeId;
+    private Long memberId;
     private String memberName; // 챌린지 만든 사람
     private String challengeTitle;
     private String challengeContent;
@@ -29,6 +30,7 @@ public class ChallengeResponseDto {
 
     public ChallengeResponseDto(Challenge challenge,
                                 List<Long> challengeMember) {
+        this.memberId = challenge.getMember().getMemberId();
         this.challengeId = challenge.getChallengeId();
         this.memberName = challenge.getMember().getNickname();
         this.challengeTitle = challenge.getChallengeTitle();
