@@ -114,7 +114,9 @@ public class ChallengeService {
     // Guest 메인 페이지
     public ChallengeGuestMainResponseDto getGuestMainChallengeDetail() {
         ChallengeGuestMainResponseDto mainRequestDto = new ChallengeGuestMainResponseDto();
+
         responseDtoRefactor(mainRequestDto, 0);
+
         categoryCollector(EXERCISE).forEach(mainRequestDto::addExercise);
         categoryCollector(LIVINGHABITS).forEach(mainRequestDto::addLivingHabits);
         categoryCollector(STUDY).forEach(mainRequestDto::addStudy);
@@ -141,6 +143,7 @@ public class ChallengeService {
         final int userSliderSize = myChallengeList.size();
 
         responseDtoRefactor(mainRequestDto, userSliderSize);
+
         categoryCollector(EXERCISE).forEach(mainRequestDto::addExercise);
         categoryCollector(LIVINGHABITS).forEach(mainRequestDto::addLivingHabits);
         categoryCollector(STUDY).forEach(mainRequestDto::addStudy);
@@ -187,10 +190,24 @@ public class ChallengeService {
                     record -> popularList.put(challengeId, popularList.get(challengeId) + 1));
         }
 
-        List<Long> challengeIdList = new ArrayList<>();
-        Collections.sort(challengeIdList, (value1, value2) -> (popularList.get(value2).compareTo(popularList.get(value1))));
+        List<Map.Entry<Long, Integer>> beSortedList = new LinkedList<>(popularList.entrySet());
 
-        for (Long id : challengeIdList) {
+        Collections.sort(beSortedList, (o1, o2) -> {
+            if (o1.getValue() > o2.getValue()) {
+                return -1;
+            }
+            else if (o1.getValue() < o2.getValue()) {
+                return 1;
+            }
+            return o1.getKey().compareTo(o2.getKey());
+        });
+
+        Map<Long, Integer> sortedMap = new LinkedHashMap<>();
+        for (Map.Entry<Long, Integer> entry : beSortedList) {
+            sortedMap.put(entry.getKey(), entry.getValue());
+        }
+
+        for (Long id : sortedMap.keySet()) {
             Challenge challenge = challengeRepository.getById(id);
             List<Long> memberIdList = new ArrayList<>();
             challengeRecordRepository.findAllByChallenge(challenge).forEach(

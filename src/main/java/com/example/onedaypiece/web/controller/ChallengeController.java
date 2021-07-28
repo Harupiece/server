@@ -23,37 +23,37 @@ public class ChallengeController {
 
     private final ChallengeService challengeService;
 
-    @GetMapping("/api/guest/main")
+    @GetMapping("/api/guest/main") // 비로그인 메인 페이지
     public ChallengeGuestMainResponseDto getGuestMainChallengeDetail() {
         return challengeService.getGuestMainChallengeDetail();
     }
 
-    @GetMapping("/api/member/main")
+    @GetMapping("/api/member/main") // 로그인 메인 페이지
     public ChallengeMemberMainResponseDto getMemberMainChallengeDetail(@AuthenticationPrincipal UserDetails userDetails) {
         return challengeService.getMemberMainChallengeDetail(userDetails.getUsername());
     }
 
-    @GetMapping("/api/member/challenge/{challengeId}")
+    @GetMapping("/api/member/challenge/{challengeId}") // 챌린지 상세
     public ChallengeResponseDto getChallengeDetail(@PathVariable Long challengeId) {
         return challengeService.getChallengeDetail(challengeId);
     }
 
-    @PostMapping("/api/member/challenge")
+    @PostMapping("/api/member/challenge") // 챌린지 등록
     public void createChallenge(@RequestBody ChallengeRequestDto requestDto, @AuthenticationPrincipal UserDetails userDetails) {
         challengeService.createChallenge(requestDto, userDetails.getUsername());
     }
 
-    @PutMapping("/api/member/challenge")
+    @PutMapping("/api/member/challenge") // 챌린지 수정
     public void putChallenge(@RequestBody PutChallengeRequestDto requestDto, @AuthenticationPrincipal UserDetails userDetails) {
         challengeService.putChallenge(requestDto, userDetails.getUsername());
     }
 
-    @DeleteMapping("/api/member/challenge/{challengeId}")
+    @DeleteMapping("/api/member/challenge/{challengeId}") // 챌린지 삭제 (유저에겐 삭제, 관리자 입장에선 상태 true->false
     public Map<String, String> deleteChallenge(@PathVariable Long challengeId, @AuthenticationPrincipal UserDetails userDetails) {
         return challengeService.deleteChallenge(challengeId, userDetails.getUsername());
     }
 
-    @DeleteMapping("/api/admin/challenge/{challengeId}")
+    @DeleteMapping("/api/admin/challenge/{challengeId}") // admin권한으로 DB에서 아예 삭제
     public void deleteChallengeByAdmin(@PathVariable Long challengeId) {
         challengeService.deleteChallengeByAdmin(challengeId);
     }

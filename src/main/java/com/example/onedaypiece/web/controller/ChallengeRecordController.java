@@ -15,13 +15,13 @@ public class ChallengeRecordController {
 
     private final ChallengeRecordService challengeRecordService;
 
-    @PostMapping("/api/member/challenge-request")
+    @PostMapping("/api/member/challenge-request") // 챌린지 신청
     public Map<String, String> requestChallenge(@RequestBody ChallengeRecordRequestDto requestDto,
                                                  @AuthenticationPrincipal UserDetails userDetails) {
         return challengeRecordService.requestChallenge(requestDto, userDetails);
     }
 
-    @DeleteMapping("/api/member/challenge-give-up/{challengeId}")
+    @DeleteMapping("/api/member/challenge-give-up/{challengeId}") // 챌린지 포기
     public void giveUpChallenge(@PathVariable Long challengeId) {
         challengeRecordService.giveUpChallenge(challengeId);
     }
