@@ -44,7 +44,7 @@ public class Member extends Timestamped {
 
 
     // 관계의주인이 저쪽이다 라고알려주는것것 포인트에서 자기자신을 member라고참조하고있다 관계의 주인은 point다
-   @OneToMany(mappedBy = "member")
+    @OneToMany(mappedBy = "member")
     private List<Point> points = new ArrayList<>();
 
 //    @Column(nullable = true)

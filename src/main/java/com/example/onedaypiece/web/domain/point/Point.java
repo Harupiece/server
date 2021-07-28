@@ -4,6 +4,7 @@ package com.example.onedaypiece.web.domain.point;
 import com.example.onedaypiece.web.domain.certification.Certification;
 import com.example.onedaypiece.web.domain.common.Timestamped;
 import com.example.onedaypiece.web.domain.member.Member;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -26,6 +27,7 @@ public class Point extends Timestamped {
 
     // 애가관계의주인임 관계의주인쪽이 관계가설정되는것
     @ManyToOne
+    @JsonIgnore
     private Member member;
 
     @ManyToOne

@@ -57,8 +57,6 @@ public class Challenge extends Timestamped {
     private String challengeHoliday;
 
     @ManyToOne
-    @JsonIgnore
-    @JoinColumn(name = "member_id")
     private Member member;
 
     public void setChallengeStatus(boolean challengeStatus) {
