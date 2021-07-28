@@ -36,4 +36,10 @@ public class Point extends Timestamped {
         this.acquiredPoint = 0L;
     }
 
+    public Point(Member member, Certification certification) {
+        this.member = member;
+        this.certification =certification;
+        this.acquiredPoint = 1L;
+    }
+
 }
