@@ -11,5 +11,5 @@ import java.util.List;
 public interface PostingRepository extends JpaRepository<Posting,Long> {
 
 
-    List<Posting> findAllByChallengeAndPostingStatusTrueOrderByCreatedAtDesc(Challenge challenge, Pageable pageable);
+    List<Posting> findByChallengeAndPostingStatusTrueOrderByCreatedAtDesc(Challenge challenge, Pageable pageable);
 }

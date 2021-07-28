@@ -1,5 +1,6 @@
 package com.example.onedaypiece.web.domain.posting;
 
+
 import com.example.onedaypiece.web.domain.challenge.Challenge;
 import com.example.onedaypiece.web.domain.common.Timestamped;
 import com.example.onedaypiece.web.domain.member.Member;
@@ -7,12 +8,14 @@ import com.example.onedaypiece.web.dto.request.posting.PostingRequestDto;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import javax.persistence.*;
 
 @Getter
 @Entity
 @NoArgsConstructor
+@ToString
 public class Posting extends Timestamped {
 
 
@@ -36,6 +39,7 @@ public class Posting extends Timestamped {
 
     @ManyToOne
     private Member member;
+
     @ManyToOne
     private Challenge challenge;
 
@@ -52,9 +56,7 @@ public class Posting extends Timestamped {
         this.challenge=challenge;
     }
 
-
     //==생성 메서드==//
-
     public static Posting createPosting(PostingRequestDto postingRequestDto, Member member, Challenge challenge) {
         return new Posting(
                 postingRequestDto.getPostingImg(),
@@ -65,14 +67,16 @@ public class Posting extends Timestamped {
     }
 
     //== 비지니스 로직 ==//
-
     public void updatePosting(PostingRequestDto postingRequestDto) {
         this.postingImg = postingRequestDto.getPostingImg();
         this.postingContent = postingRequestDto.getPostingContent();
 
     }
-
     public void deletePosting() {
         this.postingStatus =false;
+    }
+
+    public void addCount() {
+        this.postingCount += 1;
     }
 }
