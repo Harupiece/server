@@ -26,7 +26,6 @@ public class CertificationService {
     private final PostingRepository postingRepository;
     private final MemberRepository memberRepository;
     private final PointRepository pointRepository;
-    private final ChallengeRecordRepository challengeRecordRepository;
 
 
     @Transactional
@@ -35,15 +34,15 @@ public class CertificationService {
         Member member = getMemberByEmail(userDetails.getUsername());
 
 
-        int count = getCount(posting); // <- 참여인원 있음
+        Long memberCount = certificationRequestDto.getTotalNumber(); // <- 참여인원 있음
 
         // 인증 했는지 여부 확인
-        duplicate(posting,member);
+        duplicateCertification(posting,member);
 
         Certification certification = Certification.createCertification(member,posting);
 
         //50% 이상
-        checkMemberCountAndAddPoint(posting, member, count, certification);
+        checkMemberCountAndAddPoint(posting, member, memberCount, certification);
 
         certificationRepository.save(certification);
 
@@ -51,22 +50,19 @@ public class CertificationService {
     }
 
 
-    private void checkMemberCountAndAddPoint (Posting posting, Member member, int count, Certification certification) {
+    private void checkMemberCountAndAddPoint (Posting posting, Member member, Long count, Certification certification) {
         if(count /2 < posting.getPostingCount()){
             Point point = member.updatePoint(member, certification);
 //            pointRepository.save(point);
         }
     }
 
-    private void duplicate(Posting posting,Member member){
+    private void duplicateCertification(Posting posting,Member member){
         if(certificationRepository.existsByPostingAndMember(posting,member)){
             throw new ApiRequestException("이미 인증한 게시물입니다!");
         }
     }
-    private int getCount(Posting posting) {
-        return challengeRecordRepository
-                .findAllByChallenge(posting.getChallenge()).size();
-    }
+
     private Member getMemberByEmail(String email) {
         return memberRepository.findByEmail(email)
                 .orElseThrow(() -> new ApiRequestException("등록된 유저가 없습니다."));

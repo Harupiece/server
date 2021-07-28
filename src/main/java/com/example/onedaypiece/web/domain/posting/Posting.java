@@ -50,7 +50,7 @@ public class Posting extends Timestamped {
         this.postingStatus = true;
         this.postingApproval=false;
         this.postingPoint=false;
-        this.postingModifyOk=true;
+        this.postingModifyOk=false;
         this.postingCount=0L;
         this.member =member;
         this.challenge=challenge;
