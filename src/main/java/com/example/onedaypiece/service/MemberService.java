@@ -12,6 +12,7 @@ import com.example.onedaypiece.web.dto.request.login.LoginRequestDto;
 import com.example.onedaypiece.web.dto.request.mypage.MyPageRequestDto;
 import com.example.onedaypiece.web.dto.request.signup.SignupRequestDto;
 import com.example.onedaypiece.web.dto.request.token.TokenRequestDto;
+import com.example.onedaypiece.web.dto.response.login.LoginResponseDto;
 import com.example.onedaypiece.web.dto.response.mypage.MyPageResponseDto;
 import com.example.onedaypiece.web.dto.response.token.TokenDto;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +20,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -72,10 +75,34 @@ public class MemberService {
     }
 
 
-    // 로그인
-    @Transactional
-    public TokenDto loginMember(LoginRequestDto requestDto){
+//    // 로그인
+//    @Transactional
+//    public TokenDto loginMember(LoginRequestDto requestDto){
+//
+//        // 1. Login ID/PW 를 기반으로 AuthenticationToken 생성
+//        UsernamePasswordAuthenticationToken authenticationToken = requestDto.toAuthentication();
+//
+//        // 2. 실제로 검증 (사용자 비밀번호 체크) 이 이루어지는 부분
+//        //    authenticate 메서드가 실행이 될 때 CustomUserDetailsService 에서 만들었던 loadUserByUsername 메서드가 실행됨
+//        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+//
+//        // 3. 인증 정보를 기반으로 JWT 토큰 생성
+//        TokenDto tokenDto = tokenProvider.generateTokenDto(authentication);
+//
+//        // 4. RefreshToken 저장
+//        RefreshToken refreshToken = RefreshToken.builder()
+//                .key(authentication.getName())
+//                .value(tokenDto.getRefreshToken())
+//                .build();
+//
+//        refreshTokenRepository.save(refreshToken);
+//        return tokenDto;
+//    }
 
+
+    // 로그인 2
+    @Transactional
+    public LoginResponseDto loginMember(LoginRequestDto requestDto){
         // 1. Login ID/PW 를 기반으로 AuthenticationToken 생성
         UsernamePasswordAuthenticationToken authenticationToken = requestDto.toAuthentication();
 
@@ -94,8 +121,20 @@ public class MemberService {
 
         refreshTokenRepository.save(refreshToken);
 
-        return tokenDto;
+        Member member = memberRepository.findByEmail(requestDto.getEmail()).orElseThrow(
+                ()-> new ApiRequestException("로그인할떄 아이디가 존재하지않습니다.")
+        );
+        List<Point> pointList = member.getPoints();
+        Long pointSum = 0L;
+        for(int i = 0 ; i< pointList.size(); i++){
+            pointSum =  pointSum + pointList.get(i).getAcquiredPoint();
+        }
+
+        LoginResponseDto loginResponseDto = new LoginResponseDto(tokenDto, member, pointSum);
+        return loginResponseDto;
     }
+
+
 
     // 토큰 재발급
     @Transactional

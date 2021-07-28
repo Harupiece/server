@@ -5,6 +5,7 @@ import com.example.onedaypiece.web.dto.request.login.LoginRequestDto;
 import com.example.onedaypiece.web.dto.request.mypage.MyPageRequestDto;
 import com.example.onedaypiece.web.dto.request.signup.SignupRequestDto;
 import com.example.onedaypiece.web.dto.request.token.TokenRequestDto;
+import com.example.onedaypiece.web.dto.response.login.LoginResponseDto;
 import com.example.onedaypiece.web.dto.response.mypage.MyPageResponseDto;
 import com.example.onedaypiece.web.dto.response.token.TokenDto;
 import lombok.RequiredArgsConstructor;
@@ -27,8 +28,14 @@ public class MemberController {
     }
 
     // 로그인
+//    @PostMapping("/login")
+//    public TokenDto login(@RequestBody LoginRequestDto loginRequestDto){
+//        return memberService.loginMember(loginRequestDto);
+//    }
+
+    // 로그인 요청사항으로수정
     @PostMapping("/login")
-    public TokenDto login(@RequestBody LoginRequestDto loginRequestDto){
+    public LoginResponseDto login(@RequestBody LoginRequestDto loginRequestDto){
         return memberService.loginMember(loginRequestDto);
     }
 
