@@ -2,6 +2,7 @@ package com.example.onedaypiece.web.domain.member;
 
 
 
+import com.example.onedaypiece.web.domain.certification.Certification;
 import com.example.onedaypiece.web.domain.common.Timestamped;
 import com.example.onedaypiece.web.domain.point.Point;
 import com.example.onedaypiece.web.dto.request.mypage.MyPageRequestDto;
@@ -80,6 +81,10 @@ public class Member extends Timestamped {
         this.profileImg = requestDto.getProfileImg();
     }
 
+    public Point updatePoint(Member member, Certification certification) {
+
+        return new Point(member,certification);
+    }
 
 
 
