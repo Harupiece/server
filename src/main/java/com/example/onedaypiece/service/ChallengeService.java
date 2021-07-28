@@ -56,7 +56,7 @@ public class ChallengeService {
         Challenge challenge = challengeRepository.findById(challengeId).orElseThrow(
                 () -> new NullPointerException("존재하지 않은 챌린지id입니다"));
 
-        if (challenge.getMember().getEmail().equals(username)) {
+        if (!challenge.getMember().getEmail().equals(username)) {
             throw new IllegalArgumentException("작성자가 아닙니다.");
         }
 

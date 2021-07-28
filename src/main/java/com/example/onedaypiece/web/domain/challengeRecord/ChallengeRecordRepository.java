@@ -14,4 +14,5 @@ public interface ChallengeRecordRepository extends JpaRepository<ChallengeRecord
     Page<ChallengeRecord> findAll(Pageable pageable);
     void deleteAllByChallenge(Challenge challenge);
     List<ChallengeRecord> findAllByMember(Member member);
+    Boolean existsByChallengeAndMember(Challenge challenge, Member member);
 }

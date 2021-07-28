@@ -33,6 +33,10 @@ public class ChallengeRecordService {
         Member member = memberRepository.findByEmail(userDetails.getUsername())
                 .orElseThrow(() -> new NullPointerException("존재하지 않는 유저입니다."));
 
+        if (challengeRecordRepository.existsByChallengeAndMember(challenge, member)) {
+            throw new IllegalArgumentException("이미 해당 챌린지에 신청한 유저입니다.");
+        }
+
         if (challenge.getChallengePassword().equals(requestDto.getChallengePassword())) {
             challengeRecordRepository.save(new ChallengeRecord(challenge, member));
             requestChallengeResultMap.put("ok", "true");

@@ -58,7 +58,7 @@ public class ChallengeController {
         challengeService.deleteChallengeByAdmin(challengeId);
     }
 
-    @GetMapping("/api/member/challenge/category/{page}/{categoryName}") // 카테고리 별 조회
+    @GetMapping("/api/guest/challenge/category/{page}/{categoryName}") // 카테고리 별 조회
     public ChallengeListResponseDto getChallengeByCategoryName(@PathVariable int page,
                                                                @PathVariable CategoryName categoryName) {
         return challengeService.getChallengeByCategoryName(categoryName, page);
