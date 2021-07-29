@@ -24,9 +24,11 @@ public interface ChallengeRecordRepository extends JpaRepository<ChallengeRecord
     @Query("select c from ChallengeRecord c Where c.member = :member and c.challengeRecordStatus = true")
     List<ChallengeRecord> findAllByMember(Member member);
 
-//    @Query("select c from ChallengeRecord c Where c.challenge = :challenge and c.member = :member and c.challengeRecordStatus = true")
-    Boolean existsByChallengeAndMember(Challenge challenge, Member member);
+    @Query("select CASE WHEN count(c)>0 then true else false end " +
+            "from ChallengeRecord c " +
+            "Where c.challenge = :challenge and c.member = :member and c.challengeRecordStatus = true")
+    boolean existsByChallengeAndMember(Challenge challenge, Member member);
 
-//    @Query("select c from ChallengeRecord c Where c.challenge = :challenge and c.challengeRecordStatus = true")
-    Long countByChallenge(Challenge challenge);
+    @Query("select count(c) from ChallengeRecord c Where c.challenge = :challenge and c.challengeRecordStatus = true")
+    int countByChallenge(Challenge challenge);
 }

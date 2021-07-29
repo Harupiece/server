@@ -1,5 +1,7 @@
 package com.example.onedaypiece.service;
 
+import com.example.onedaypiece.exception.ApiException;
+import com.example.onedaypiece.exception.ApiRequestException;
 import com.example.onedaypiece.web.domain.challenge.CategoryName;
 import com.example.onedaypiece.web.domain.challenge.Challenge;
 import com.example.onedaypiece.web.domain.challenge.ChallengeRepository;
@@ -33,7 +35,7 @@ public class ChallengeService {
 
     public ChallengeResponseDto getChallengeDetail(Long challengeId) {
         Challenge challenge = challengeRepository.findById(challengeId).orElseThrow(
-                () -> new NullPointerException("존재하지 않은 챌린지id입니다"));
+                () -> new ApiRequestException("존재하지 않은 챌린지id입니다"));
 
         LocalDateTime currentLocalDateTime = LocalDateTime.now();
         if (currentLocalDateTime.isBefore(challenge.getChallengeStartDate())) {
@@ -42,6 +44,8 @@ public class ChallengeService {
             challenge.setChallengeProgress(2L);
         } else {
             challenge.setChallengeProgress(3L);
+            challengeRecordRepository.findAllByChallenge(challenge)
+                    .forEach(ChallengeRecord::setChallengeRecordStatusToFalse);
         }
 
         List<Long> challengeMember = new ArrayList<>();
@@ -52,42 +56,40 @@ public class ChallengeService {
     }
 
     @Transactional
-    public Map<String, String> deleteChallenge(Long challengeId, String username) {
+    public void deleteChallenge(Long challengeId, String username) {
         Challenge challenge = challengeRepository.findById(challengeId).orElseThrow(
-                () -> new NullPointerException("존재하지 않은 챌린지 id입니다"));
+                () -> new ApiRequestException("존재하지 않은 챌린지 id입니다"));
 
         if (!challenge.getMember().getEmail().equals(username)) {
             throw new IllegalArgumentException("작성자가 아닙니다.");
         }
 
-        Map<String, String> deleteResultMap = new HashMap<>();
-
         LocalDateTime currentLocalDateTime = LocalDateTime.now();
         if (currentLocalDateTime.isBefore(challenge.getChallengeStartDate())) {
             challenge.setChallengeStatus(false);
             challenge.setChallengeProgress(3L);
-
-            deleteResultMap.put("msg", "챌린지가 비활성화되었습니다.");
         } else {
-            deleteResultMap.put("msg", "이미 시작된 챌린지는 삭제할 수 없습니다.");
+            throw new ApiRequestException("이미 시작된 챌린지는 삭제할 수 없습니다.");
         }
 
         challengeRecordRepository.deleteAllByChallenge(challenge); // 챌린지 참가 기록 삭제
-
-        return deleteResultMap;
     }
 
     @Transactional
     public void createChallenge(ChallengeRequestDto requestDto, String email) {
         Member member = memberRepository.findByEmail(email)
-                .orElseThrow(() -> new NullPointerException("존재하지 않는 유저입니다."));
+                .orElseThrow(() -> new ApiRequestException("존재하지 않는 유저입니다."));
 
         challengeRepository.findAllByMember(member)
                 .stream()
                 .filter(value -> value.getCategoryName() == requestDto.getCategoryName())
                 .forEach(value -> {
-                    throw new IllegalArgumentException("이미 해당 카테고리에 챌린지를 생성한 유저입니다.");
+                    throw new ApiRequestException("이미 해당 카테고리에 챌린지를 생성한 유저입니다.");
                 });
+
+        if (requestDto.getChallengePassword().length() < 4) {
+            throw new ApiRequestException("비밀번호는 4자리 이상으로 설정해야합니다.");
+        }
 
         Challenge challenge = new Challenge(requestDto, member);
         challengeRepository.save(challenge);
@@ -97,16 +99,22 @@ public class ChallengeService {
     @Transactional
     public void putChallenge(PutChallengeRequestDto requestDto, String username) {
         Member member = memberRepository.findByEmail(username)
-                .orElseThrow(() -> new NullPointerException("존재하지 않는 유저입니다."));
+                .orElseThrow(() -> new ApiRequestException("존재하지 않는 유저입니다."));
         Challenge challenge = challengeRepository.findByChallengeIdAndMember(requestDto.getChallengeId(), member)
-                .orElseThrow(() -> new NullPointerException("존재하지 않는 챌린지입니다."));
+                .orElseThrow(() -> new ApiRequestException("존재하지 않는 챌린지입니다."));
+        challengeRepository.findAllByMember(member)
+                .stream()
+                .filter(value -> value.getCategoryName() == requestDto.getCategoryName())
+                .forEach(value -> {
+                    throw new ApiRequestException("이미 해당 카테고리에 챌린지를 생성한 유저입니다.");
+                });
         challenge.putChallenge(requestDto);
     }
 
     @Transactional
     public void deleteChallengeByAdmin(Long challengeId) {
         Challenge challenge = challengeRepository.findById(challengeId)
-                .orElseThrow(() -> new NullPointerException("존재하지 않는 챌린지입니다."));
+                .orElseThrow(() -> new ApiRequestException("존재하지 않는 챌린지입니다."));
         challengeRepository.deleteById(challengeId);
         challengeRecordRepository.deleteAllByChallenge(challenge);
     }
@@ -128,7 +136,7 @@ public class ChallengeService {
     public ChallengeMemberMainResponseDto getMemberMainChallengeDetail(String userEmail) {
         ChallengeMemberMainResponseDto mainRequestDto = new ChallengeMemberMainResponseDto();
         Member member = memberRepository.findByEmail(userEmail)
-                .orElseThrow(() -> new NullPointerException("존재하지 않는 유저입니다."));
+                .orElseThrow(() -> new ApiRequestException("존재하지 않는 유저입니다."));
 
         List<ChallengeRecord> myChallengeList = challengeRecordRepository.findAllByMember(member);
 
@@ -234,11 +242,11 @@ public class ChallengeService {
     }
 
     public ChallengeListResponseDto getChallengeSearchResult(String searchWords, int page) {
-        final int pageSize = 6;
+        final int searchPageSize = 6;
 
         Page<Challenge> challengeList = challengeRepository.
                 findAllByWordsAndChallengeStatusTrueOrderByModifiedAtDesc(
-                        searchWords.trim(), PageRequest.of(page - 1, pageSize));
+                        searchWords.trim(), PageRequest.of(page - 1, searchPageSize));
         return listResponseDtoSource(challengeList);
     }
 

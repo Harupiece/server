@@ -1,5 +1,6 @@
 package com.example.onedaypiece.service;
 
+import com.example.onedaypiece.exception.ApiRequestException;
 import com.example.onedaypiece.web.domain.categoryImage.CategoryImage;
 import com.example.onedaypiece.web.domain.categoryImage.CategoryImageRepository;
 import com.example.onedaypiece.web.domain.challenge.CategoryName;
@@ -22,7 +23,7 @@ public class CategoryImageService {
     public void postCategoryImage(CategoryImageRequestDto requestDto) {
         if (!categoryImageRepository.existsByCategoryImageUrl(requestDto.getCategoryImageUrl())) {
             categoryImageRepository.save(new CategoryImage(requestDto));
-        } else throw new IllegalArgumentException("이미 존재하는 이미지입니다.");
+        } else throw new ApiRequestException("이미 존재하는 이미지입니다.");
     }
 
     public CategoryImageResponseDto getCategoryImage(CategoryName categoryName) {
