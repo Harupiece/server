@@ -4,7 +4,6 @@ import com.example.onedaypiece.web.domain.common.Timestamped;
 import com.example.onedaypiece.web.domain.member.Member;
 import com.example.onedaypiece.web.dto.request.challenge.ChallengeRequestDto;
 import com.example.onedaypiece.web.dto.request.challenge.PutChallengeRequestDto;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -14,6 +13,9 @@ import java.time.LocalDateTime;
 @Getter
 @Entity
 @NoArgsConstructor
+@Table(indexes = {@Index(name = "idx_category", columnList = "category_name"),
+        @Index(name = "idx_status", columnList = "challenge_status"),
+        @Index(name = "idx_progress", columnList = "challenge_progress")})
 public class Challenge extends Timestamped {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
@@ -25,7 +27,7 @@ public class Challenge extends Timestamped {
     @Column(nullable = false)
     private String challengeContent;
 
-    @Column(nullable = false)
+    @Column(name = "category_name", nullable = false)
     @Enumerated(value = EnumType.STRING)
     private CategoryName categoryName;
 
@@ -38,10 +40,11 @@ public class Challenge extends Timestamped {
     @Column(nullable = false)
     private LocalDateTime challengeEndDate;
 
-    @Column(nullable = false)
-    private boolean challengeStatus; // 삭제 여부
+    // 삭제 여부
+    @Column(name = "challenge_status", nullable = false)
+    private boolean challengeStatus;
 
-    @Column(nullable = false)
+    @Column(name = "challenge_progress", nullable = false)
     private Long challengeProgress;
 
     @Column
