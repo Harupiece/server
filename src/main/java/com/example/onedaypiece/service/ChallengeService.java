@@ -87,7 +87,7 @@ public class ChallengeService {
                     throw new ApiRequestException("이미 해당 카테고리에 챌린지를 생성한 유저입니다.");
                 });
 
-        if (requestDto.getChallengePassword().length() < 4) {
+        if (requestDto.getChallengePassword().length() < 4 || requestDto.getChallengePassword().equals("")) {
             throw new ApiRequestException("비밀번호는 4자리 이상으로 설정해야합니다.");
         }
 
