@@ -11,6 +11,7 @@ import javax.persistence.*;
 @Getter
 @Entity
 @NoArgsConstructor
+@Table(indexes = {@Index(name = "idx_record_status", columnList = "challenge_record_status")})
 public class ChallengeRecord extends Timestamped {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
@@ -24,8 +25,13 @@ public class ChallengeRecord extends Timestamped {
     @JoinColumn(name = "member_id")
     private Member member;
 
+    // ChallengeProgress가 1 or 2이면 true, 3이면 false
+    @Column(name = "challenge_record_status", nullable = false)
+    private boolean challengeRecordStatus;
+
     public ChallengeRecord(Challenge challenge, Member member) {
         this.challenge = challenge;
         this.member = member;
+        this.challengeRecordStatus = true;
     }
 }
