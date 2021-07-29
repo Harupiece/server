@@ -4,7 +4,8 @@ package com.example.onedaypiece.web.domain.posting;
 import com.example.onedaypiece.web.domain.challenge.Challenge;
 import com.example.onedaypiece.web.domain.common.Timestamped;
 import com.example.onedaypiece.web.domain.member.Member;
-import com.example.onedaypiece.web.dto.request.posting.PostingRequestDto;
+import com.example.onedaypiece.web.dto.request.posting.PostingCreateRequestDto;
+import com.example.onedaypiece.web.dto.request.posting.PostingUpdateRequestDto;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -35,7 +36,7 @@ public class Posting extends Timestamped {
     @Column
     private boolean postingPoint;
     @Column
-    private Long postingCount;
+    private Long certificationCount;
 
     @ManyToOne
     private Member member;
@@ -51,13 +52,15 @@ public class Posting extends Timestamped {
         this.postingApproval=false;
         this.postingPoint=false;
         this.postingModifyOk=false;
-        this.postingCount=0L;
+        this.certificationCount=0L;
         this.member =member;
         this.challenge=challenge;
     }
 
+
+
     //==생성 메서드==//
-    public static Posting createPosting(PostingRequestDto postingRequestDto, Member member, Challenge challenge) {
+    public static Posting createPosting(PostingCreateRequestDto postingRequestDto, Member member, Challenge challenge) {
         return new Posting(
                 postingRequestDto.getPostingImg(),
                 postingRequestDto.getPostingContent(),
@@ -67,16 +70,17 @@ public class Posting extends Timestamped {
     }
 
     //== 비지니스 로직 ==//
-    public void updatePosting(PostingRequestDto postingRequestDto) {
+    public void updatePosting(PostingUpdateRequestDto postingRequestDto) {
         this.postingImg = postingRequestDto.getPostingImg();
         this.postingContent = postingRequestDto.getPostingContent();
 
     }
+
     public void deletePosting() {
         this.postingStatus =false;
     }
 
     public void addCount() {
-        this.postingCount += 1;
+        this.certificationCount += 1;
     }
 }

@@ -5,12 +5,14 @@ import com.example.onedaypiece.web.domain.member.Member;
 import com.example.onedaypiece.web.domain.posting.Posting;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import javax.persistence.*;
 
 @Entity
 @Getter
 @NoArgsConstructor
+@ToString
 public class Certification {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
