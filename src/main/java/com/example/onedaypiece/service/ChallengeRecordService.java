@@ -35,7 +35,8 @@ public class ChallengeRecordService {
 
         if (challengeRecordRepository.existsByChallengeAndMember(challenge, member)) {
             throw new IllegalArgumentException("이미 해당 챌린지에 신청한 유저입니다.");
-        } else if (challengeRecordRepository.countByChallenge(challenge) > 10) {
+        }
+        if (challengeRecordRepository.countByChallenge(challenge) > 10) {
             throw new IllegalArgumentException("챌린지는 10명까지만 참여 가능합니다.");
         }
 
