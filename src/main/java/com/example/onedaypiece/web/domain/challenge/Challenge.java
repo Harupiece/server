@@ -13,9 +13,7 @@ import java.time.LocalDateTime;
 @Getter
 @Entity
 @NoArgsConstructor
-@Table(indexes = {@Index(name = "idx_category", columnList = "category_name"),
-        @Index(name = "idx_status", columnList = "challenge_status"),
-        @Index(name = "idx_progress", columnList = "challenge_progress")})
+@Table(indexes = {@Index(name = "idx_challenge", columnList = "challenge_status, challenge_progress")})
 public class Challenge extends Timestamped {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
