@@ -9,6 +9,8 @@ import com.example.onedaypiece.web.domain.member.Member;
 import com.example.onedaypiece.web.domain.member.MemberRepository;
 import com.example.onedaypiece.web.domain.point.Point;
 import com.example.onedaypiece.web.domain.point.PointRepository;
+import com.example.onedaypiece.web.domain.pointhistory.PointHistory;
+import com.example.onedaypiece.web.domain.pointhistory.PointHistoryRepository;
 import com.example.onedaypiece.web.domain.posting.Posting;
 import com.example.onedaypiece.web.domain.posting.PostingRepository;
 import com.example.onedaypiece.web.dto.request.certification.CertificationRequestDto;
@@ -25,7 +27,8 @@ public class CertificationService {
     private final CertificationRepository certificationRepository;
     private final PostingRepository postingRepository;
     private final MemberRepository memberRepository;
-    private final PointRepository pointRepository;
+    private final PointHistoryRepository pointHistoryRepository;
+
 
 
     @Transactional
@@ -41,19 +44,23 @@ public class CertificationService {
 
         Certification certification = Certification.createCertification(member,posting);
 
-        //50% 이상
-//        checkMemberCountAndAddPoint(posting, member, memberCount, certification);
-
         certificationRepository.save(certification);
+
+        //50% 이상
+        checkMemberCountAndAddPoint(posting, member, memberCount, certification);
 
         return certification.getCertificationId();
     }
 
 
+    // 50퍼넘으면 승인해주는거
     private void checkMemberCountAndAddPoint (Posting posting, Member member, Long count, Certification certification) {
-        if(count /2 < posting.getCertificationCount()){
-            Point point = member.updatePoint(member, certification);
-//            pointRepository.save(point);
+        System.out.println("50퍼 테스트트 : "+posting.getCertificationCount());
+        System.out.println("롱카운트: "+count);
+        if(count /2 <= posting.getCertificationCount()){
+            PointHistory pointHistory = new PointHistory(5L, certification);
+            pointHistoryRepository.save(pointHistory);
+            member.updatePoint(5L);
         }
     }
 
