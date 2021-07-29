@@ -28,6 +28,5 @@ public class CertificationController {
 
         log.info("certificationRequestDto : {} ",certificationRequestDto);
         return ResponseEntity.ok().body(certificationService.createCertification(certificationRequestDto,userDetails));
-
     }
 }

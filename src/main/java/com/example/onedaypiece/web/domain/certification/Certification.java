@@ -3,6 +3,7 @@ package com.example.onedaypiece.web.domain.certification;
 
 import com.example.onedaypiece.web.domain.member.Member;
 import com.example.onedaypiece.web.domain.posting.Posting;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -12,17 +13,20 @@ import javax.persistence.*;
 @Entity
 @Getter
 @NoArgsConstructor
-@ToString
 public class Certification {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
+    @Column(name="certification_id")
     private Long certificationId;
 
     @ManyToOne
+    @JoinColumn(name="posting_id")
+    @JsonIgnore
     private Posting posting;
 
     @ManyToOne
+    @JoinColumn(name="member_id")
     private Member member;
 
     public Certification(Member member, Posting posting) {
