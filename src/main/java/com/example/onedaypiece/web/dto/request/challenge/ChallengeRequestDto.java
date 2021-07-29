@@ -27,7 +27,7 @@ public class ChallengeRequestDto {
         this.challengePassword = challengePassword;
         this.categoryName = categoryName;
         this.challengeStartDate = challengeStartDate;
-        this.challengeEndDate = challengeEndDate;
+        this.challengeEndDate = challengeEndDate.plusHours(23).plusMinutes(59).plusSeconds(59).plusNanos(999);
         this.challengeImgUrl = challengeImgUrl;
         this.challengeGood = challengeGood;
         this.challengeBad = challengeBad;
