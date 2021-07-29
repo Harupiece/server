@@ -1,17 +1,20 @@
 package com.example.onedaypiece.service;
 
 import com.example.onedaypiece.exception.ApiRequestException;
+import com.example.onedaypiece.web.domain.certification.Certification;
+import com.example.onedaypiece.web.domain.certification.CertificationRepository;
 import com.example.onedaypiece.web.domain.challenge.Challenge;
 import com.example.onedaypiece.web.domain.challenge.ChallengeRepository;
 import com.example.onedaypiece.web.domain.member.Member;
 import com.example.onedaypiece.web.domain.member.MemberRepository;
 import com.example.onedaypiece.web.domain.posting.Posting;
 import com.example.onedaypiece.web.domain.posting.PostingRepository;
-import com.example.onedaypiece.web.dto.request.posting.PostingRequestDto;
+import com.example.onedaypiece.web.dto.request.posting.PostingCreateRequestDto;
+import com.example.onedaypiece.web.dto.request.posting.PostingUpdateRequestDto;
+import com.example.onedaypiece.web.dto.response.certification.CertificationResponseDto;
 import com.example.onedaypiece.web.dto.response.posting.PostingResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.tomcat.jni.Local;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -19,7 +22,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.*;
 
@@ -32,13 +37,14 @@ public class PostingService {
     private final PostingRepository postingRepository;
     private final MemberRepository memberRepository;
     private final ChallengeRepository challengeRepository;
+    private final CertificationRepository certificationRepository;
 
     /**
      * 1.포스트 저장
      *
      */
-    public Long createPosting(PostingRequestDto postingRequestDto) {
-        Member member = getMemberById(postingRequestDto.getMemberId());
+    public Long createPosting(PostingCreateRequestDto postingRequestDto, String email) {
+        Member member = getMemberByEmail(email);
         Challenge challenge = getChallenge(postingRequestDto.getChallengeId());
         Posting posting = Posting.createPosting(postingRequestDto,member,challenge);
 
@@ -56,11 +62,30 @@ public class PostingService {
      */
     @Transactional(readOnly = true)
     public List<PostingResponseDto> getPosting(int page, Long challengeId) {
+
         Challenge challenge = getChallenge(challengeId);
-        Pageable pageable = PageRequest.of(page,6);
+        Pageable pageable = PageRequest.of(page-1,6);
+
+
 
         List<Posting> postingList =
                 postingRepository.findByChallengeAndPostingStatusTrueOrderByCreatedAtDesc(challenge,pageable);
+
+        List<Certification> certificationList = certificationRepository.findByPosting(
+                postingList.forEach(posting -> posting)
+        );
+
+        List<CertificationResponseDto> certifications = new ArrayList<>();
+
+
+        for(Posting p : postingList) {
+           Certification certification = certificationRepository.findByPosting(p);
+           if(certification != null) {
+               certifications.add(new CertificationResponseDto(certification));
+           }
+        }
+        System.out.println(certifications.toString() +"==============");
+
 
         log.info("postingList : {} ",postingList);
         return postingList
@@ -73,7 +98,7 @@ public class PostingService {
      * 3.포스트 업데이트
      *
      */
-    public Long updatePosting(Long postingId,String email,PostingRequestDto postingRequestDto) {
+    public Long updatePosting(Long postingId, String email, PostingUpdateRequestDto postingUpdateRequestDto) {
 
         Member member = getMemberByEmail(email);
         Posting posting = getPosting(postingId);
@@ -84,7 +109,7 @@ public class PostingService {
         // 포스팅 검사
         validatePosting();
 
-        posting.updatePosting(postingRequestDto);
+        posting.updatePosting(postingUpdateRequestDto);
         return posting.getPostingId();
     }
     /**

@@ -42,7 +42,7 @@ public class CertificationService {
         Certification certification = Certification.createCertification(member,posting);
 
         //50% 이상
-        checkMemberCountAndAddPoint(posting, member, memberCount, certification);
+//        checkMemberCountAndAddPoint(posting, member, memberCount, certification);
 
         certificationRepository.save(certification);
 
@@ -51,7 +51,7 @@ public class CertificationService {
 
 
     private void checkMemberCountAndAddPoint (Posting posting, Member member, Long count, Certification certification) {
-        if(count /2 < posting.getPostingCount()){
+        if(count /2 < posting.getCertificationCount()){
             Point point = member.updatePoint(member, certification);
 //            pointRepository.save(point);
         }
