@@ -14,6 +14,7 @@ import com.example.onedaypiece.web.dto.request.signup.SignupRequestDto;
 import com.example.onedaypiece.web.dto.request.token.TokenRequestDto;
 import com.example.onedaypiece.web.dto.response.login.LoginResponseDto;
 import com.example.onedaypiece.web.dto.response.mypage.MyPageResponseDto;
+import com.example.onedaypiece.web.dto.response.reload.ReloadResponseDto;
 import com.example.onedaypiece.web.dto.response.token.TokenDto;
 import lombok.RequiredArgsConstructor;
 
@@ -134,6 +135,18 @@ public class MemberService {
         return loginResponseDto;
     }
 
+    @Transactional
+    public ReloadResponseDto reload(String email){
+        Member member = memberRepository.findByEmail(email).orElseThrow(
+                ()-> new ApiRequestException("새로고침중 찾을수없는 아이디")
+        );
+        List<Point> pointList = member.getPoints();
+        Long pointSum = 0L;
+        for(int i = 0 ; i< pointList.size(); i++){
+            pointSum =  pointSum + pointList.get(i).getAcquiredPoint();
+        }
+        return new ReloadResponseDto(member, pointSum);
+    }
 
 
     // 토큰 재발급

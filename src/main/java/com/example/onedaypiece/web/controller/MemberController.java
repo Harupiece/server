@@ -7,6 +7,7 @@ import com.example.onedaypiece.web.dto.request.signup.SignupRequestDto;
 import com.example.onedaypiece.web.dto.request.token.TokenRequestDto;
 import com.example.onedaypiece.web.dto.response.login.LoginResponseDto;
 import com.example.onedaypiece.web.dto.response.mypage.MyPageResponseDto;
+import com.example.onedaypiece.web.dto.response.reload.ReloadResponseDto;
 import com.example.onedaypiece.web.dto.response.token.TokenDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -39,6 +40,11 @@ public class MemberController {
         return memberService.loginMember(loginRequestDto);
     }
 
+    @GetMapping("/reload")
+    public ReloadResponseDto reload(@AuthenticationPrincipal UserDetails userDetails){
+        return memberService.reload(userDetails.getUsername());
+    }
+
     // 재발급
     @PostMapping("/reissue")
     public ResponseEntity<TokenDto> reissue(@RequestBody TokenRequestDto tokenRequestDto) {
@@ -61,5 +67,7 @@ public class MemberController {
         memberService.updateMember(requestDto, userDetails.getUsername());
         return ResponseEntity.ok().build();
     }
+
+
 
 }
