@@ -71,21 +71,6 @@ public class PostingService {
         List<Posting> postingList =
                 postingRepository.findByChallengeAndPostingStatusTrueOrderByCreatedAtDesc(challenge,pageable);
 
-        List<Certification> certificationList = certificationRepository.findByPosting(
-                postingList.forEach(posting -> posting)
-        );
-
-        List<CertificationResponseDto> certifications = new ArrayList<>();
-
-
-        for(Posting p : postingList) {
-           Certification certification = certificationRepository.findByPosting(p);
-           if(certification != null) {
-               certifications.add(new CertificationResponseDto(certification));
-           }
-        }
-        System.out.println(certifications.toString() +"==============");
-
 
         log.info("postingList : {} ",postingList);
         return postingList
