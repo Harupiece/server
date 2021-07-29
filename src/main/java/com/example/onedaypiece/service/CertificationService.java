@@ -3,8 +3,6 @@ package com.example.onedaypiece.service;
 import com.example.onedaypiece.exception.ApiRequestException;
 import com.example.onedaypiece.web.domain.certification.Certification;
 import com.example.onedaypiece.web.domain.certification.CertificationRepository;
-import com.example.onedaypiece.web.domain.challengeRecord.ChallengeRecord;
-import com.example.onedaypiece.web.domain.challengeRecord.ChallengeRecordRepository;
 import com.example.onedaypiece.web.domain.member.Member;
 import com.example.onedaypiece.web.domain.member.MemberRepository;
 import com.example.onedaypiece.web.domain.point.Point;
@@ -55,12 +53,13 @@ public class CertificationService {
 
     // 50퍼넘으면 승인해주는거
     private void checkMemberCountAndAddPoint (Posting posting, Member member, Long count, Certification certification) {
-        System.out.println("50퍼 테스트트 : "+posting.getCertificationCount());
-        System.out.println("롱카운트: "+count);
+
+     
         if(count /2 <= posting.getCertificationCount()){
             PointHistory pointHistory = new PointHistory(5L, certification);
             pointHistoryRepository.save(pointHistory);
             member.updatePoint(5L);
+
         }
     }
 

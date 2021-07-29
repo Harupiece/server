@@ -66,14 +66,11 @@ public class PostingService {
         Challenge challenge = getChallenge(challengeId);
         Pageable pageable = PageRequest.of(page-1,6);
 
-
-
         List<Posting> postingList =
                 postingRepository.findByChallengeAndPostingStatusTrueOrderByCreatedAtDesc(challenge,pageable);
 
 
-        log.info("postingList : {} ",postingList);
-        return postingList
+        return  postingList
                 .stream()
                 .map(PostingResponseDto::new)
                 .collect(toList());
