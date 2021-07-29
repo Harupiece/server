@@ -10,6 +10,7 @@ import com.example.onedaypiece.web.dto.request.posting.PostingUpdateRequestDto;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -18,6 +19,7 @@ import java.util.List;
 @Getter
 @Entity
 @NoArgsConstructor
+@ToString(exclude = {"member","challenge","certificationList"} )
 public class Posting extends Timestamped {
 
 
@@ -40,11 +42,11 @@ public class Posting extends Timestamped {
     @Column
     private Long postingCount;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="member_id")
     private Member member;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="challenge_id")
     private Challenge challenge;
 
@@ -61,7 +63,7 @@ public class Posting extends Timestamped {
         this.postingStatus = true;
         this.postingApproval=false;
         this.postingPoint=false;
-        this.postingModifyOk=false;
+        this.postingModifyOk=true;
         this.postingCount =0L;
         this.member =member;
         this.challenge=challenge;
@@ -90,7 +92,23 @@ public class Posting extends Timestamped {
         this.postingStatus =false;
     }
 
+    // 인증 인원수 추가 로직
     public void addCount() {
         this.postingCount += 1;
+    }
+
+    // 수정 가능 여부 로직
+    public void updateStatus() {
+        this.postingModifyOk = false;
+    }
+
+    // 인증 상태 로직
+    public void updateApproval() {
+        this.postingApproval = true;
+    }
+
+    // 포인트 지급 상태 로직
+    public void updatePoint() {
+        this.postingPoint = true;
     }
 }

@@ -119,10 +119,6 @@ public class PostingService {
         log.info("getChallenge : {} ",challengeId);
         return challengeRepository.findChallengeStatusTrue(challengeId);
     }
-    private Member getMemberById(Long memberId) {
-        return memberRepository.findById(memberId)
-                .orElseThrow(() -> new ApiRequestException("등록된 멤버가 없습니다."));
-    }
     private Member getMemberByEmail(String email) {
         return memberRepository.findByEmail(email)
                 .orElseThrow(() -> new ApiRequestException("등록된 멤버가 없습니다."));

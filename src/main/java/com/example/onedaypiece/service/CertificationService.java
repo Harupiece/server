@@ -54,11 +54,12 @@ public class CertificationService {
     // 50퍼넘으면 승인해주는거
     private void checkMemberCountAndAddPoint (Posting posting, Member member, Long count, Certification certification) {
 
-     
         if(count /2 <= posting.getPostingCount()){
             PointHistory pointHistory = new PointHistory(5L, certification);
             pointHistoryRepository.save(pointHistory);
             member.updatePoint(5L);
+            posting.updateApproval();
+            posting.updatePoint();
 
         }
     }
