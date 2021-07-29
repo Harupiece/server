@@ -192,6 +192,7 @@ public class ChallengeService {
 
         Map<Long, Integer> popularList = new HashMap<>();
 
+        // 여긴 시간복잡도가 N^2
         for (Long challengeId : currentChallengeIdList) {
             if (!popularList.containsKey(challengeId)) {
                 popularList.put(challengeId, 0);
