@@ -48,12 +48,12 @@ public class ChallengeController {
         challengeService.putChallenge(requestDto, userDetails.getUsername());
     }
 
-    @DeleteMapping("/api/member/challenge/{challengeId}") // 챌린지 삭제 (유저에겐 삭제, 관리자 입장에선 상태 true->false
+    @DeleteMapping("/api/member/challenge/{challengeId}") // 챌린지 삭제 (유저에겐 삭제, 관리자 입장에선 상태 true->false)
     public Map<String, String> deleteChallenge(@PathVariable Long challengeId, @AuthenticationPrincipal UserDetails userDetails) {
         return challengeService.deleteChallenge(challengeId, userDetails.getUsername());
     }
 
-    @DeleteMapping("/api/admin/challenge/{challengeId}") // admin권한으로 DB에서 아예 삭제
+    @DeleteMapping("/api/admin/challenge/{challengeId}") // admin 권한으로 DB에서 아예 삭제
     public void deleteChallengeByAdmin(@PathVariable Long challengeId) {
         challengeService.deleteChallengeByAdmin(challengeId);
     }
