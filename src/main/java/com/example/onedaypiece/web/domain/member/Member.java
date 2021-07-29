@@ -1,8 +1,5 @@
 package com.example.onedaypiece.web.domain.member;
 
-
-
-import com.example.onedaypiece.web.domain.certification.Certification;
 import com.example.onedaypiece.web.domain.common.Timestamped;
 import com.example.onedaypiece.web.domain.point.Point;
 import com.example.onedaypiece.web.dto.request.mypage.MyPageRequestDto;
@@ -11,12 +8,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 
 @NoArgsConstructor
 @Entity
 @Getter
+@Table(indexes = {@Index(name = "idx_member_status", columnList = "member_status")})
 public class Member extends Timestamped {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,7 +36,7 @@ public class Member extends Timestamped {
     @Column
     private String profileImg;
 
-    @Column
+    @Column(name = "member_status")
     private Long memberStatus;
 
     // fk를가져야하니까
