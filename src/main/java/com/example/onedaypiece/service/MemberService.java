@@ -30,6 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 
+
 @RequiredArgsConstructor
 @Service
 public class MemberService {
@@ -39,6 +40,7 @@ public class MemberService {
     private final PasswordEncoder passwordEncoder;
     private final TokenProvider tokenProvider;
     private final RefreshTokenRepository refreshTokenRepository;
+    private final PointRepository pointRepository;
 
 
     // 회원가입
@@ -66,11 +68,9 @@ public class MemberService {
         String password= passwordEncoder.encode(requestDto.getPassword());
         requestDto.setPassword(password);
 
-
-
-        Member member = new Member(requestDto);
-        Point point = new Point(member);
-        member.add(point);
+        Point point = new Point();
+        point = pointRepository.save(point);
+        Member member = new Member(requestDto, point);
         memberRepository.save(member);
 
     }
@@ -125,11 +125,7 @@ public class MemberService {
         Member member = memberRepository.findByEmail(requestDto.getEmail()).orElseThrow(
                 ()-> new ApiRequestException("로그인할떄 아이디가 존재하지않습니다.")
         );
-        List<Point> pointList = member.getPoints();
-        Long pointSum = 0L;
-        for(int i = 0 ; i< pointList.size(); i++){
-            pointSum =  pointSum + pointList.get(i).getAcquiredPoint();
-        }
+        Long pointSum = member.getPoint().getAcquiredPoint();
 
         LoginResponseDto loginResponseDto = new LoginResponseDto(tokenDto, member, pointSum);
         return loginResponseDto;
@@ -140,11 +136,7 @@ public class MemberService {
         Member member = memberRepository.findByEmail(email).orElseThrow(
                 ()-> new ApiRequestException("새로고침중 찾을수없는 아이디")
         );
-        List<Point> pointList = member.getPoints();
-        Long pointSum = 0L;
-        for(int i = 0 ; i< pointList.size(); i++){
-            pointSum =  pointSum + pointList.get(i).getAcquiredPoint();
-        }
+        Long pointSum = member.getPoint().getAcquiredPoint();
         return new ReloadResponseDto(member, pointSum);
     }
 
@@ -189,11 +181,8 @@ public class MemberService {
         );
 
         // 오류나면 PointRepository로 해결하기
-        List<Point> pointList = member.getPoints();
-        Long pointSum = 0L;
-        for(int i = 0 ; i< pointList.size(); i++){
-            pointSum =  pointSum + pointList.get(i).getAcquiredPoint();
-        }
+        Long pointSum = member.getPoint().getAcquiredPoint();
+
         System.out.println("포인트합 적히는지 실험: "+pointSum);
         MyPageResponseDto responseDto = new MyPageResponseDto(member, pointSum);
         return responseDto;

@@ -43,27 +43,21 @@ public class Member extends Timestamped {
     @Column
     private Long memberStatus;
 
-
-    // 관계의주인이 저쪽이다 라고알려주는것것 포인트에서 자기자신을 member라고참조하고있다 관계의 주인은 point다
-    @OneToMany(mappedBy = "member")
-    private List<Point> points = new ArrayList<>();
-
-//    @Column(nullable = true)
-//    private String kakaoEmail;
+    // fk를가져야하니까
+    @OneToOne
+    @JoinColumn(name = "POINT_ID")
+    private Point point;
 
 
-    public void add(Point point){
-        point.setMember(this);  // 애가주인인데
-        this.points.add(point); // 이걸하는이유 이이유는 jpa를왜쓰냐 이런질문임 객체지향적으로 하기위해서 쓰는거임
-    }
 
-    public Member(SignupRequestDto requestDto){
+    public Member(SignupRequestDto requestDto, Point point){
         this.email = requestDto.getEmail();
         this.password = requestDto.getPassword();
         this.nickname = requestDto.getNickname();
         this.profileImg = requestDto.getProfileImg();
         this.memberStatus = 1L;
         this.role = MemberRole.MEMBER;
+        this.point = point;
     }
 
     public Member(String email, String password, String nickname, String profileImg){
@@ -82,9 +76,13 @@ public class Member extends Timestamped {
         this.profileImg = requestDto.getProfileImg();
     }
 
-    public Point updatePoint(Member member, Certification certification) {
-
-        return new Point(member,certification);
+    // 업데이트완료된 토탈 포인트 보내주기
+    public Long updatePoint(Long getPoint) {
+        Long before = this.getPoint().getAcquiredPoint();
+        Long result;
+        result = before + getPoint;
+        this.getPoint().setAcquiredPoint(result);
+        return result;
     }
 
 
