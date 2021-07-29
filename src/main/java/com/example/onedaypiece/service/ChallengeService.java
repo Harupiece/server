@@ -54,7 +54,7 @@ public class ChallengeService {
     @Transactional
     public Map<String, String> deleteChallenge(Long challengeId, String username) {
         Challenge challenge = challengeRepository.findById(challengeId).orElseThrow(
-                () -> new NullPointerException("존재하지 않은 챌린지id입니다"));
+                () -> new NullPointerException("존재하지 않은 챌린지 id입니다"));
 
         if (!challenge.getMember().getEmail().equals(username)) {
             throw new IllegalArgumentException("작성자가 아닙니다.");

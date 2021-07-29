@@ -3,8 +3,6 @@ package com.example.onedaypiece.service;
 import com.example.onedaypiece.exception.ApiRequestException;
 import com.example.onedaypiece.web.domain.certification.Certification;
 import com.example.onedaypiece.web.domain.certification.CertificationRepository;
-import com.example.onedaypiece.web.domain.challengeRecord.ChallengeRecord;
-import com.example.onedaypiece.web.domain.challengeRecord.ChallengeRecordRepository;
 import com.example.onedaypiece.web.domain.member.Member;
 import com.example.onedaypiece.web.domain.member.MemberRepository;
 import com.example.onedaypiece.web.domain.point.Point;
@@ -51,7 +49,7 @@ public class CertificationService {
 
 
     private void checkMemberCountAndAddPoint (Posting posting, Member member, Long count, Certification certification) {
-        if(count /2 < posting.getCertificationCount()){
+        if(count /2 < posting.getPostingCount()){
             Point point = member.updatePoint(member, certification);
 //            pointRepository.save(point);
         }

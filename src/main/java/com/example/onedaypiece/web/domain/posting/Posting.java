@@ -1,6 +1,7 @@
 package com.example.onedaypiece.web.domain.posting;
 
 
+import com.example.onedaypiece.web.domain.certification.Certification;
 import com.example.onedaypiece.web.domain.challenge.Challenge;
 import com.example.onedaypiece.web.domain.common.Timestamped;
 import com.example.onedaypiece.web.domain.member.Member;
@@ -9,19 +10,20 @@ import com.example.onedaypiece.web.dto.request.posting.PostingUpdateRequestDto;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Entity
 @NoArgsConstructor
-@ToString
 public class Posting extends Timestamped {
 
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
+    @Column(name="posting_id")
     private Long postingId;
     @Column
     private String postingImg;
@@ -36,13 +38,21 @@ public class Posting extends Timestamped {
     @Column
     private boolean postingPoint;
     @Column
-    private Long certificationCount;
+    private Long postingCount;
 
     @ManyToOne
+    @JoinColumn(name="member_id")
     private Member member;
 
     @ManyToOne
+    @JoinColumn(name="challenge_id")
     private Challenge challenge;
+
+    @OneToMany(
+            mappedBy = "posting",
+            fetch = FetchType.LAZY,
+            cascade = CascadeType.ALL)
+    private List<Certification> certificationList = new ArrayList<>();
 
     @Builder
     public Posting(String postingImg, String postingContent, Member member, Challenge challenge) {
@@ -52,7 +62,7 @@ public class Posting extends Timestamped {
         this.postingApproval=false;
         this.postingPoint=false;
         this.postingModifyOk=false;
-        this.certificationCount=0L;
+        this.postingCount =0L;
         this.member =member;
         this.challenge=challenge;
     }
@@ -81,6 +91,6 @@ public class Posting extends Timestamped {
     }
 
     public void addCount() {
-        this.certificationCount += 1;
+        this.postingCount += 1;
     }
 }
