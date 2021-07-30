@@ -3,10 +3,7 @@ package com.example.onedaypiece.web.dto.response.challenge;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @NoArgsConstructor
 @Getter
@@ -33,8 +30,8 @@ public class ChallengeGuestMainResponseDto {
         noDrinkNoSmoke.add(responseDto);
     }
 
-    public List<Long> sliderIdList() {
-        List<Long> sliderIdList = new ArrayList<>();
+    public Set<Long> sliderIdList() {
+        Set<Long> sliderIdList = new HashSet<>();
         slider.forEach(content -> sliderIdList.add(content.getChallengeId()));
         return sliderIdList;
     }

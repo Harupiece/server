@@ -166,8 +166,7 @@ public class ChallengeService {
                     record -> myChallengeMemberList.add(record.getMember().getMemberId()));
             mainRequestDto.addSlider(new ChallengeSliderSourceResponseDto(mine.getChallenge(), myChallengeMemberList));
         }
-        System.out.println("");
-
+        System.out.println(" ");
         final int userSliderSize = myChallengeList.size();
 
         sliderListUpdate(mainRequestDto, userSliderSize);
@@ -201,7 +200,6 @@ public class ChallengeService {
     }
 
     private void sliderListUpdate(ChallengeGuestMainResponseDto mainResponseDto, int minusSize) {
-
         final int sliderSize = 5;
 
         HashSet<Long> currentChallengeIdList = new HashSet<>();
@@ -240,14 +238,19 @@ public class ChallengeService {
         for (Long aLong : mainResponseDto.sliderIdList()) {
             System.out.print(aLong + ", ");
         }
+        System.out.println();
 
         for (Long id : sortedMap.keySet()) {
             Challenge challenge = challengeRepository.getById(id);
+
             List<Long> memberIdList = new ArrayList<>();
+
             challengeRecordRepository.findAllByChallenge(challenge).forEach(
                     record -> memberIdList.add(record.getMember().getMemberId()));
+
             ChallengeSliderSourceResponseDto sliderRequestDto =
                     new ChallengeSliderSourceResponseDto(challenge, memberIdList);
+
             System.out.println(id);
             if (!mainResponseDto.sliderIdList().contains(id)) {
                 mainResponseDto.addSlider(sliderRequestDto);
