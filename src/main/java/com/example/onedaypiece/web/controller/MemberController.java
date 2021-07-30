@@ -66,7 +66,7 @@ public class MemberController {
     }
 
     // 예정 중인거
-    @GetMapping("/mypage/scheduled")
+    @GetMapping("/mypage")
     public ResponseEntity<MyPageScheduledResponseDto> getscheduled(@AuthenticationPrincipal UserDetails userDetails){
 
         MyPageScheduledResponseDto responseDto = memberService.getSchduled(userDetails.getUsername());
