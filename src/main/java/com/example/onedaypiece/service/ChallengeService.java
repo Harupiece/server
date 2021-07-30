@@ -142,7 +142,7 @@ public class ChallengeService {
     public ChallengeGuestMainResponseDto getGuestMainChallengeDetail() {
         ChallengeGuestMainResponseDto mainRequestDto = new ChallengeGuestMainResponseDto();
 
-        responseDtoRefactor(mainRequestDto, 0);
+        sliderListUpdate(mainRequestDto, 0);
 
         categoryCollector(EXERCISE).forEach(mainRequestDto::addExercise);
         categoryCollector(LIVINGHABITS).forEach(mainRequestDto::addLivingHabits);
@@ -158,17 +158,17 @@ public class ChallengeService {
 
         List<ChallengeRecord> myChallengeList = challengeRecordRepository.findAllByMember(member);
 
-        // myList 추가
         for (ChallengeRecord mine : myChallengeList) {
             List<Long> myChallengeMemberList = new ArrayList<>();
             challengeRecordRepository.findAllByChallenge(mine.getChallenge()).forEach(
                     record -> myChallengeMemberList.add(record.getMember().getMemberId()));
-            mainRequestDto.addMyList(new ChallengeSliderSourceResponseDto(mine.getChallenge(), myChallengeMemberList));
+            System.out.println(mine.getChallenge().getChallengeId());
+            mainRequestDto.addSlider(new ChallengeSliderSourceResponseDto(mine.getChallenge(), myChallengeMemberList));
         }
 
         final int userSliderSize = myChallengeList.size();
 
-        responseDtoRefactor(mainRequestDto, userSliderSize);
+        sliderListUpdate(mainRequestDto, userSliderSize);
 
         categoryCollector(EXERCISE).forEach(mainRequestDto::addExercise);
         categoryCollector(LIVINGHABITS).forEach(mainRequestDto::addLivingHabits);
@@ -198,7 +198,7 @@ public class ChallengeService {
         return returnList;
     }
 
-    private void responseDtoRefactor(ChallengeGuestMainResponseDto mainResponseDto, int minusSize) {
+    private void sliderListUpdate(ChallengeGuestMainResponseDto mainResponseDto, int minusSize) {
 
         final int sliderSize = 5;
 
@@ -210,7 +210,7 @@ public class ChallengeService {
 
         Map<Long, Integer> popularList = new HashMap<>();
 
-        // 여긴 시간복잡도가 N^2
+        // 여긴 시간복잡도가 N^2, 인기리스트 솎아내는 과정
         for (Long challengeId : currentChallengeIdList) {
             if (!popularList.containsKey(challengeId)) {
                 popularList.put(challengeId, 0);
@@ -230,9 +230,12 @@ public class ChallengeService {
             return o1.getKey().compareTo(o2.getKey());
         });
 
-        Map<Long, Integer> sortedMap = new LinkedHashMap<>();
-        for (Map.Entry<Long, Integer> entry : beSortedList) {
-            sortedMap.put(entry.getKey(), entry.getValue());
+        Map<Long, Integer> sortedMap = beSortedList
+                .stream()
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (a, b) -> b, LinkedHashMap::new));
+
+        for (Long aLong : mainResponseDto.sliderIdList()) {
+            System.out.println("id / " +aLong);
         }
 
         for (Long id : sortedMap.keySet()) {
@@ -242,8 +245,11 @@ public class ChallengeService {
                     record -> memberIdList.add(record.getMember().getMemberId()));
             ChallengeSliderSourceResponseDto sliderRequestDto =
                     new ChallengeSliderSourceResponseDto(challenge, memberIdList);
-            mainResponseDto.addPopular(sliderRequestDto);
-            if (mainResponseDto.getPopular().size() > sliderSize - minusSize) {
+            if (!mainResponseDto.sliderIdList().contains(id)) {
+                mainResponseDto.addSlider(sliderRequestDto);
+                System.out.println(id + " / "+ sliderRequestDto.getCategoryName());
+            }
+            if (mainResponseDto.getSlider().size() >= sliderSize - minusSize) {
                 break;
             }
         }
