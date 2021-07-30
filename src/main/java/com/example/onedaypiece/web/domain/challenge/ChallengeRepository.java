@@ -17,6 +17,9 @@ public interface ChallengeRepository extends JpaRepository<Challenge, Long> {
     @Query("select c from Challenge c Where c.member.memberStatus = 1 and c.member = :member")
     List<Challenge> findAllByMember(Member member);
 
+    @Query("select c from Challenge c Where c.member.memberStatus = 1 and c.member = :member")
+    List<CategoryNameMapping> findAllByMemberByCategoryNameMapping(Member member);
+
     @Query("select c from Challenge c " +
             "Where c.challengeStatus = true and c.challengeProgress = 1 and c.categoryName = :categoryName " +
             "ORDER BY c.modifiedAt DESC")
