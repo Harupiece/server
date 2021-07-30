@@ -98,7 +98,8 @@ public class ChallengeService {
     public void putChallenge(PutChallengeRequestDto requestDto, String username) {
         Member member = memberRepository.findByEmail(username)
                 .orElseThrow(() -> new ApiRequestException("존재하지 않는 유저입니다."));
-        Challenge challenge = challengeRepository.findByChallengeIdAndMember(requestDto.getChallengeId(), member);
+        Challenge challenge = challengeRepository.findByChallengeIdAndMember(requestDto.getChallengeId(), member)
+                .orElseThrow(() -> new ApiRequestException("존재하지 않는 챌린지입니다."));
         challengeProgressChecker(challenge);
         if (!challenge.getChallengeProgress().equals(1L)) {
             throw new ApiRequestException("이미 시작되거나 종료된 챌린지입니다.");
