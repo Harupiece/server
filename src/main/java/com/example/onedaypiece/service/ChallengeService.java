@@ -33,6 +33,8 @@ public class ChallengeService {
     private final ChallengeRecordRepository challengeRecordRepository;
     private final MemberRepository memberRepository;
 
+    private final LocalDateTime currentLocalDateTime = LocalDateTime.now();
+
     public ChallengeResponseDto getChallengeDetail(Long challengeId) {
         Challenge challenge = challengeRepository.findById(challengeId).orElseThrow(
                 () -> new ApiRequestException("존재하지 않는 챌린지id입니다"));
@@ -72,6 +74,9 @@ public class ChallengeService {
                 .orElseThrow(() -> new ApiRequestException("존재하지 않는 유저입니다."));
 
         challengeRepository.findAllByMember(member)
+                .forEach(challenge -> challengeRepository.save(challengeProgressCheckerReturner(challenge)));
+
+        challengeRepository.findAllByMember(member)
                 .stream()
                 .filter(value -> value.getCategoryName() == requestDto.getCategoryName())
                 .forEach(value -> {
@@ -93,8 +98,7 @@ public class ChallengeService {
     public void putChallenge(PutChallengeRequestDto requestDto, String username) {
         Member member = memberRepository.findByEmail(username)
                 .orElseThrow(() -> new ApiRequestException("존재하지 않는 유저입니다."));
-        Challenge challenge = challengeRepository.findByChallengeIdAndMember(requestDto.getChallengeId(), member)
-                .orElseThrow(() -> new ApiRequestException("존재하지 않는 챌린지입니다."));
+        Challenge challenge = challengeRepository.findByChallengeIdAndMember(requestDto.getChallengeId(), member);
         challengeProgressChecker(challenge);
         if (!challenge.getChallengeProgress().equals(1L)) {
             throw new ApiRequestException("이미 시작되거나 종료된 챌린지입니다.");
@@ -277,7 +281,6 @@ public class ChallengeService {
     }
 
     private void challengeProgressChecker(Challenge challenge) {
-        LocalDateTime currentLocalDateTime = LocalDateTime.now();
         if (currentLocalDateTime.isBefore(challenge.getChallengeStartDate())) {
             challenge.setChallengeProgress(1L);
         } else if (currentLocalDateTime.isBefore(challenge.getChallengeEndDate())) {
@@ -287,5 +290,19 @@ public class ChallengeService {
             challengeRecordRepository.findAllByChallenge(challenge)
                     .forEach(ChallengeRecord::setChallengeRecordStatusToFalse);
         }
+    }
+
+    private Challenge challengeProgressCheckerReturner(Challenge challenge) {
+        if (currentLocalDateTime.isBefore(challenge.getChallengeStartDate())) {
+            challenge.setChallengeProgress(1L);
+        } else if (currentLocalDateTime.isBefore(challenge.getChallengeEndDate())) {
+            challenge.setChallengeProgress(2L);
+        } else {
+            challenge.setChallengeProgress(3L);
+            challengeRecordRepository.findAllByChallenge(challenge)
+                    .forEach(ChallengeRecord::setChallengeRecordStatusToFalse);
+        }
+
+        return challenge;
     }
 }
