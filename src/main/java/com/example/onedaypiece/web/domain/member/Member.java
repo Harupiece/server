@@ -40,7 +40,7 @@ public class Member extends Timestamped {
     private Long memberStatus;
 
     // fk를가져야하니까
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "POINT_ID")
     private Point point;
 

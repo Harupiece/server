@@ -11,7 +11,6 @@ import com.example.onedaypiece.web.domain.posting.Posting;
 import com.example.onedaypiece.web.domain.posting.PostingRepository;
 import com.example.onedaypiece.web.dto.request.posting.PostingCreateRequestDto;
 import com.example.onedaypiece.web.dto.request.posting.PostingUpdateRequestDto;
-import com.example.onedaypiece.web.dto.response.certification.CertificationResponseDto;
 import com.example.onedaypiece.web.dto.response.posting.PostingResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,11 +21,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static java.util.stream.Collectors.*;
 
 @Slf4j
 @Service
@@ -63,17 +59,29 @@ public class PostingService {
     @Transactional(readOnly = true)
     public List<PostingResponseDto> getPosting(int page, Long challengeId) {
 
-        Challenge challenge = getChallenge(challengeId);
         Pageable pageable = PageRequest.of(page-1,6);
 
-        List<Posting> postingList =
-                postingRepository.findByChallengeAndPostingStatusTrueOrderByCreatedAtDesc(challenge,pageable);
+        List<Posting> postingList =postingRepository.findPostingList(challengeId,pageable);
+
+        List<Long> postingId = postingList.stream().map(Posting::getPostingId).collect(Collectors.toList());
 
 
-        return  postingList
+        List<Certification> test = certificationRepository.findTest(postingId);
+
+        for (Certification certification : test) {
+            System.out.println("certification = " + certification.toString());
+        }
+
+
+
+        List<Certification> certifications = certificationRepository.findAllByPosting(challengeId);
+
+
+
+        return postingList
                 .stream()
-                .map(PostingResponseDto::new)
-                .collect(toList());
+                .map(posting -> new PostingResponseDto(posting, certifications))
+                .collect(Collectors.toList());
     }
 
     /**
@@ -105,29 +113,43 @@ public class PostingService {
         // 작성자 검사
         validateMember(member,posting.getMember().getMemberId());
 
+        // 인증 검사.
+        isApprovalIsTrue(posting);
+
         posting.deletePosting();
         return posting.getPostingId();
 
 
     }
 
+    private void isApprovalIsTrue(Posting posting) {
+        if(posting.isPostingApproval()){
+             throw new ApiRequestException("이미 인증된 게시글은 삭제할 수 없습니다.");
+        }
+    }
+
     private Posting getPosting(Long postingId) {
         return postingRepository.findById(postingId)
                 .orElseThrow(() -> new ApiRequestException("등록된 포스트가 없습니다."));
     }
+
     private Challenge getChallenge(Long challengeId) {
         log.info("getChallenge : {} ",challengeId);
-        return challengeRepository.findChallengeStatusTrue(challengeId);
+        return challengeRepository.findChallengeStatusTrue(challengeId)
+                .orElseThrow(() -> new ApiRequestException("등록된 챌린지가 없습니다."));
     }
+
     private Member getMemberByEmail(String email) {
         return memberRepository.findByEmail(email)
                 .orElseThrow(() -> new ApiRequestException("등록된 멤버가 없습니다."));
     }
+
     private void validateMember(Member member, Long memberId) {
         if (!memberId.equals(member.getMemberId())) {
             throw new ApiRequestException("해당 게시물에 대한 수정 권한이 없습니다.");
         }
     }
+
     private void validatePosting(){
 
         LocalDateTime today = LocalDate.now().atStartOfDay();

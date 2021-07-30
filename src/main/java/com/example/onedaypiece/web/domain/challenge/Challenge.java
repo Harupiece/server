@@ -58,7 +58,7 @@ public class Challenge extends Timestamped {
     @Column
     private String challengeHoliday;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Member member;
 
     public void setChallengeStatus(boolean challengeStatus) {

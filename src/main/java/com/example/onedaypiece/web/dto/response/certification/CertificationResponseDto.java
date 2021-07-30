@@ -11,9 +11,11 @@ import lombok.ToString;
 public class CertificationResponseDto {
     private Long memberId;
     private String nickName;
+    private String profileImg;
 
     public CertificationResponseDto(Certification certification) {
         this.memberId =certification.getMember().getMemberId();
         this.nickName=certification.getMember().getNickname();
+        this.profileImg =certification.getMember().getProfileImg();
     }
 }

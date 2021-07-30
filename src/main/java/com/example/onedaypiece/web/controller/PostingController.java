@@ -25,7 +25,7 @@ public class PostingController {
     @PostMapping("")
     public ResponseEntity<Long> createPosting(@RequestBody PostingCreateRequestDto postingRequestDto,
                                               @AuthenticationPrincipal UserDetails userDetails){
-        log.info("postingRequestDto : {} ",postingRequestDto);
+        log.info("createPosting 포스트 저장: {} ",postingRequestDto);
         String email = userDetails.getUsername();
         return ResponseEntity.ok().body(postingService.createPosting(postingRequestDto,email));
     }
@@ -35,6 +35,8 @@ public class PostingController {
     @GetMapping("/{page}/{challengeId}")
     public ResponseEntity<List<PostingResponseDto>> getPosting (@PathVariable int page,
                                                                 @PathVariable Long challengeId){
+
+        log.info("getPosting 전체 포스트 리스트 : {} ",challengeId);
         return ResponseEntity.ok().body(postingService.getPosting(page,challengeId));
     }
     /**
@@ -44,7 +46,7 @@ public class PostingController {
     public ResponseEntity<Long> updatePosting(@PathVariable Long postingId,
                                               @AuthenticationPrincipal UserDetails userDetails,
                                               @RequestBody PostingUpdateRequestDto postingUpdateRequestDto){
-        log.info("postingUpdateRequestDto : {} ",postingUpdateRequestDto);
+        log.info("updatePosting  포스팅 업데이트 : {} ",postingUpdateRequestDto);
         String email = userDetails.getUsername();
         return ResponseEntity.ok().body(postingService.updatePosting(postingId,email,postingUpdateRequestDto));
     }
@@ -54,8 +56,7 @@ public class PostingController {
     @DeleteMapping("/delete/{postingId}")
     public ResponseEntity<Long> deletePosting(@PathVariable Long postingId,
                                               @AuthenticationPrincipal UserDetails userDetails){
-        System.out.println("===================여기옴?============");
-        log.info("Username : {} ",userDetails.getUsername());
+        log.info("deletePosting 포스트 삭제: {} ", postingId);
         String email = userDetails.getUsername();
         return ResponseEntity.ok().body(postingService.deletePosting(postingId,email));
     }
