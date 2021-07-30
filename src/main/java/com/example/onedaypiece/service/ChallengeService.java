@@ -158,13 +158,15 @@ public class ChallengeService {
 
         List<ChallengeRecord> myChallengeList = challengeRecordRepository.findAllByMember(member);
 
+        System.out.print("myChallengeIdList = ");
         for (ChallengeRecord mine : myChallengeList) {
+            System.out.print(mine.getChallenge().getChallengeId() + ", ");
             List<Long> myChallengeMemberList = new ArrayList<>();
             challengeRecordRepository.findAllByChallenge(mine.getChallenge()).forEach(
                     record -> myChallengeMemberList.add(record.getMember().getMemberId()));
-            System.out.println(mine.getChallenge().getChallengeId());
             mainRequestDto.addSlider(new ChallengeSliderSourceResponseDto(mine.getChallenge(), myChallengeMemberList));
         }
+        System.out.println("");
 
         final int userSliderSize = myChallengeList.size();
 
@@ -234,8 +236,9 @@ public class ChallengeService {
                 .stream()
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (a, b) -> b, LinkedHashMap::new));
 
+        System.out.print("mainRequestDto의 Id 리스트 : ");
         for (Long aLong : mainResponseDto.sliderIdList()) {
-            System.out.println("id / " +aLong);
+            System.out.print(aLong + ", ");
         }
 
         for (Long id : sortedMap.keySet()) {
@@ -245,6 +248,7 @@ public class ChallengeService {
                     record -> memberIdList.add(record.getMember().getMemberId()));
             ChallengeSliderSourceResponseDto sliderRequestDto =
                     new ChallengeSliderSourceResponseDto(challenge, memberIdList);
+            System.out.println(id);
             if (!mainResponseDto.sliderIdList().contains(id)) {
                 mainResponseDto.addSlider(sliderRequestDto);
                 System.out.println(id + " / "+ sliderRequestDto.getCategoryName());
