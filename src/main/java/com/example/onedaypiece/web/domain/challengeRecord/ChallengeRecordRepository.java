@@ -13,8 +13,8 @@ public interface ChallengeRecordRepository extends JpaRepository<ChallengeRecord
     @Query("select c from ChallengeRecord c Where c.challengeRecordStatus = true and c.challenge = :challenge")
     List<ChallengeRecord> findAllByChallenge(Challenge challenge);
 
-    @Query("select c from ChallengeRecord c Where c.challengeRecordStatus = true")
-    List<ChallengeRecord> findAll();
+    @Query("select c from ChallengeRecord c Where c.challengeRecordStatus = true and c.challenge.challengeProgress = 1")
+    List<ChallengeRecord> findAllStatusTrueAndProgressNotStartedYet();
 
     @Query("select c from ChallengeRecord c Where c.challengeRecordStatus = true")
     Page<ChallengeRecord> findAll(Pageable pageable);
