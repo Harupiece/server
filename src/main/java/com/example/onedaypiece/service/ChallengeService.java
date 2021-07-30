@@ -39,7 +39,7 @@ public class ChallengeService {
         Challenge challenge = challengeRepository.findById(challengeId).orElseThrow(
                 () -> new ApiRequestException("존재하지 않는 챌린지id입니다"));
 
-        challengeProgressChecker(challenge);
+        challenge = challengeProgressChecker(challenge);
 
         List<Long> challengeMember = new ArrayList<>();
         challengeRecordRepository.findAllByChallenge(challenge).forEach(
@@ -74,7 +74,7 @@ public class ChallengeService {
                 .orElseThrow(() -> new ApiRequestException("존재하지 않는 유저입니다."));
 
         challengeRepository.findAllByMember(member)
-                .forEach(challenge -> challengeRepository.save(challengeProgressCheckerReturner(challenge)));
+                .forEach(challenge -> challengeRepository.save(challengeProgressChecker(challenge)));
 
         challengeRepository.findAllByMember(member)
                 .stream()
@@ -100,7 +100,7 @@ public class ChallengeService {
                 .orElseThrow(() -> new ApiRequestException("존재하지 않는 유저입니다."));
         Challenge challenge = challengeRepository.findByChallengeIdAndMember(requestDto.getChallengeId(), member)
                 .orElseThrow(() -> new ApiRequestException("존재하지 않는 챌린지입니다."));
-        challengeProgressChecker(challenge);
+        challenge = challengeProgressChecker(challenge);
         if (!challenge.getChallengeProgress().equals(1L)) {
             throw new ApiRequestException("이미 시작되거나 종료된 챌린지입니다.");
         }
@@ -139,7 +139,6 @@ public class ChallengeService {
     }
 
     // Guest 메인 페이지
-
     public ChallengeGuestMainResponseDto getGuestMainChallengeDetail() {
         ChallengeGuestMainResponseDto mainRequestDto = new ChallengeGuestMainResponseDto();
 
@@ -147,8 +146,7 @@ public class ChallengeService {
 
         categoryCollector(EXERCISE).forEach(mainRequestDto::addExercise);
         categoryCollector(LIVINGHABITS).forEach(mainRequestDto::addLivingHabits);
-        categoryCollector(STUDY).forEach(mainRequestDto::addStudy);
-        categoryCollector(MONEY).forEach(mainRequestDto::addMoney);
+        categoryCollector(NODRINKNOSMOKE).forEach(mainRequestDto::addNoDrinkNoSmoke);
         return mainRequestDto;
     }
     // Member 메인 페이지
@@ -174,8 +172,7 @@ public class ChallengeService {
 
         categoryCollector(EXERCISE).forEach(mainRequestDto::addExercise);
         categoryCollector(LIVINGHABITS).forEach(mainRequestDto::addLivingHabits);
-        categoryCollector(STUDY).forEach(mainRequestDto::addStudy);
-        categoryCollector(MONEY).forEach(mainRequestDto::addMoney);
+        categoryCollector(NODRINKNOSMOKE).forEach(mainRequestDto::addNoDrinkNoSmoke);
         return mainRequestDto;
     }
 
@@ -186,7 +183,7 @@ public class ChallengeService {
         List<ChallengeSliderSourceResponseDto> returnList = new ArrayList<>();
 
         challengeRepository.findAllByCategoryNameOrderByModifiedAtDescListed(categoryName)
-                .forEach(challenge -> challengeRepository.save(challengeProgressCheckerReturner(challenge)));
+                .forEach(challenge -> challengeRepository.save(challengeProgressChecker(challenge)));
 
         Page<Challenge> pagedChallengeList = challengeRepository
                 .findAllByCategoryNameOrderByModifiedAtDescPaged(categoryName, PageRequest.of(0, categorySize));
@@ -284,20 +281,8 @@ public class ChallengeService {
         return listResponseDto;
     }
 
-    private void challengeProgressChecker(Challenge challenge) {
-        if (currentLocalDateTime.isBefore(challenge.getChallengeStartDate())) {
-            challenge.setChallengeProgress(1L);
-        } else if (currentLocalDateTime.isBefore(challenge.getChallengeEndDate())) {
-            challenge.setChallengeProgress(2L);
-        } else {
-            challenge.setChallengeProgress(3L);
-            challengeRecordRepository.findAllByChallenge(challenge)
-                    .forEach(ChallengeRecord::setChallengeRecordStatusToFalse);
-        }
-    }
-
     @Transactional
-    Challenge challengeProgressCheckerReturner(Challenge challenge) {
+    Challenge challengeProgressChecker(Challenge challenge) {
         if (currentLocalDateTime.isBefore(challenge.getChallengeStartDate())) {
             challenge.setChallengeProgress(1L);
         } else if (currentLocalDateTime.isBefore(challenge.getChallengeEndDate())) {

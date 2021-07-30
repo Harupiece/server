@@ -13,8 +13,7 @@ public class ChallengeGuestMainResponseDto {
     private final List<ChallengeSliderSourceResponseDto> popular = new ArrayList<>();
     private final List<ChallengeSliderSourceResponseDto> exercise = new ArrayList<>();
     private final List<ChallengeSliderSourceResponseDto> livingHabits = new ArrayList<>();
-    private final List<ChallengeSliderSourceResponseDto> study = new ArrayList<>();
-    private final List<ChallengeSliderSourceResponseDto> money = new ArrayList<>();
+    private final List<ChallengeSliderSourceResponseDto> noDrinkNoSmoke = new ArrayList<>();
 
     public void addPopular(ChallengeSliderSourceResponseDto responseDto) {
         popular.add(responseDto);
@@ -25,10 +24,7 @@ public class ChallengeGuestMainResponseDto {
     public void addLivingHabits(ChallengeSliderSourceResponseDto responseDto) {
         livingHabits.add(responseDto);
     }
-    public void addStudy(ChallengeSliderSourceResponseDto responseDto) {
-        study.add(responseDto);
-    }
-    public void addMoney(ChallengeSliderSourceResponseDto responseDto) {
-        money.add(responseDto);
+    public void addNoDrinkNoSmoke(ChallengeSliderSourceResponseDto responseDto) {
+        noDrinkNoSmoke.add(responseDto);
     }
 }
