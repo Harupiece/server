@@ -4,24 +4,21 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 @NoArgsConstructor
 @Getter
 public class ChallengeMemberMainResponseDto extends ChallengeGuestMainResponseDto{
 
-    private final List<ChallengeSliderSourceResponseDto> popular = new ArrayList<>();
-    private final List<ChallengeSliderSourceResponseDto> myList = new ArrayList<>();
+    private final Set<ChallengeSliderSourceResponseDto> slider = new LinkedHashSet<>();
     private final List<ChallengeSliderSourceResponseDto> exercise = new ArrayList<>();
     private final List<ChallengeSliderSourceResponseDto> livingHabits = new ArrayList<>();
-    private final List<ChallengeSliderSourceResponseDto> study = new ArrayList<>();
-    private final List<ChallengeSliderSourceResponseDto> money = new ArrayList<>();
+    private final List<ChallengeSliderSourceResponseDto> noDrinkNoSmoke = new ArrayList<>();
 
-    public void addPopular(ChallengeSliderSourceResponseDto responseDto) {
-        popular.add(responseDto);
-    }
-    public void addMyList(ChallengeSliderSourceResponseDto responseDto) {
-        myList.add(responseDto);
+    public void addSlider(ChallengeSliderSourceResponseDto responseDto) {
+        slider.add(responseDto);
     }
     public void addExercise(ChallengeSliderSourceResponseDto responseDto) {
         exercise.add(responseDto);
@@ -29,10 +26,14 @@ public class ChallengeMemberMainResponseDto extends ChallengeGuestMainResponseDt
     public void addLivingHabits(ChallengeSliderSourceResponseDto responseDto) {
         livingHabits.add(responseDto);
     }
-    public void addStudy(ChallengeSliderSourceResponseDto responseDto) {
-        study.add(responseDto);
+    public void addNoDrinkNoSmoke(ChallengeSliderSourceResponseDto responseDto) {
+        noDrinkNoSmoke.add(responseDto);
     }
-    public void addMoney(ChallengeSliderSourceResponseDto responseDto) {
-        money.add(responseDto);
+
+    @Override
+    public List<Long> sliderIdList() {
+        List<Long> sliderIdList = new ArrayList<>();
+        slider.forEach(content -> sliderIdList.add(content.getChallengeId()));
+        return sliderIdList;
     }
 }
