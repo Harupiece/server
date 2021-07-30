@@ -1,29 +1,33 @@
-package com.example.onedaypiece.web.dto.response.login;
-
+package com.example.onedaypiece.web.dto.response.mypage.scheduled;
 
 import com.example.onedaypiece.web.domain.member.Member;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @NoArgsConstructor
 @Getter
-public class MemberResponseDto {
+public class MyPageScheduledResponseDto {
+
     private Long memberId;
     private String nickname;
     private String profileImg;
     private Long point;
-    private Long memberLevel; // 멤버 레벨 계산해서하기
+    private Long level;
+    private List<ScheduledResponseDto> challengeList;
 
-    public MemberResponseDto(Member member, Long memberPoint){
+    public MyPageScheduledResponseDto(Member member, List<ScheduledResponseDto> challengeList){
         this.memberId = member.getMemberId();
         this.nickname = member.getNickname();
         this.profileImg = member.getProfileImg();
-        this.point = memberPoint;
-        this.memberLevel = calculLevel(memberPoint);
+        this.point = member.getPoint().getAcquiredPoint();
+        this.challengeList = challengeList;
+        this.level = calculLevel(member.getPoint().getAcquiredPoint());
     }
-    // 699면 5레벨
+
     public long calculLevel(Long memberPoint){
-        long level = 1;
+        long level = 1 ;
 
         //100 1~5
         if(memberPoint < 500) {

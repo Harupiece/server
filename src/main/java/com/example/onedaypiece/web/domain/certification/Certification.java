@@ -13,6 +13,7 @@ import javax.persistence.*;
 @Entity
 @Getter
 @NoArgsConstructor
+@ToString
 public class Certification {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,12 +21,11 @@ public class Certification {
     @Column(name="certification_id")
     private Long certificationId;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="posting_id")
-    @JsonIgnore
     private Posting posting;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="member_id")
     private Member member;
 
