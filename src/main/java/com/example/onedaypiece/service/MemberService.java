@@ -4,10 +4,13 @@ import com.example.onedaypiece.exception.ApiRequestException;
 import com.example.onedaypiece.security.TokenProvider;
 import com.example.onedaypiece.web.domain.challenge.Challenge;
 import com.example.onedaypiece.web.domain.challenge.ChallengeRepository;
+import com.example.onedaypiece.web.domain.challengeRecord.ChallengeRecord;
+import com.example.onedaypiece.web.domain.challengeRecord.ChallengeRecordRepository;
 import com.example.onedaypiece.web.domain.member.Member;
 import com.example.onedaypiece.web.domain.member.MemberRepository;
 import com.example.onedaypiece.web.domain.point.Point;
 import com.example.onedaypiece.web.domain.point.PointRepository;
+import com.example.onedaypiece.web.domain.posting.PostingRepository;
 import com.example.onedaypiece.web.domain.token.RefreshToken;
 import com.example.onedaypiece.web.domain.token.RefreshTokenRepository;
 import com.example.onedaypiece.web.dto.request.login.LoginRequestDto;
@@ -15,8 +18,12 @@ import com.example.onedaypiece.web.dto.request.mypage.MyPageRequestDto;
 import com.example.onedaypiece.web.dto.request.signup.SignupRequestDto;
 import com.example.onedaypiece.web.dto.request.token.TokenRequestDto;
 import com.example.onedaypiece.web.dto.response.login.LoginResponseDto;
-import com.example.onedaypiece.web.dto.response.mypage.MyPageResponseDto;
-import com.example.onedaypiece.web.dto.response.mypage.MypageChallengeResponseDto;
+import com.example.onedaypiece.web.dto.response.mypage.end.EndResponseDto;
+import com.example.onedaypiece.web.dto.response.mypage.end.MyPageEndResponseDto;
+import com.example.onedaypiece.web.dto.response.mypage.proceed.MypageProceedResponseDto;
+import com.example.onedaypiece.web.dto.response.mypage.proceed.ProceedResponseDto;
+import com.example.onedaypiece.web.dto.response.mypage.scheduled.MyPageScheduledResponseDto;
+import com.example.onedaypiece.web.dto.response.mypage.scheduled.ScheduledResponseDto;
 import com.example.onedaypiece.web.dto.response.reload.ReloadResponseDto;
 import com.example.onedaypiece.web.dto.response.token.TokenDto;
 import lombok.RequiredArgsConstructor;
@@ -24,12 +31,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -46,6 +52,8 @@ public class MemberService {
     private final RefreshTokenRepository refreshTokenRepository;
     private final PointRepository pointRepository;
     private final ChallengeRepository challengeRepository;
+    private final ChallengeRecordRepository challengeRecordRepository;
+    private final PostingRepository postingRepository;
 
     // 회원가입
     @Transactional
@@ -109,6 +117,7 @@ public class MemberService {
         return loginResponseDto;
     }
 
+    // 새로고침
     @Transactional
     public ReloadResponseDto reload(String email){
         Member member = memberRepository.findByEmail(email).orElseThrow(
@@ -151,20 +160,66 @@ public class MemberService {
     }
 
 
-    // 마이 페이지 상세
+    // 진행중인
     @Transactional
-    public MyPageResponseDto getMypageInfo(String email){
+    public MypageProceedResponseDto getProceed(String email){
+        Member member = memberRepository.findByEmail(email).orElseThrow(
+                ()-> new ApiRequestException("마이페이지 상세에서 찾는 이메일 존재하지않음")
+        );
+        Long pointSum = member.getPoint().getAcquiredPoint();
+
+        //본인이 참여한 챌린지 리스트  1: 진행 예정, 2: 진행 중, 3 : 진행 완료
+        List<ChallengeRecord> targetList = challengeRecordRepository.findAllByMemberAndProgress(member,2L);
+//        List<Challenge> proceeding = challengeRepository.findAllByChallengeProgressAndMember(2L, member);
+        List<Challenge> proceeding = targetList.stream()
+                .map(challengeRecord -> challengeRecord.getChallenge()).collect(Collectors.toList());
+
+        List<ProceedResponseDto> proceedingResult = proceeding.stream()
+                .map(challenge -> new ProceedResponseDto(challenge, challengeRecordRepository.findAllByChallenge(challenge)))
+                .collect(Collectors.toList());
+
+        return new MypageProceedResponseDto(member, pointSum, proceedingResult);
+    }
+
+    // 예정인
+    @Transactional
+    public MyPageScheduledResponseDto getSchduled(String email){
         Member member = memberRepository.findByEmail(email).orElseThrow(
                 ()-> new ApiRequestException("마이페이지 상세에서 찾는 이메일 존재하지않음")
         );
 
-        Long pointSum = member.getPoint().getAcquiredPoint();
-        List<Challenge> challengeList = challengeRepository.findAll();
-        List<MypageChallengeResponseDto> mypageChallengeResponseDtoList = challengeList.stream()
-                .map(challenge -> new MypageChallengeResponseDto(challenge)).collect(Collectors.toList());
+        //본인이 참여한 챌린지 리스트  1: 진행 예정, 2: 진행 중, 3 : 진행 완료
+        List<ChallengeRecord> targetList = challengeRecordRepository.findAllByMemberAndProgress(member,1L);
+//        List<Challenge> scheduled = challengeRepository.findAllByChallengeProgressAndMember(1L, member);
+        List<Challenge> scheduled = targetList.stream()
+                .map(challengeRecord -> challengeRecord.getChallenge()).collect(Collectors.toList());
 
-        MyPageResponseDto responseDto = new MyPageResponseDto(member, pointSum, mypageChallengeResponseDtoList);
-        return responseDto;
+        List<ScheduledResponseDto> scheduledList = scheduled.stream()
+                .map(challenge -> new ScheduledResponseDto(challenge, challengeRecordRepository.findAllByChallenge(challenge)))
+                .collect(Collectors.toList());
+
+        return new MyPageScheduledResponseDto(member,  scheduledList);
+    }
+
+    // 종료된 챌린지
+    @Transactional
+    public MyPageEndResponseDto getEnd(String email){
+        Member member = memberRepository.findByEmail(email).orElseThrow(
+                ()-> new ApiRequestException("마이페이지 상세에서 찾는 이메일 존재하지않음")
+        );
+
+        //본인이 참여한 챌린지 리스트  1: 진행 예정, 2: 진행 중, 3 : 진행 완료
+        List<ChallengeRecord> targetList = challengeRecordRepository.findAllByMemberAndProgress(member,3L);
+//        List<Challenge> end = challengeRepository.findAllByChallengeProgressAndMember(3L, member);
+
+        List<Challenge> end = targetList.stream()
+                .map(challengeRecord -> challengeRecord.getChallenge()).collect(Collectors.toList());
+
+        List<EndResponseDto> endList = end.stream()
+                .map(challenge -> new EndResponseDto(challenge, challengeRecordRepository.findAllByChallenge(challenge)))
+                .collect(Collectors.toList());
+
+        return new MyPageEndResponseDto(member, endList);
     }
 
 
@@ -182,5 +237,7 @@ public class MemberService {
 
         member.update(requestDto);
     }
+
+
 }
 
