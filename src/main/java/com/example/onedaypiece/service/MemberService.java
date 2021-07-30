@@ -2,6 +2,8 @@ package com.example.onedaypiece.service;
 
 import com.example.onedaypiece.exception.ApiRequestException;
 import com.example.onedaypiece.security.TokenProvider;
+import com.example.onedaypiece.web.domain.challenge.Challenge;
+import com.example.onedaypiece.web.domain.challenge.ChallengeRepository;
 import com.example.onedaypiece.web.domain.member.Member;
 import com.example.onedaypiece.web.domain.member.MemberRepository;
 import com.example.onedaypiece.web.domain.point.Point;
@@ -14,6 +16,7 @@ import com.example.onedaypiece.web.dto.request.signup.SignupRequestDto;
 import com.example.onedaypiece.web.dto.request.token.TokenRequestDto;
 import com.example.onedaypiece.web.dto.response.login.LoginResponseDto;
 import com.example.onedaypiece.web.dto.response.mypage.MyPageResponseDto;
+import com.example.onedaypiece.web.dto.response.mypage.MypageChallengeResponseDto;
 import com.example.onedaypiece.web.dto.response.reload.ReloadResponseDto;
 import com.example.onedaypiece.web.dto.response.token.TokenDto;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 @RequiredArgsConstructor
@@ -41,7 +45,7 @@ public class MemberService {
     private final TokenProvider tokenProvider;
     private final RefreshTokenRepository refreshTokenRepository;
     private final PointRepository pointRepository;
-
+    private final ChallengeRepository challengeRepository;
 
     // 회원가입
     @Transactional
@@ -75,33 +79,7 @@ public class MemberService {
 
     }
 
-
-//    // 로그인
-//    @Transactional
-//    public TokenDto loginMember(LoginRequestDto requestDto){
-//
-//        // 1. Login ID/PW 를 기반으로 AuthenticationToken 생성
-//        UsernamePasswordAuthenticationToken authenticationToken = requestDto.toAuthentication();
-//
-//        // 2. 실제로 검증 (사용자 비밀번호 체크) 이 이루어지는 부분
-//        //    authenticate 메서드가 실행이 될 때 CustomUserDetailsService 에서 만들었던 loadUserByUsername 메서드가 실행됨
-//        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
-//
-//        // 3. 인증 정보를 기반으로 JWT 토큰 생성
-//        TokenDto tokenDto = tokenProvider.generateTokenDto(authentication);
-//
-//        // 4. RefreshToken 저장
-//        RefreshToken refreshToken = RefreshToken.builder()
-//                .key(authentication.getName())
-//                .value(tokenDto.getRefreshToken())
-//                .build();
-//
-//        refreshTokenRepository.save(refreshToken);
-//        return tokenDto;
-//    }
-
-
-    // 로그인 2
+    // 로그인
     @Transactional
     public LoginResponseDto loginMember(LoginRequestDto requestDto){
         // 1. Login ID/PW 를 기반으로 AuthenticationToken 생성
@@ -180,11 +158,12 @@ public class MemberService {
                 ()-> new ApiRequestException("마이페이지 상세에서 찾는 이메일 존재하지않음")
         );
 
-        // 오류나면 PointRepository로 해결하기
         Long pointSum = member.getPoint().getAcquiredPoint();
+        List<Challenge> challengeList = challengeRepository.findAll();
+        List<MypageChallengeResponseDto> mypageChallengeResponseDtoList = challengeList.stream()
+                .map(challenge -> new MypageChallengeResponseDto(challenge)).collect(Collectors.toList());
 
-        System.out.println("포인트합 적히는지 실험: "+pointSum);
-        MyPageResponseDto responseDto = new MyPageResponseDto(member, pointSum);
+        MyPageResponseDto responseDto = new MyPageResponseDto(member, pointSum, mypageChallengeResponseDtoList);
         return responseDto;
     }
 
