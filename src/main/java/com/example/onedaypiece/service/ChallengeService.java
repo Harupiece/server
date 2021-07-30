@@ -1,6 +1,5 @@
 package com.example.onedaypiece.service;
 
-import com.example.onedaypiece.exception.ApiException;
 import com.example.onedaypiece.exception.ApiRequestException;
 import com.example.onedaypiece.web.domain.challenge.CategoryName;
 import com.example.onedaypiece.web.domain.challenge.Challenge;
@@ -22,6 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.example.onedaypiece.web.domain.challenge.CategoryName.*;
 
@@ -35,18 +35,9 @@ public class ChallengeService {
 
     public ChallengeResponseDto getChallengeDetail(Long challengeId) {
         Challenge challenge = challengeRepository.findById(challengeId).orElseThrow(
-                () -> new ApiRequestException("존재하지 않은 챌린지id입니다"));
+                () -> new ApiRequestException("존재하지 않는 챌린지id입니다"));
 
-        LocalDateTime currentLocalDateTime = LocalDateTime.now();
-        if (currentLocalDateTime.isBefore(challenge.getChallengeStartDate())) {
-            challenge.setChallengeProgress(1L);
-        } else if (currentLocalDateTime.isBefore(challenge.getChallengeEndDate())) {
-            challenge.setChallengeProgress(2L);
-        } else {
-            challenge.setChallengeProgress(3L);
-            challengeRecordRepository.findAllByChallenge(challenge)
-                    .forEach(ChallengeRecord::setChallengeRecordStatusToFalse);
-        }
+        challengeProgressChecker(challenge);
 
         List<Long> challengeMember = new ArrayList<>();
         challengeRecordRepository.findAllByChallenge(challenge).forEach(
@@ -58,7 +49,7 @@ public class ChallengeService {
     @Transactional
     public void deleteChallenge(Long challengeId, String username) {
         Challenge challenge = challengeRepository.findById(challengeId).orElseThrow(
-                () -> new ApiRequestException("존재하지 않은 챌린지 id입니다"));
+                () -> new ApiRequestException("존재하지 않는 챌린지 id입니다"));
 
         if (!challenge.getMember().getEmail().equals(username)) {
             throw new IllegalArgumentException("작성자가 아닙니다.");
@@ -104,12 +95,33 @@ public class ChallengeService {
                 .orElseThrow(() -> new ApiRequestException("존재하지 않는 유저입니다."));
         Challenge challenge = challengeRepository.findByChallengeIdAndMember(requestDto.getChallengeId(), member)
                 .orElseThrow(() -> new ApiRequestException("존재하지 않는 챌린지입니다."));
-        challengeRepository.findAllByMember(member)
+        challengeProgressChecker(challenge);
+        if (!challenge.getChallengeProgress().equals(1L)) {
+            throw new ApiRequestException("이미 시작되거나 종료된 챌린지입니다.");
+        }
+        if (!challenge.isChallengeStatus()) {
+            throw new ApiRequestException("삭제된 챌린지입니다.");
+        }
+
+        Map<CategoryName, Integer> participatingCategoryMap = Arrays
+                .stream(values())
+                .collect(Collectors.toMap(categoryName -> categoryName, categoryName -> 0, (a, b) -> b));
+
+        List<CategoryName> participatingCategoryList = challengeRepository.findAllByMember(member)
                 .stream()
-                .filter(value -> value.getCategoryName() == requestDto.getCategoryName())
-                .forEach(value -> {
-                    throw new ApiRequestException("이미 해당 카테고리에 챌린지를 생성한 유저입니다.");
-                });
+                .map(Challenge::getCategoryName)
+                .collect(Collectors.toList());
+
+        participatingCategoryMap
+                .put(requestDto.getCategoryName(), participatingCategoryMap.get(requestDto.getCategoryName()) + 1);
+
+        for (CategoryName category : participatingCategoryList) {
+            participatingCategoryMap.put(category, participatingCategoryMap.get(category) + 1);
+            if (requestDto.getCategoryName() == category && participatingCategoryMap.get(requestDto.getCategoryName()) == 2) {
+                throw new ApiRequestException("동일한 카테고리에 2개 이상의 챌린지를 개설할 수 없습니다.");
+            }
+        }
+
         challenge.putChallenge(requestDto);
     }
 
@@ -122,6 +134,7 @@ public class ChallengeService {
     }
 
     // Guest 메인 페이지
+
     public ChallengeGuestMainResponseDto getGuestMainChallengeDetail() {
         ChallengeGuestMainResponseDto mainRequestDto = new ChallengeGuestMainResponseDto();
 
@@ -133,8 +146,8 @@ public class ChallengeService {
         categoryCollector(MONEY).forEach(mainRequestDto::addMoney);
         return mainRequestDto;
     }
-
     // Member 메인 페이지
+
     public ChallengeMemberMainResponseDto getMemberMainChallengeDetail(String userEmail) {
         ChallengeMemberMainResponseDto mainRequestDto = new ChallengeMemberMainResponseDto();
         Member member = memberRepository.findByEmail(userEmail)
@@ -206,8 +219,7 @@ public class ChallengeService {
         Collections.sort(beSortedList, (o1, o2) -> {
             if (o1.getValue() > o2.getValue()) {
                 return -1;
-            }
-            else if (o1.getValue() < o2.getValue()) {
+            } else if (o1.getValue() < o2.getValue()) {
                 return 1;
             }
             return o1.getKey().compareTo(o2.getKey());
@@ -262,5 +274,18 @@ public class ChallengeService {
             listResponseDto.addResult(new ChallengeResponseDto(challenge, memberIdList));
         }
         return listResponseDto;
+    }
+
+    private void challengeProgressChecker(Challenge challenge) {
+        LocalDateTime currentLocalDateTime = LocalDateTime.now();
+        if (currentLocalDateTime.isBefore(challenge.getChallengeStartDate())) {
+            challenge.setChallengeProgress(1L);
+        } else if (currentLocalDateTime.isBefore(challenge.getChallengeEndDate())) {
+            challenge.setChallengeProgress(2L);
+        } else {
+            challenge.setChallengeProgress(3L);
+            challengeRecordRepository.findAllByChallenge(challenge)
+                    .forEach(ChallengeRecord::setChallengeRecordStatusToFalse);
+        }
     }
 }
