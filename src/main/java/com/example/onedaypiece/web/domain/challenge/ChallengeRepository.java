@@ -12,15 +12,25 @@ import java.util.Optional;
 
 public interface ChallengeRepository extends JpaRepository<Challenge, Long> {
 
+    @Query("select c from Challenge c " +
+            "Where c.challengeStatus = true and c.challengeProgress = 1 and c.challengeId = :challengeId " +
+            "and c.member.memberStatus = 1 and c.member = :member")
     Optional<Challenge> findByChallengeIdAndMember(Long challengeId, Member member);
 
-    @Query("select c from Challenge c Where c.member.memberStatus = 1 and c.member = :member")
+    @Query("select c from Challenge c " +
+            "Where c.challengeStatus = true and c.challengeProgress = 1 " +
+            "and c.member.memberStatus = 1 and c.member = :member")
     List<Challenge> findAllByMember(Member member);
 
     @Query("select c from Challenge c " +
             "Where c.challengeStatus = true and c.challengeProgress = 1 and c.categoryName = :categoryName " +
             "ORDER BY c.modifiedAt DESC")
-    Page<Challenge> findAllByCategoryNameOrderByModifiedAtDesc(CategoryName categoryName, Pageable pageable);
+    Page<Challenge> findAllByCategoryNameOrderByModifiedAtDescPaged(CategoryName categoryName, Pageable pageable);
+
+    @Query("select c from Challenge c " +
+            "Where c.challengeStatus = true and c.challengeProgress = 1 and c.categoryName = :categoryName " +
+            "ORDER BY c.modifiedAt DESC")
+    List<Challenge> findAllByCategoryNameOrderByModifiedAtDescListed(CategoryName categoryName);
 
     @Query("select c from Challenge c " +
             "WHERE c.challengeStatus = true and c.challengeProgress = 1 and c.challengeTitle like %?1%" +

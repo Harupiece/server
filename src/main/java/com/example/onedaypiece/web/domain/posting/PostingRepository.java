@@ -1,8 +1,5 @@
 package com.example.onedaypiece.web.domain.posting;
 
-import com.example.onedaypiece.web.domain.certification.Certification;
-import com.example.onedaypiece.web.domain.challenge.Challenge;
-import com.example.onedaypiece.web.dto.response.posting.PostingResponseDto;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
