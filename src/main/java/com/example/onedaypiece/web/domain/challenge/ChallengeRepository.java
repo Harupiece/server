@@ -25,7 +25,12 @@ public interface ChallengeRepository extends JpaRepository<Challenge, Long> {
     @Query("select c from Challenge c " +
             "Where c.challengeStatus = true and c.challengeProgress = 1 and c.categoryName = :categoryName " +
             "ORDER BY c.modifiedAt DESC")
-    Page<Challenge> findAllByCategoryNameOrderByModifiedAtDesc(CategoryName categoryName, Pageable pageable);
+    Page<Challenge> findAllByCategoryNameOrderByModifiedAtDescPaged(CategoryName categoryName, Pageable pageable);
+
+    @Query("select c from Challenge c " +
+            "Where c.challengeStatus = true and c.challengeProgress = 1 and c.categoryName = :categoryName " +
+            "ORDER BY c.modifiedAt DESC")
+    List<Challenge> findAllByCategoryNameOrderByModifiedAtDescListed(CategoryName categoryName);
 
     @Query("select c from Challenge c " +
             "WHERE c.challengeStatus = true and c.challengeProgress = 1 and c.challengeTitle like %?1%" +

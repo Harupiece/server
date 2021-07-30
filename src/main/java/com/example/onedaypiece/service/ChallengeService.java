@@ -185,8 +185,12 @@ public class ChallengeService {
 
         List<ChallengeSliderSourceResponseDto> returnList = new ArrayList<>();
 
+
+        challengeRepository.findAllByCategoryNameOrderByModifiedAtDescListed(categoryName)
+                .forEach(challenge -> challengeRepository.save(challengeProgressCheckerReturner(challenge)));
+
         Page<Challenge> pagedChallengeList = challengeRepository
-                .findAllByCategoryNameOrderByModifiedAtDesc(categoryName, PageRequest.of(0, categorySize));
+                .findAllByCategoryNameOrderByModifiedAtDescPaged(categoryName, PageRequest.of(0, categorySize));
 
         for (Challenge challenge : pagedChallengeList) {
             List<Long> memberIdList = new ArrayList<>();
@@ -257,7 +261,7 @@ public class ChallengeService {
         final int pageSize = 6;
 
         Page<Challenge> challengeList = challengeRepository.
-                findAllByCategoryNameOrderByModifiedAtDesc(categoryName, PageRequest.of(page - 1, pageSize));
+                findAllByCategoryNameOrderByModifiedAtDescPaged(categoryName, PageRequest.of(page - 1, pageSize));
         return listResponseDtoSource(challengeList);
     }
 
@@ -293,7 +297,8 @@ public class ChallengeService {
         }
     }
 
-    private Challenge challengeProgressCheckerReturner(Challenge challenge) {
+    @Transactional
+    Challenge challengeProgressCheckerReturner(Challenge challenge) {
         if (currentLocalDateTime.isBefore(challenge.getChallengeStartDate())) {
             challenge.setChallengeProgress(1L);
         } else if (currentLocalDateTime.isBefore(challenge.getChallengeEndDate())) {
