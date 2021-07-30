@@ -185,7 +185,6 @@ public class ChallengeService {
 
         List<ChallengeSliderSourceResponseDto> returnList = new ArrayList<>();
 
-
         challengeRepository.findAllByCategoryNameOrderByModifiedAtDescListed(categoryName)
                 .forEach(challenge -> challengeRepository.save(challengeProgressCheckerReturner(challenge)));
 
@@ -208,7 +207,7 @@ public class ChallengeService {
 
         HashSet<Long> currentChallengeIdList = new HashSet<>();
 
-        List<ChallengeRecord> recordList = challengeRecordRepository.findAll();
+        List<ChallengeRecord> recordList = challengeRecordRepository.findAllStatusTrueAndProgressNotStartedYet();
         recordList.forEach(
                 record -> currentChallengeIdList.add(record.getChallenge().getChallengeId()));
 
