@@ -28,5 +28,5 @@ public interface ChallengeRepository extends JpaRepository<Challenge, Long> {
     Page<Challenge> findAllByWordsAndChallengeStatusTrueOrderByModifiedAtDesc(String words, Pageable pageable);
 
     @Query("select c from Challenge c where c.challengeStatus = true and c.challengeId =:challengeId")
-    Challenge findChallengeStatusTrue(Long challengeId);
+    Optional<Challenge> findChallengeStatusTrue(Long challengeId);
 }

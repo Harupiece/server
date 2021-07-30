@@ -6,8 +6,6 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 @Getter
-@NoArgsConstructor
-@ToString
 public class PostingCreateRequestDto {
 
     private String postingImg;

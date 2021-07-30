@@ -19,7 +19,7 @@ import java.util.List;
 @Getter
 @Entity
 @NoArgsConstructor
-@ToString(exclude = {"member","challenge","certificationList"} )
+@ToString(exclude = {"challenge","certificationList"} )
 public class Posting extends Timestamped {
 
 
@@ -50,11 +50,6 @@ public class Posting extends Timestamped {
     @JoinColumn(name="challenge_id")
     private Challenge challenge;
 
-    @OneToMany(
-            mappedBy = "posting",
-            fetch = FetchType.LAZY,
-            cascade = CascadeType.ALL)
-    private List<Certification> certificationList = new ArrayList<>();
 
     @Builder
     public Posting(String postingImg, String postingContent, Member member, Challenge challenge) {
@@ -68,8 +63,6 @@ public class Posting extends Timestamped {
         this.member =member;
         this.challenge=challenge;
     }
-
-
 
     //==생성 메서드==//
     public static Posting createPosting(PostingCreateRequestDto postingRequestDto, Member member, Challenge challenge) {
@@ -87,9 +80,10 @@ public class Posting extends Timestamped {
         this.postingContent = postingRequestDto.getPostingContent();
 
     }
-
+    // 삭제 로직
     public void deletePosting() {
         this.postingStatus =false;
+
     }
 
     // 인증 인원수 추가 로직
