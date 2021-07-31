@@ -14,7 +14,8 @@ import com.example.onedaypiece.web.domain.posting.PostingRepository;
 import com.example.onedaypiece.web.domain.token.RefreshToken;
 import com.example.onedaypiece.web.domain.token.RefreshTokenRepository;
 import com.example.onedaypiece.web.dto.request.login.LoginRequestDto;
-import com.example.onedaypiece.web.dto.request.mypage.MyPageRequestDto;
+import com.example.onedaypiece.web.dto.request.mypage.PasswordUpdateRequestDto;
+import com.example.onedaypiece.web.dto.request.mypage.ProfileUpdateRequestDto;
 import com.example.onedaypiece.web.dto.request.signup.SignupRequestDto;
 import com.example.onedaypiece.web.dto.request.token.TokenRequestDto;
 import com.example.onedaypiece.web.dto.response.login.LoginResponseDto;
@@ -35,7 +36,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -223,21 +223,33 @@ public class MemberService {
     }
 
 
-    // 마이 페이지 수정
+    // 마이 페이지 비밀번호 수정
     @Transactional
-    public void updateMember(MyPageRequestDto requestDto, String email){
+    public void updatePassword(PasswordUpdateRequestDto requestDto, String email){
         Member member = memberRepository.findByEmail(email).orElseThrow(
                 ()-> new ApiRequestException("마이페이지수정에서 멤버 수정하는 아이디찾는거실패")
         );
 
-        System.out.println("인코드 되기전: "+requestDto.getPassword());
-        String password = passwordEncoder.encode(requestDto.getPassword());
-        requestDto.setPassword(password);
-        System.out.println("인코드된 후: "+requestDto.getPassword());
+        if(!passwordEncoder.matches(requestDto.getCurrentPassword(), member.getPassword())){
+            throw new ApiRequestException("현재 비밀번호가 일치하지 않습니다.");
+        }
 
-        member.update(requestDto);
+        String newPassword = passwordEncoder.encode(requestDto.getNewPassword());
+
+        member.updatePassword(newPassword);
     }
 
+    // 마이 페이지 프로필 수정
+    @Transactional
+    public void updateProfile(ProfileUpdateRequestDto requestDto, String email){
+        Member member = memberRepository.findByEmail(email).orElseThrow(
+                ()-> new ApiRequestException("마이페이지수정에서 멤버 수정하는 아이디찾는거실패")
+        );
 
+        if(member.getNickname().equals(requestDto.getNickname())){
+            throw new ApiRequestException("현재 닉네임과 변경할 닉네임과 동일합니다.");
+        }
+        member.updateProfile(requestDto);
+    }
 }
 
