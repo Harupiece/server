@@ -1,27 +1,26 @@
-package com.example.onedaypiece.web.dto.response.login;
+package com.example.onedaypiece.web.dto.response.member;
 
 
 import com.example.onedaypiece.web.domain.member.Member;
 import com.example.onedaypiece.web.dto.response.token.TokenDto;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class LoginResponseDto {
-
+public class MemberTokenResponseDto {
     private String grantType;
     private String accessToken;
     private String refreshToken;
     private Long accessTokenExpiresIn;
     private MemberResponseDto userInfo;
 
-    public LoginResponseDto(TokenDto tokenDto, Member member, Long totalPoint){
+    public MemberTokenResponseDto(TokenDto tokenDto, Member member){
         this.grantType = tokenDto.getGrantType();
         this.accessToken = tokenDto.getAccessToken();
         this.refreshToken = tokenDto.getRefreshToken();
         this.accessTokenExpiresIn = tokenDto.getAccessTokenExpiresIn();
-        this.userInfo = new MemberResponseDto(member,totalPoint);
+        this.userInfo = new MemberResponseDto(member);
     }
+
 }

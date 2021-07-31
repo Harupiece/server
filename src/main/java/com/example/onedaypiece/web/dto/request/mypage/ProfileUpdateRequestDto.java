@@ -3,7 +3,9 @@ package com.example.onedaypiece.web.dto.request.mypage;
 
 import com.example.onedaypiece.exception.ApiRequestException;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor
 @Getter
 public class ProfileUpdateRequestDto {
 
@@ -11,7 +13,6 @@ public class ProfileUpdateRequestDto {
     private String profileImage;
 
     public ProfileUpdateRequestDto(String nickname, String profileImage){
-
 
         if(nickname.isEmpty()){
             throw new ApiRequestException("변경할 닉네임을 입력해주세요.");
