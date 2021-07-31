@@ -2,6 +2,8 @@ package com.example.onedaypiece.web.controller;
 
 import com.example.onedaypiece.service.AdminService;
 import com.example.onedaypiece.web.domain.challenge.Challenge;
+import com.example.onedaypiece.web.domain.challengeRecord.ChallengeRecord;
+import com.example.onedaypiece.web.dto.response.challenge.ChallengeResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -18,7 +20,7 @@ public class AdminController {
     private final AdminService adminService;
 
     @GetMapping("/api/admin/challenge")
-    public ResponseEntity<List<Challenge>> getAllChallengeByAdmin() {
+    public ResponseEntity<List<ChallengeResponseDto>> getAllChallengeByAdmin() {
         return ResponseEntity.ok().body(adminService.getAllChallengeByAdmin());
     }
 

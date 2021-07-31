@@ -2,6 +2,7 @@ package com.example.onedaypiece.util;
 
 import com.example.onedaypiece.web.domain.challenge.Challenge;
 import com.example.onedaypiece.web.domain.challenge.ChallengeRepository;
+import com.example.onedaypiece.web.domain.challengeRecord.ChallengeRecord;
 import com.example.onedaypiece.web.domain.challengeRecord.ChallengeRecordRepository;
 import com.example.onedaypiece.web.domain.posting.Posting;
 import com.example.onedaypiece.web.domain.posting.PostingRepository;
@@ -14,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -41,17 +43,18 @@ public class Scheduler {
     @Scheduled(cron = "01 00 00 * * *") // 초, 분, 시, 일, 월, 주 순서
     @Transactional
     public void challengeStatusUpdate() {
-        List<Challenge> challengeList = challengeRepository.findAllByChallengeStatusTrueAndChallengeProgressLessThan(3L);
+        List<ChallengeRecord> records = challengeRecordRepository.findAllByChallengeStatusTrueAndChallengeProgressLessThan();
 
-        for (Challenge challenge : challengeList) {
+        for (Challenge challenge : records.stream().map(ChallengeRecord::getChallenge).collect(Collectors.toList())) {
             LocalDateTime challengeStartDay = setTimeToZero(challenge.getChallengeStartDate());
-            LocalDateTime challengeEndDay = setTimeToZero(challenge.getChallengeEndDate());
+            LocalDateTime challengeEndDay = setTimeToZero(challenge.getChallengeEndDate().plusDays(1));
 
             // 오늘과 시작일이 같을 때
             if (challenge.getChallengeProgress() == 1L && challengeStartDay.isEqual(today)) {
                 challenge.setChallengeProgress(2L);
-            } else if (challenge.getChallengeProgress() == 2L) {
-                break;
+            } else if (challenge.getChallengeProgress() == 2L && challengeEndDay.isEqual(today)) {
+                challenge.setChallengeProgress(3L);
+
             }
         }
 
