@@ -13,7 +13,7 @@ public class MyPageEndResponseDto {
 
     private Long memberId;
     private String nickname;
-    private String profileImg;
+    private String profileImage;
     private Long point;
     private Long level;
     private List<EndResponseDto> challengeList;
@@ -21,7 +21,7 @@ public class MyPageEndResponseDto {
     public MyPageEndResponseDto(Member member, List<EndResponseDto> challengeList){
         this.memberId = member.getMemberId();
         this.nickname = member.getNickname();
-        this.profileImg = member.getProfileImg();
+        this.profileImage = member.getProfileImg();
         this.point = member.getPoint().getAcquiredPoint();
         this.challengeList = challengeList;
         this.level = calculLevel(member.getPoint().getAcquiredPoint());

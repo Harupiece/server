@@ -5,8 +5,6 @@ import com.example.onedaypiece.web.domain.certification.Certification;
 import com.example.onedaypiece.web.domain.certification.CertificationRepository;
 import com.example.onedaypiece.web.domain.member.Member;
 import com.example.onedaypiece.web.domain.member.MemberRepository;
-import com.example.onedaypiece.web.domain.point.Point;
-import com.example.onedaypiece.web.domain.point.PointRepository;
 import com.example.onedaypiece.web.domain.pointhistory.PointHistory;
 import com.example.onedaypiece.web.domain.pointhistory.PointHistoryRepository;
 import com.example.onedaypiece.web.domain.posting.Posting;
@@ -30,10 +28,9 @@ public class CertificationService {
 
 
     @Transactional
-    public Long createCertification(CertificationRequestDto certificationRequestDto, UserDetails userDetails) {
+    public Boolean createCertification(CertificationRequestDto certificationRequestDto, UserDetails userDetails) {
         Posting posting = getPosting(certificationRequestDto.getPostingId());
         Member member = getMemberByEmail(userDetails.getUsername());
-
 
         Long memberCount = certificationRequestDto.getTotalNumber(); // <- 참여인원 있음
 
@@ -47,29 +44,27 @@ public class CertificationService {
         //50% 이상
         checkMemberCountAndAddPoint(posting, member, memberCount, certification);
 
-        return certification.getCertificationId();
+
+        return posting.isPostingApproval();
     }
 
 
-    // 50퍼넘으면 승인해주는거
-    private void checkMemberCountAndAddPoint (Posting posting, Member member, Long count, Certification certification) {
+    // 인증 인원 50% 넘으면 승인
+    private void checkMemberCountAndAddPoint (Posting posting, Member member, Long memberCount, Certification certification) {
 
-        if(count /2 <= posting.getPostingCount()){
+        if(memberCount /2 <= posting.getPostingCount()){
             PointHistory pointHistory = new PointHistory(5L, certification);
             pointHistoryRepository.save(pointHistory);
             member.updatePoint(5L);
             posting.updateApproval();
             posting.updatePoint();
-
         }
     }
-
     private void duplicateCertification(Posting posting,Member member){
         if(certificationRepository.existsByPostingAndMember(posting,member)){
             throw new ApiRequestException("이미 인증한 게시물입니다!");
         }
     }
-
     private Member getMemberByEmail(String email) {
         return memberRepository.findByEmail(email)
                 .orElseThrow(() -> new ApiRequestException("등록된 유저가 없습니다."));
