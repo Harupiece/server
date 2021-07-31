@@ -72,7 +72,6 @@ public class Challenge extends Timestamped {
     public void putChallenge(PutChallengeRequestDto requestDto) {
         this.challengeTitle = requestDto.getChallengeTitle();
         this.challengeContent = requestDto.getChallengeContent();
-        this.categoryName = requestDto.getCategoryName();
         this.challengePassword = requestDto.getChallengePassword();
         this.challengeStartDate = requestDto.getChallengeStartDate();
         this.challengeEndDate = requestDto.getChallengeEndDate();

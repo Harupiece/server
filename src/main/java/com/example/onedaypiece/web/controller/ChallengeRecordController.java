@@ -8,8 +8,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
-
 @RequiredArgsConstructor
 @RestController
 public class ChallengeRecordController {
@@ -17,9 +15,10 @@ public class ChallengeRecordController {
     private final ChallengeRecordService challengeRecordService;
 
     @PostMapping("/api/member/challenge-request") // 챌린지 신청
-    public ResponseEntity<Map<String, String>> requestChallenge(@RequestBody ChallengeRecordRequestDto requestDto,
-                                                                @AuthenticationPrincipal UserDetails userDetails) {
-        return ResponseEntity.ok().body(challengeRecordService.requestChallenge(requestDto, userDetails));
+    public ResponseEntity<Void> requestChallenge(@RequestBody ChallengeRecordRequestDto requestDto,
+                                                 @AuthenticationPrincipal UserDetails userDetails) {
+        challengeRecordService.requestChallenge(requestDto, userDetails.getUsername());
+        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/api/member/challenge-give-up/{challengeId}") // 챌린지 포기

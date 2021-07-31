@@ -34,9 +34,8 @@ public class ChallengeController {
     }
 
     @PostMapping("/api/member/challenge") // 챌린지 등록
-    public ResponseEntity<Void> createChallenge(@RequestBody ChallengeRequestDto requestDto, @AuthenticationPrincipal UserDetails userDetails) {
-        challengeService.createChallenge(requestDto, userDetails.getUsername());
-        return ResponseEntity.ok().build();
+    public ResponseEntity<Long> createChallenge(@RequestBody ChallengeRequestDto requestDto, @AuthenticationPrincipal UserDetails userDetails) {
+        return ResponseEntity.ok().body(challengeService.createChallenge(requestDto, userDetails.getUsername()));
     }
 
     @PutMapping("/api/member/challenge") // 챌린지 수정

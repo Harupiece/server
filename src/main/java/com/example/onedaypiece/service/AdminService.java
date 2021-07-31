@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class AdminService {
@@ -21,5 +23,9 @@ public class AdminService {
                 .orElseThrow(() -> new ApiRequestException("존재하지 않는 챌린지입니다."));
         challengeRepository.deleteById(challengeId);
         challengeRecordRepository.deleteAllByChallenge(challenge);
+    }
+
+    public List<Challenge> getAllChallengeByAdmin() {
+        return challengeRepository.findAll();
     }
 }
