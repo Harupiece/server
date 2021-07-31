@@ -1,8 +1,6 @@
 package com.example.onedaypiece.web.dto.response.posting;
 
 import com.example.onedaypiece.web.domain.certification.Certification;
-import com.example.onedaypiece.web.domain.challenge.Challenge;
-import com.example.onedaypiece.web.domain.member.Member;
 import com.example.onedaypiece.web.domain.posting.Posting;
 import com.example.onedaypiece.web.dto.response.certification.CertificationResponseDto;
 import lombok.AllArgsConstructor;
@@ -11,7 +9,6 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 

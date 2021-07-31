@@ -1,7 +1,6 @@
 package com.example.onedaypiece.web.domain.posting;
 
 
-import com.example.onedaypiece.web.domain.certification.Certification;
 import com.example.onedaypiece.web.domain.challenge.Challenge;
 import com.example.onedaypiece.web.domain.common.Timestamped;
 import com.example.onedaypiece.web.domain.member.Member;
@@ -13,8 +12,6 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 
 @Getter
 @Entity

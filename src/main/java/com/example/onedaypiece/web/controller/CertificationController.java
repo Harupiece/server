@@ -1,7 +1,6 @@
 package com.example.onedaypiece.web.controller;
 
 import com.example.onedaypiece.service.CertificationService;
-import com.example.onedaypiece.web.domain.certification.Certification;
 import com.example.onedaypiece.web.dto.request.certification.CertificationRequestDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +21,7 @@ public class CertificationController {
     private final CertificationService certificationService;
 
     @PostMapping("")
-    public ResponseEntity<Long> createCertification(
+    public ResponseEntity<Boolean> createCertification(
             @RequestBody CertificationRequestDto certificationRequestDto,
             @AuthenticationPrincipal UserDetails userDetails){
 

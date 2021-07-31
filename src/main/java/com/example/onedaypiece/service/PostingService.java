@@ -39,13 +39,13 @@ public class PostingService {
      * 1.포스트 저장
      *
      */
-    public Long createPosting(PostingCreateRequestDto postingRequestDto, String email) {
+    public Long createPosting(PostingCreateRequestDto postingCreateRequestDto, String email) {
         Member member = getMemberByEmail(email);
-        Challenge challenge = getChallenge(postingRequestDto.getChallengeId());
-        Posting posting = Posting.createPosting(postingRequestDto,member,challenge);
+        Challenge challenge = getChallenge(postingCreateRequestDto.getChallengeId());
+        Posting posting = Posting.createPosting(postingCreateRequestDto,member,challenge);
 
         // 포스팅 검사
-        validatePosting();
+        validatePosting(challenge);
 
         postingRepository.save(posting);
 
@@ -63,20 +63,7 @@ public class PostingService {
 
         List<Posting> postingList =postingRepository.findPostingList(challengeId,pageable);
 
-        List<Long> postingId = postingList.stream().map(Posting::getPostingId).collect(Collectors.toList());
-
-
-        List<Certification> test = certificationRepository.findTest(postingId);
-
-        for (Certification certification : test) {
-            System.out.println("certification = " + certification.toString());
-        }
-
-
-
         List<Certification> certifications = certificationRepository.findAllByPosting(challengeId);
-
-
 
         return postingList
                 .stream()
@@ -97,7 +84,7 @@ public class PostingService {
         validateMember(member,posting.getMember().getMemberId());
 
         // 포스팅 검사
-        validatePosting();
+        validatePosting(posting.getChallenge());
 
         posting.updatePosting(postingUpdateRequestDto);
         return posting.getPostingId();
@@ -150,18 +137,12 @@ public class PostingService {
         }
     }
 
-    private void validatePosting(){
+    private void validatePosting(Challenge challenge){
 
-        LocalDateTime today = LocalDate.now().atStartOfDay();
         LocalDateTime now = LocalDateTime.now();
-        LocalDateTime tomorrow = today.plusDays(1);
 
-        if(now.isAfter(today)){
-            if(!now.isBefore(tomorrow)) {
-                throw new ApiRequestException("수정 가능한 날이 아닙니다.");
-            }
-        }else{
-            throw new ApiRequestException("챌린지 시작 후 등록할 수 있습니다!");
+        if(challenge.getChallengeStartDate().isAfter(now)){
+            throw new ApiRequestException("챌린지 시작 후에 게시글 등록 가능합니다.");
         }
     }
 
