@@ -3,7 +3,6 @@ package com.example.onedaypiece.web.domain.certification;
 
 import com.example.onedaypiece.web.domain.member.Member;
 import com.example.onedaypiece.web.domain.posting.Posting;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
