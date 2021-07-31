@@ -15,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -43,21 +42,22 @@ public class Scheduler {
     @Scheduled(cron = "01 00 00 * * *") // 초, 분, 시, 일, 월, 주 순서
     @Transactional
     public void challengeStatusUpdate() {
-        List<ChallengeRecord> records = challengeRecordRepository.findAllByChallengeStatusTrueAndChallengeProgressLessThan();
+        List<ChallengeRecord> records = challengeRecordRepository.findAllByChallengeStatusTrue();
 
-        for (Challenge challenge : records.stream().map(ChallengeRecord::getChallenge).collect(Collectors.toList())) {
+        for (ChallengeRecord record : records) {
+            Challenge challenge = record.getChallenge();
             LocalDateTime challengeStartDay = setTimeToZero(challenge.getChallengeStartDate());
             LocalDateTime challengeEndDay = setTimeToZero(challenge.getChallengeEndDate().plusDays(1));
 
-            // 오늘과 시작일이 같을 때
             if (challenge.getChallengeProgress() == 1L && challengeStartDay.isEqual(today)) {
                 challenge.setChallengeProgress(2L);
+                log.info(challenge.getChallengeId() + " Challenge has begun.");
             } else if (challenge.getChallengeProgress() == 2L && challengeEndDay.isEqual(today)) {
                 challenge.setChallengeProgress(3L);
-
+                record.setStatusFalse();
+                log.info(challenge.getChallengeId() + " Challenge is over.");
             }
         }
-
     }
 
     private LocalDateTime setTimeToZero(LocalDateTime time) {
