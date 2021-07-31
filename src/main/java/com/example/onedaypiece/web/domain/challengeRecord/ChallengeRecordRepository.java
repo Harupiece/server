@@ -1,15 +1,30 @@
 package com.example.onedaypiece.web.domain.challengeRecord;
 
+import com.example.onedaypiece.web.domain.challenge.CategoryName;
 import com.example.onedaypiece.web.domain.challenge.Challenge;
 import com.example.onedaypiece.web.domain.member.Member;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
 public interface ChallengeRecordRepository extends JpaRepository<ChallengeRecord, Long> {
-//    List<ChallengeRecord> findAllByChallengeRecordStatusTrue;
+
+    @Query("select c from ChallengeRecord c left join fetch c.challenge " +
+            "Where c.challengeRecordStatus = true " +
+            "and c.challenge.challengeStatus = true " +
+            "and c.challenge.challengeProgress = 1 " +
+            "ORDER BY c.modifiedAt DESC")
+    List<ChallengeRecord> findAllByChallengeRecordByCategoryName(CategoryName categoryName, Pageable pageable);
+
+    @Modifying
+    @Query("delete from ChallengeRecord c " +
+            "Where c.challenge.challengeStatus = true " +
+            "and c.challenge.challengeId = :challengeId " +
+            "and c.member = :member")
+    void deleteByChallengeIdAndMember(Long challengeId, Member member);
 
     @Query("select c from ChallengeRecord c Where c.challengeRecordStatus = true and c.challenge = :challenge")
     List<ChallengeRecord> findAllByChallenge(Challenge challenge);

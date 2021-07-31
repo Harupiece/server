@@ -22,8 +22,9 @@ public class ChallengeRecordController {
     }
 
     @DeleteMapping("/api/member/challenge-give-up/{challengeId}") // 챌린지 포기
-    public ResponseEntity<Void> giveUpChallenge(@PathVariable Long challengeId) {
-        challengeRecordService.giveUpChallenge(challengeId);
+    public ResponseEntity<Void> giveUpChallenge(@PathVariable Long challengeId,
+                                                @AuthenticationPrincipal UserDetails userDetails) {
+        challengeRecordService.giveUpChallenge(challengeId, userDetails.getUsername());
         return ResponseEntity.ok().build();
     }
 }
