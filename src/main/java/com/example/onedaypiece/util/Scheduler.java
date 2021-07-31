@@ -14,8 +14,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Set;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -43,21 +45,24 @@ public class Scheduler {
     @Scheduled(cron = "01 00 00 * * *") // 초, 분, 시, 일, 월, 주 순서
     @Transactional
     public void challengeStatusUpdate() {
-        List<ChallengeRecord> records = challengeRecordRepository.findAllByChallengeStatusTrueAndChallengeProgressLessThan();
+        List<ChallengeRecord> records = challengeRecordRepository.findAllByChallengeStatusTrue();
+        List<Challenge> updatedChallengeList = new ArrayList<>();
 
-        for (Challenge challenge : records.stream().map(ChallengeRecord::getChallenge).collect(Collectors.toList())) {
-            LocalDateTime challengeStartDay = setTimeToZero(challenge.getChallengeStartDate());
-            LocalDateTime challengeEndDay = setTimeToZero(challenge.getChallengeEndDate().plusDays(1));
+        for (ChallengeRecord record : records) {
+            Challenge challenge = record.getChallenge();
+            if (!updatedChallengeList.contains(challenge)) {
+                updatedChallengeList.add(challenge);
+                LocalDateTime challengeStartDay = setTimeToZero(challenge.getChallengeStartDate());
+                LocalDateTime challengeEndDay = setTimeToZero(challenge.getChallengeEndDate().plusDays(1));
 
-            // 오늘과 시작일이 같을 때
-            if (challenge.getChallengeProgress() == 1L && challengeStartDay.isEqual(today)) {
-                challenge.setChallengeProgress(2L);
-            } else if (challenge.getChallengeProgress() == 2L && challengeEndDay.isEqual(today)) {
-                challenge.setChallengeProgress(3L);
-
+                if (challenge.getChallengeProgress() == 1L && challengeStartDay.isEqual(today)) {
+                    challenge.setChallengeProgress(2L);
+                } else if (challenge.getChallengeProgress() == 2L && challengeEndDay.isEqual(today)) {
+                    challenge.setChallengeProgress(3L);
+                    record.setStatusFalse();
+                }
             }
         }
-
     }
 
     private LocalDateTime setTimeToZero(LocalDateTime time) {
