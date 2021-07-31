@@ -3,14 +3,14 @@ package com.example.onedaypiece.service;
 import com.example.onedaypiece.exception.ApiRequestException;
 import com.example.onedaypiece.security.TokenProvider;
 import com.example.onedaypiece.web.domain.challenge.Challenge;
-import com.example.onedaypiece.web.domain.challenge.ChallengeRepository;
 import com.example.onedaypiece.web.domain.challengeRecord.ChallengeRecord;
 import com.example.onedaypiece.web.domain.challengeRecord.ChallengeRecordRepository;
 import com.example.onedaypiece.web.domain.member.Member;
 import com.example.onedaypiece.web.domain.member.MemberRepository;
 import com.example.onedaypiece.web.domain.point.Point;
 import com.example.onedaypiece.web.domain.point.PointRepository;
-import com.example.onedaypiece.web.domain.posting.PostingRepository;
+import com.example.onedaypiece.web.domain.pointhistory.PointHistory;
+import com.example.onedaypiece.web.domain.pointhistory.PointHistoryRepository;
 import com.example.onedaypiece.web.domain.token.RefreshToken;
 import com.example.onedaypiece.web.domain.token.RefreshTokenRepository;
 import com.example.onedaypiece.web.dto.request.login.LoginRequestDto;
@@ -18,17 +18,20 @@ import com.example.onedaypiece.web.dto.request.mypage.PasswordUpdateRequestDto;
 import com.example.onedaypiece.web.dto.request.mypage.ProfileUpdateRequestDto;
 import com.example.onedaypiece.web.dto.request.signup.SignupRequestDto;
 import com.example.onedaypiece.web.dto.request.token.TokenRequestDto;
-import com.example.onedaypiece.web.dto.response.login.LoginResponseDto;
+import com.example.onedaypiece.web.dto.response.member.MemberTokenResponseDto;
+import com.example.onedaypiece.web.dto.response.mypage.histroy.HistoryResponseDto;
 import com.example.onedaypiece.web.dto.response.mypage.end.EndResponseDto;
 import com.example.onedaypiece.web.dto.response.mypage.end.MyPageEndResponseDto;
+import com.example.onedaypiece.web.dto.response.mypage.histroy.PointHistoryResponseDto;
 import com.example.onedaypiece.web.dto.response.mypage.proceed.MypageProceedResponseDto;
 import com.example.onedaypiece.web.dto.response.mypage.proceed.ProceedResponseDto;
 import com.example.onedaypiece.web.dto.response.mypage.scheduled.MyPageScheduledResponseDto;
 import com.example.onedaypiece.web.dto.response.mypage.scheduled.ScheduledResponseDto;
-import com.example.onedaypiece.web.dto.response.reload.ReloadResponseDto;
+import com.example.onedaypiece.web.dto.response.member.reload.ReloadResponseDto;
 import com.example.onedaypiece.web.dto.response.token.TokenDto;
 import lombok.RequiredArgsConstructor;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -40,7 +43,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class MemberService {
@@ -51,9 +54,8 @@ public class MemberService {
     private final TokenProvider tokenProvider;
     private final RefreshTokenRepository refreshTokenRepository;
     private final PointRepository pointRepository;
-    private final ChallengeRepository challengeRepository;
     private final ChallengeRecordRepository challengeRecordRepository;
-    private final PostingRepository postingRepository;
+    private PointHistoryRepository pointHistoryRepository;
 
     // 회원가입
     @Transactional
@@ -89,7 +91,7 @@ public class MemberService {
 
     // 로그인
     @Transactional
-    public LoginResponseDto loginMember(LoginRequestDto requestDto){
+    public MemberTokenResponseDto loginMember(LoginRequestDto requestDto){
         // 1. Login ID/PW 를 기반으로 AuthenticationToken 생성
         UsernamePasswordAuthenticationToken authenticationToken = requestDto.toAuthentication();
 
@@ -111,9 +113,7 @@ public class MemberService {
         Member member = memberRepository.findByEmail(requestDto.getEmail()).orElseThrow(
                 ()-> new ApiRequestException("로그인할떄 아이디가 존재하지않습니다.")
         );
-        Long pointSum = member.getPoint().getAcquiredPoint();
-
-        LoginResponseDto loginResponseDto = new LoginResponseDto(tokenDto, member, pointSum);
+        MemberTokenResponseDto loginResponseDto = new MemberTokenResponseDto(tokenDto, member);
         return loginResponseDto;
     }
 
@@ -123,14 +123,14 @@ public class MemberService {
         Member member = memberRepository.findByEmail(email).orElseThrow(
                 ()-> new ApiRequestException("새로고침중 찾을수없는 아이디")
         );
-        Long pointSum = member.getPoint().getAcquiredPoint();
-        return new ReloadResponseDto(member, pointSum);
+
+        return new ReloadResponseDto(member);
     }
 
 
     // 토큰 재발급
     @Transactional
-    public TokenDto reissue(TokenRequestDto tokenRequestDto) {
+    public MemberTokenResponseDto reissue(TokenRequestDto tokenRequestDto) {
         // 1. Refresh Token 검증
         if (!tokenProvider.validateToken(tokenRequestDto.getRefreshToken())) {
             throw new RuntimeException("Refresh Token 이 유효하지 않습니다.");
@@ -138,6 +138,11 @@ public class MemberService {
 
         // 2. Access Token 에서 Member ID 가져오기
         Authentication authentication = tokenProvider.getAuthentication(tokenRequestDto.getAccessToken());
+
+        Member member = memberRepository.findByEmail(authentication.getName()).orElseThrow(
+                ()-> new ApiRequestException("Access Token에서 유저정보가져오거 실패")
+        );
+
 
         // 3. 저장소에서 Member ID 를 기반으로 Refresh Token 값 가져옴
         RefreshToken refreshToken = refreshTokenRepository.findByKey(authentication.getName())
@@ -155,8 +160,9 @@ public class MemberService {
         RefreshToken newRefreshToken = refreshToken.updateValue(tokenDto.getRefreshToken());
         refreshTokenRepository.save(newRefreshToken);
 
+        MemberTokenResponseDto reIssueResponseDto = new MemberTokenResponseDto(tokenDto, member);
         // 토큰 발급
-        return tokenDto;
+        return reIssueResponseDto;
     }
 
 
@@ -240,16 +246,34 @@ public class MemberService {
     }
 
     // 마이 페이지 프로필 수정
+
     @Transactional
     public void updateProfile(ProfileUpdateRequestDto requestDto, String email){
+
         Member member = memberRepository.findByEmail(email).orElseThrow(
                 ()-> new ApiRequestException("마이페이지수정에서 멤버 수정하는 아이디찾는거실패")
         );
+        log.info("프로필 들어오는지 확인: {}", requestDto.getProfileImage());
 
-        if(member.getNickname().equals(requestDto.getNickname())){
-            throw new ApiRequestException("현재 닉네임과 변경할 닉네임과 동일합니다.");
-        }
         member.updateProfile(requestDto);
+    }
+
+
+    // 마이 페이지 히스토리
+    @Transactional
+    public HistoryResponseDto getHistory(String email){
+        Member member = memberRepository.findByEmail(email).orElseThrow(
+                ()-> new ApiRequestException("마이페이지 히스토리에서 멤버 아이디찾는거실패")
+        );
+
+        List<PointHistory> targetList = pointHistoryRepository.findAllByMember(member);
+
+        List<PointHistoryResponseDto> pointHistoryList = targetList.stream()
+                .map(pointHistory -> new PointHistoryResponseDto(pointHistory)).collect(Collectors.toList());
+
+
+        // 순위추가하면 여기에 파라미터로 순위 추가해줘야함
+        return new HistoryResponseDto(member, pointHistoryList);
     }
 }
 

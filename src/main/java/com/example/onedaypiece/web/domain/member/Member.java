@@ -33,7 +33,8 @@ public class Member extends Timestamped {
     @Enumerated(value = EnumType.STRING)
     private MemberRole role;
 
-    @Column
+
+    @Column(columnDefinition="TEXT")
     private String profileImg;
 
     @Column(name = "member_status")

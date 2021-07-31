@@ -12,6 +12,4 @@ public class PostingCreateRequestDto {
     private String postingContent;
     private Long memberId;
     private Long challengeId;
-
-
 }

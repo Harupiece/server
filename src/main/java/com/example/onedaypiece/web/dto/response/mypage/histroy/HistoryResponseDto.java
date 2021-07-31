@@ -1,26 +1,33 @@
-package com.example.onedaypiece.web.dto.response.login;
+package com.example.onedaypiece.web.dto.response.mypage.histroy;
 
 
 import com.example.onedaypiece.web.domain.member.Member;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @NoArgsConstructor
 @Getter
-public class MemberResponseDto {
+public class HistoryResponseDto {
+
     private Long memberId;
     private String nickname;
     private String profileImg;
     private Long point;
     private Long memberLevel; // 멤버 레벨 계산해서하기
+    private List<PointHistoryResponseDto> pointHistoryList;
 
-    public MemberResponseDto(Member member, Long memberPoint){
+    public HistoryResponseDto(Member member, List<PointHistoryResponseDto> pointHistoryList){
         this.memberId = member.getMemberId();
         this.nickname = member.getNickname();
         this.profileImg = member.getProfileImg();
-        this.point = memberPoint;
-        this.memberLevel = calculLevel(memberPoint);
+        this.point = member.getPoint().getAcquiredPoint();
+        this.memberLevel = calculLevel(member.getPoint().getAcquiredPoint());
+        // 포인트히스토리
+        this.pointHistoryList = pointHistoryList;
     }
+
     // 699면 5레벨
     public long calculLevel(Long memberPoint){
         long level = 1;
@@ -95,4 +102,6 @@ public class MemberResponseDto {
         }
         return level;
     }
+
+
 }
