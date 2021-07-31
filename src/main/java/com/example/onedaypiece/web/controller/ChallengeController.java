@@ -44,7 +44,7 @@ public class ChallengeController {
         return ResponseEntity.ok().build();
     }
 
-    @DeleteMapping("/api/member/challenge/{challengeId}") // 챌린지 삭제 (유저에겐 삭제, 관리자 입장에선 상태 true->false)
+    @DeleteMapping("/api/member/challenge/{challengeId}") // 챌린지 취소 (유저에겐 삭제, 관리자 입장에선 상태 true->false)
     public ResponseEntity<Void> deleteChallenge(@PathVariable Long challengeId, @AuthenticationPrincipal UserDetails userDetails) {
         challengeService.deleteChallenge(challengeId, userDetails.getUsername());
         return ResponseEntity.ok().build();
