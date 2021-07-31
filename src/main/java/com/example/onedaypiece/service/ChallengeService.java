@@ -16,9 +16,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -36,11 +34,11 @@ public class ChallengeService {
 
     public ChallengeResponseDto getChallengeDetail(Long challengeId) {
         Challenge challenge = ChallengeChecker(challengeId);
-        return new ChallengeResponseDto(challenge,
-                challengeRecordRepository.findAllByChallengeId(challengeId)
-                        .stream()
-                        .map(c -> c.getMember().getMemberId())
-                        .collect(Collectors.toList()));
+        List<Long> memberList = challengeRecordRepository.findAllByChallengeId(challengeId)
+                .stream()
+                .map(c -> c.getMember().getMemberId())
+                .collect(Collectors.toList());
+        return new ChallengeResponseDto(challenge, memberList);
     }
 
     @Transactional
@@ -103,18 +101,18 @@ public class ChallengeService {
 
         final int categorySize = 3;
 
-        List<Challenge> challengeList = challengeRepository
-                .findAllByCategoryNameOrderByModifiedAtDescListed(categoryName, PageRequest.of(0, categorySize));
+        List<ChallengeRecord> challengeRecordList = challengeRecordRepository
+                .findAllByChallengeRecordByCategoryName(categoryName, PageRequest.of(0, categorySize));
 
-        List<ChallengeSliderSourceResponseDto> returnList;
-
-        List<ChallengeRecord> allByMember = challengeRecordRepository.findAllByChallengeList(challengeList);
-        returnList = challengeList
+        List<Challenge> challengeList = challengeRecordList
                 .stream()
-                .map(challenge -> new ChallengeSliderSourceResponseDto(challenge, allByMember))
+                .map(ChallengeRecord::getChallenge)
                 .collect(Collectors.toList());
 
-        return returnList;
+        return challengeList
+                .stream()
+                .map(challenge -> new ChallengeSliderSourceResponseDto(challenge, challengeRecordList))
+                .collect(Collectors.toList());
     }
 
     private void sliderListUpdate(ChallengeGuestMainResponseDto mainResponseDto, String email) {
