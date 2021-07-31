@@ -60,7 +60,6 @@ public class MemberController {
     // 마이 페이지 수정 프로필 + 닉네임
     @PutMapping("/mypage/profile")
     public ResponseEntity<Void> updateMyPageInfoProfile(@RequestBody ProfileUpdateRequestDto requestDto, @AuthenticationPrincipal UserDetails userDetails){
-        System.out.println("수정시 프로필이미지: "+requestDto.getProfileImage());
         memberService.updateProfile(requestDto, userDetails.getUsername());
         return ResponseEntity.ok().build();
     }
