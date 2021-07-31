@@ -15,9 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -25,7 +23,6 @@ import java.util.Set;
 public class Scheduler {
 
     final PostingRepository postingRepository;
-    private final ChallengeRepository challengeRepository;
     private final ChallengeRecordRepository challengeRecordRepository;
 
     private final LocalDateTime today = LocalDate.now().atStartOfDay();
