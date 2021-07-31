@@ -14,7 +14,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -43,19 +46,21 @@ public class Scheduler {
     @Transactional
     public void challengeStatusUpdate() {
         List<ChallengeRecord> records = challengeRecordRepository.findAllByChallengeStatusTrue();
+        List<Challenge> updatedChallengeList = new ArrayList<>();
 
         for (ChallengeRecord record : records) {
             Challenge challenge = record.getChallenge();
-            LocalDateTime challengeStartDay = setTimeToZero(challenge.getChallengeStartDate());
-            LocalDateTime challengeEndDay = setTimeToZero(challenge.getChallengeEndDate().plusDays(1));
+            if (!updatedChallengeList.contains(challenge)) {
+                updatedChallengeList.add(challenge);
+                LocalDateTime challengeStartDay = setTimeToZero(challenge.getChallengeStartDate());
+                LocalDateTime challengeEndDay = setTimeToZero(challenge.getChallengeEndDate().plusDays(1));
 
-            if (challenge.getChallengeProgress() == 1L && challengeStartDay.isEqual(today)) {
-                challenge.setChallengeProgress(2L);
-                log.info(challenge.getChallengeId() + " Challenge has begun.");
-            } else if (challenge.getChallengeProgress() == 2L && challengeEndDay.isEqual(today)) {
-                challenge.setChallengeProgress(3L);
-                record.setStatusFalse();
-                log.info(challenge.getChallengeId() + " Challenge is over.");
+                if (challenge.getChallengeProgress() == 1L && challengeStartDay.isEqual(today)) {
+                    challenge.setChallengeProgress(2L);
+                } else if (challenge.getChallengeProgress() == 2L && challengeEndDay.isEqual(today)) {
+                    challenge.setChallengeProgress(3L);
+                    record.setStatusFalse();
+                }
             }
         }
     }
