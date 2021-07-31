@@ -12,12 +12,10 @@ import com.example.onedaypiece.web.dto.request.challenge.ChallengeRequestDto;
 import com.example.onedaypiece.web.dto.request.challenge.PutChallengeRequestDto;
 import com.example.onedaypiece.web.dto.response.challenge.*;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -39,10 +37,10 @@ public class ChallengeService {
         Challenge challenge = challengeRepository.findById(challengeId).orElseThrow(
                 () -> new ApiRequestException("존재하지 않는 챌린지id입니다"));
 
-        challenge = challengeProgressChecker(challenge);
+//        challenge = challengeProgressChecker(challenge);
 
         List<Long> challengeMember = new ArrayList<>();
-        challengeRecordRepository.findAllByChallenge(challenge).forEach(
+        challengeRecordRepository.findAllByChallengeId(challengeId).forEach(
                 value -> challengeMember.add(value.getMember().getMemberId()));
 
         return new ChallengeResponseDto(challenge, challengeMember);
@@ -57,7 +55,6 @@ public class ChallengeService {
             throw new IllegalArgumentException("작성자가 아닙니다.");
         }
 
-        LocalDateTime currentLocalDateTime = LocalDateTime.now();
         if (currentLocalDateTime.isBefore(challenge.getChallengeStartDate())) {
             challenge.setChallengeStatus(false);
             challenge.setChallengeProgress(3L);
@@ -72,9 +69,6 @@ public class ChallengeService {
     public void createChallenge(ChallengeRequestDto requestDto, String email) {
         Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new ApiRequestException("존재하지 않는 유저입니다."));
-
-        challengeRepository.findAllByMember(member)
-                .forEach(challenge -> challengeRepository.save(challengeProgressChecker(challenge)));
 
         challengeRepository.findAllByMember(member)
                 .stream()
@@ -100,7 +94,7 @@ public class ChallengeService {
                 .orElseThrow(() -> new ApiRequestException("존재하지 않는 유저입니다."));
         Challenge challenge = challengeRepository.findByChallengeIdAndMember(requestDto.getChallengeId(), member)
                 .orElseThrow(() -> new ApiRequestException("존재하지 않는 챌린지입니다."));
-        challenge = challengeProgressChecker(challenge);
+//        challenge = challengeProgressChecker(challenge);
         if (!challenge.getChallengeProgress().equals(1L)) {
             throw new ApiRequestException("이미 시작되거나 종료된 챌린지입니다.");
         }
@@ -130,182 +124,84 @@ public class ChallengeService {
         challenge.putChallenge(requestDto);
     }
 
-    @Transactional
-    public void deleteChallengeByAdmin(Long challengeId) {
-        Challenge challenge = challengeRepository.findById(challengeId)
-                .orElseThrow(() -> new ApiRequestException("존재하지 않는 챌린지입니다."));
-        challengeRepository.deleteById(challengeId);
-        challengeRecordRepository.deleteAllByChallenge(challenge);
-    }
-
     // Guest 메인 페이지
     public ChallengeGuestMainResponseDto getGuestMainChallengeDetail() {
         ChallengeGuestMainResponseDto mainRequestDto = new ChallengeGuestMainResponseDto();
 
-        sliderListUpdate(mainRequestDto, 0);
+        sliderListUpdate(mainRequestDto, "");
 
         categoryCollector(EXERCISE).forEach(mainRequestDto::addExercise);
         categoryCollector(LIVINGHABITS).forEach(mainRequestDto::addLivingHabits);
         categoryCollector(NODRINKNOSMOKE).forEach(mainRequestDto::addNoDrinkNoSmoke);
         return mainRequestDto;
     }
+
     // Member 메인 페이지
-
     public ChallengeMemberMainResponseDto getMemberMainChallengeDetail(String userEmail) {
-        ChallengeMemberMainResponseDto mainRequestDto = new ChallengeMemberMainResponseDto();
-        Member member = memberRepository.findByEmail(userEmail)
-                .orElseThrow(() -> new ApiRequestException("존재하지 않는 유저입니다."));
+        ChallengeMemberMainResponseDto mainResponseDto = new ChallengeMemberMainResponseDto();
 
-        List<ChallengeRecord> myChallengeList = challengeRecordRepository.findAllByMember(member);
+        List<ChallengeRecord> allByMember = challengeRecordRepository.findAllByMemberEmail(userEmail);
 
-        System.out.print("myChallengeIdList = ");
-        for (ChallengeRecord mine : myChallengeList) {
-            System.out.print(mine.getChallenge().getChallengeId() + ", ");
-            List<Long> myChallengeMemberList = new ArrayList<>();
-            challengeRecordRepository.findAllByChallenge(mine.getChallenge()).forEach(
-                    record -> myChallengeMemberList.add(record.getMember().getMemberId()));
-            mainRequestDto.addSlider(new ChallengeSliderSourceResponseDto(mine.getChallenge(), myChallengeMemberList));
-        }
-        System.out.println(" ");
-        final int userSliderSize = myChallengeList.size();
+        // 유저가 참가한 챌린지 추가
+        mainResponseDto.addSlider(allByMember
+                .stream()
+                .map(o -> (new ChallengeSliderSourceResponseDto(o.getChallenge(), allByMember)))
+                .collect(Collectors.toList()));
 
-        sliderListUpdate(mainRequestDto, userSliderSize);
+        sliderListUpdate(mainResponseDto, userEmail);
 
-        categoryCollector(EXERCISE).forEach(mainRequestDto::addExercise);
-        categoryCollector(LIVINGHABITS).forEach(mainRequestDto::addLivingHabits);
-        categoryCollector(NODRINKNOSMOKE).forEach(mainRequestDto::addNoDrinkNoSmoke);
-        return mainRequestDto;
+        categoryCollector(EXERCISE).forEach(mainResponseDto::addExercise);
+        categoryCollector(LIVINGHABITS).forEach(mainResponseDto::addLivingHabits);
+        categoryCollector(NODRINKNOSMOKE).forEach(mainResponseDto::addNoDrinkNoSmoke);
+        return mainResponseDto;
     }
 
     private List<ChallengeSliderSourceResponseDto> categoryCollector(CategoryName categoryName) {
 
         final int categorySize = 3;
 
-        List<ChallengeSliderSourceResponseDto> returnList = new ArrayList<>();
+        List<Challenge> challengeList = challengeRepository
+                .findAllByCategoryNameOrderByModifiedAtDescListed(categoryName, PageRequest.of(0, categorySize));
 
-        challengeRepository.findAllByCategoryNameOrderByModifiedAtDescListed(categoryName)
-                .forEach(challenge -> challengeRepository.save(challengeProgressChecker(challenge)));
+        List<ChallengeSliderSourceResponseDto> returnList;
 
-        Page<Challenge> pagedChallengeList = challengeRepository
-                .findAllByCategoryNameOrderByModifiedAtDescPaged(categoryName, PageRequest.of(0, categorySize));
-
-        for (Challenge challenge : pagedChallengeList) {
-            List<Long> memberIdList = new ArrayList<>();
-            challengeRecordRepository.findAllByChallenge(challenge)
-                    .forEach(record -> memberIdList.add(record.getMember().getMemberId()));
-            returnList.add(new ChallengeSliderSourceResponseDto(challenge, memberIdList));
-        }
+        List<ChallengeRecord> allByMember = challengeRecordRepository.findAllByChallengeList(challengeList);
+        returnList = challengeList
+                .stream()
+                .map(challenge -> new ChallengeSliderSourceResponseDto(challenge, allByMember))
+                .collect(Collectors.toList());
 
         return returnList;
     }
 
-    private void sliderListUpdate(ChallengeGuestMainResponseDto mainResponseDto, int minusSize) {
-        final int sliderSize = 5;
+    private void sliderListUpdate(ChallengeGuestMainResponseDto mainResponseDto, String email) {
+        List<ChallengeRecord> recordList = challengeRecordRepository
+                .findAllStatusTrueAndProgressNotStartedYet(email, PageRequest.of(0, 5 - mainResponseDto.getSlider().size()));
 
-        HashSet<Long> currentChallengeIdList = new HashSet<>();
-
-        List<ChallengeRecord> recordList = challengeRecordRepository.findAllStatusTrueAndProgressNotStartedYet();
-        recordList.forEach(
-                record -> currentChallengeIdList.add(record.getChallenge().getChallengeId()));
-
-        Map<Long, Integer> popularList = new HashMap<>();
-
-        // 여긴 시간복잡도가 N^2, 인기리스트 솎아내는 과정
-        for (Long challengeId : currentChallengeIdList) {
-            if (!popularList.containsKey(challengeId)) {
-                popularList.put(challengeId, 0);
-            }
-            recordList.stream().filter(record -> record.getChallenge().getChallengeId().equals(challengeId)).forEach(
-                    record -> popularList.put(challengeId, popularList.get(challengeId) + 1));
-        }
-
-        List<Map.Entry<Long, Integer>> beSortedList = new LinkedList<>(popularList.entrySet());
-
-        Collections.sort(beSortedList, (o1, o2) -> {
-            if (o1.getValue() > o2.getValue()) {
-                return -1;
-            } else if (o1.getValue() < o2.getValue()) {
-                return 1;
-            }
-            return o1.getKey().compareTo(o2.getKey());
-        });
-
-        Map<Long, Integer> sortedMap = beSortedList
+        List<ChallengeSliderSourceResponseDto> sliderList = recordList
                 .stream()
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (a, b) -> b, LinkedHashMap::new));
+                .map(record -> (new ChallengeSliderSourceResponseDto(record.getChallenge(), recordList)))
+                .collect(Collectors.toList());
 
-        System.out.print("mainRequestDto의 Id 리스트 : ");
-        for (Long aLong : mainResponseDto.sliderIdList()) {
-            System.out.print(aLong + ", ");
-        }
-        System.out.println();
-
-        for (Long id : sortedMap.keySet()) {
-            Challenge challenge = challengeRepository.getById(id);
-
-            List<Long> memberIdList = new ArrayList<>();
-
-            challengeRecordRepository.findAllByChallenge(challenge).forEach(
-                    record -> memberIdList.add(record.getMember().getMemberId()));
-
-            ChallengeSliderSourceResponseDto sliderRequestDto =
-                    new ChallengeSliderSourceResponseDto(challenge, memberIdList);
-
-            System.out.println(id);
-            if (!mainResponseDto.sliderIdList().contains(id)) {
-                mainResponseDto.addSlider(sliderRequestDto);
-                System.out.println(id + " / "+ sliderRequestDto.getCategoryName());
-            }
-            if (mainResponseDto.getSlider().size() >= sliderSize - minusSize) {
-                break;
-            }
-        }
+        mainResponseDto.addSlider(sliderList);
     }
 
     public List<Challenge> getAllChallenge() {
         return challengeRepository.findAll();
     }
 
-    public ChallengeListResponseDto getChallengeByCategoryName(CategoryName categoryName, int page) {
-        final int pageSize = 6;
-
-        Page<Challenge> challengeList = challengeRepository.
-                findAllByCategoryNameOrderByModifiedAtDescPaged(categoryName, PageRequest.of(page - 1, pageSize));
-        return listResponseDtoSource(challengeList);
-    }
-
-    public ChallengeListResponseDto getChallengeSearchResult(String searchWords, int page) {
-        final int searchPageSize = 6;
-
-        Page<Challenge> challengeList = challengeRepository.
-                findAllByWordsAndChallengeStatusTrueOrderByModifiedAtDesc(
-                        searchWords.trim(), PageRequest.of(page - 1, searchPageSize));
-        return listResponseDtoSource(challengeList);
-    }
-
-    private ChallengeListResponseDto listResponseDtoSource(Page<Challenge> challengeList) {
-        ChallengeListResponseDto listResponseDto = new ChallengeListResponseDto();
-        for (Challenge challenge : challengeList) {
-            List<Long> memberIdList = new ArrayList<>();
-            challengeRecordRepository.findAllByChallenge(challenge).forEach(
-                    record -> memberIdList.add(record.getMember().getMemberId()));
-            listResponseDto.addResult(new ChallengeResponseDto(challenge, memberIdList));
-        }
-        return listResponseDto;
-    }
-
-    @Transactional
-    Challenge challengeProgressChecker(Challenge challenge) {
-        if (currentLocalDateTime.isBefore(challenge.getChallengeStartDate())) {
-            challenge.setChallengeProgress(1L);
-        } else if (currentLocalDateTime.isBefore(challenge.getChallengeEndDate())) {
-            challenge.setChallengeProgress(2L);
-        } else {
-            challenge.setChallengeProgress(3L);
-            challengeRecordRepository.findAllByChallenge(challenge)
-                    .forEach(ChallengeRecord::setChallengeRecordStatusToFalse);
-        }
-
-        return challenge;
-    }
+//    @Transactional
+//    Challenge challengeProgressChecker(Challenge challenge) {
+//        if (currentLocalDateTime.isBefore(challenge.getChallengeStartDate())) {
+//            challenge.setChallengeProgress(1L);
+//        } else if (currentLocalDateTime.isBefore(challenge.getChallengeEndDate())) {
+//            challenge.setChallengeProgress(2L);
+//        } else {
+//            challenge.setChallengeProgress(3L);
+//            challengeRecordRepository.findAllByChallengeId(challenge.getChallengeId())
+//                    .forEach(ChallengeRecord::setChallengeRecordStatusToFalse);
+//        }
+//
+//        return challenge;
+//    }
 }

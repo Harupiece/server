@@ -5,23 +5,25 @@ import com.example.onedaypiece.web.domain.common.Timestamped;
 import com.example.onedaypiece.web.domain.member.Member;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import javax.persistence.*;
 
 @Getter
 @Entity
 @NoArgsConstructor
+@ToString
 @Table(indexes = {@Index(name = "idx_record_status", columnList = "challenge_record_status")})
 public class ChallengeRecord extends Timestamped {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     private Long challengeRecordId;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "challenge_id")
     private Challenge challenge;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
 

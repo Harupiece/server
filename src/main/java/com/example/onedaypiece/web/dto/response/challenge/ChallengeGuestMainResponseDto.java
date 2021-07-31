@@ -9,30 +9,24 @@ import java.util.*;
 @Getter
 public class ChallengeGuestMainResponseDto {
 
-    private final Set<ChallengeSliderSourceResponseDto> slider = new LinkedHashSet<>();
+    private final List<ChallengeSliderSourceResponseDto> slider = new ArrayList<>();
     private final List<ChallengeSliderSourceResponseDto> exercise = new ArrayList<>();
-    private final List<ChallengeSliderSourceResponseDto> livingHabits = new ArrayList<>();
-    private final List<ChallengeSliderSourceResponseDto> noDrinkNoSmoke = new ArrayList<>();
-
-    public void addSlider(ChallengeSliderSourceResponseDto responseDto) {
-        slider.add(responseDto);
-    }
+    private final List<ChallengeSliderSourceResponseDto> livinghabits = new ArrayList<>();
+    private final List<ChallengeSliderSourceResponseDto> nodrinknosmoke = new ArrayList<>();
 
     public void addExercise(ChallengeSliderSourceResponseDto responseDto) {
         exercise.add(responseDto);
     }
 
     public void addLivingHabits(ChallengeSliderSourceResponseDto responseDto) {
-        livingHabits.add(responseDto);
+        livinghabits.add(responseDto);
     }
 
     public void addNoDrinkNoSmoke(ChallengeSliderSourceResponseDto responseDto) {
-        noDrinkNoSmoke.add(responseDto);
+        nodrinknosmoke.add(responseDto);
     }
 
-    public Set<Long> sliderIdList() {
-        Set<Long> sliderIdList = new HashSet<>();
-        slider.forEach(content -> sliderIdList.add(content.getChallengeId()));
-        return sliderIdList;
+    public void addSlider(List<ChallengeSliderSourceResponseDto> sliderSource) {
+        this.slider.addAll(sliderSource);
     }
 }
