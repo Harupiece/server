@@ -52,7 +52,6 @@ public class MemberController {
     // 마이 페이지 수정 비밀번호변경만
     @PutMapping("/mypage/password")
     public ResponseEntity<Void> updateMyPageInfoPassword(@RequestBody PasswordUpdateRequestDto requestDto, @AuthenticationPrincipal UserDetails userDetails){
-
         memberService.updatePassword(requestDto, userDetails.getUsername());
         return ResponseEntity.ok().build();
     }
@@ -70,7 +69,6 @@ public class MemberController {
     // 현재 진해중인거
     @GetMapping("/mypage/proceed")
     public ResponseEntity<MypageProceedResponseDto> getprocedd(@AuthenticationPrincipal UserDetails userDetails){
-
         MypageProceedResponseDto responseDto = memberService.getProceed(userDetails.getUsername());
         return ResponseEntity.ok().body(responseDto);
     }
@@ -78,7 +76,6 @@ public class MemberController {
     // 예정 중인거
     @GetMapping("/mypage")
     public ResponseEntity<MyPageScheduledResponseDto> getscheduled(@AuthenticationPrincipal UserDetails userDetails){
-
         MyPageScheduledResponseDto responseDto = memberService.getSchduled(userDetails.getUsername());
         return ResponseEntity.ok().body(responseDto);
     }
@@ -86,7 +83,6 @@ public class MemberController {
     // 끝난거
     @GetMapping("/mypage/end")
     public ResponseEntity<MyPageEndResponseDto> getEnd(@AuthenticationPrincipal UserDetails userDetails){
-
         MyPageEndResponseDto responseDto = memberService.getEnd(userDetails.getUsername());
         return ResponseEntity.ok().body(responseDto);
     }
@@ -94,7 +90,6 @@ public class MemberController {
     // 마이페이지 히스토리 ... 순위하면 HistoryResponseDto에 순위추가하고
     @GetMapping("/mypage/history")
     public ResponseEntity<HistoryResponseDto> getHistory(@AuthenticationPrincipal UserDetails userDetails){
-
         HistoryResponseDto responseDto = memberService.getHistory(userDetails.getUsername());
          return ResponseEntity.ok().body(responseDto);
     }
