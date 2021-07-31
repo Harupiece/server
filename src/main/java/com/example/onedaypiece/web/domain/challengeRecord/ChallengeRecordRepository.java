@@ -12,19 +12,27 @@ import java.util.List;
 
 public interface ChallengeRecordRepository extends JpaRepository<ChallengeRecord, Long> {
 
+    @Query("select c from ChallengeRecord c join fetch c.challenge " +
+            "where c.challengeRecordStatus = true " +
+            "and c.challenge.challengeStatus = true " +
+            "and c.challenge.challengeProgress < 3")
+    List<ChallengeRecord> findAllByChallengeStatusTrueAndChallengeProgressLessThan();
+
     @Query("select c from ChallengeRecord c left join fetch c.challenge " +
-            "Where c.challengeRecordStatus = true " +
+            "where c.challengeRecordStatus = true " +
             "and c.challenge.challengeStatus = true " +
             "and c.challenge.challengeProgress = 1 " +
-            "ORDER BY c.modifiedAt DESC")
+            "order by c.modifiedAt desc")
     List<ChallengeRecord> findAllByChallengeRecordByCategoryName(CategoryName categoryName, Pageable pageable);
 
-    @Modifying
-    @Query("delete from ChallengeRecord c " +
-            "Where c.challenge.challengeStatus = true " +
-            "and c.challenge.challengeId = :challengeId " +
-            "and c.member = :member")
-    void deleteByChallengeIdAndMember(Long challengeId, Member member);
+//    @Modifying
+//    @Query("delete from ChallengeRecord c " +
+//            "Where c.challenge.challengeStatus = true " +
+//            "and c.challenge.challengeId = :challengeId " +
+//            "and c.member = :member")
+//    void deleteByChallengeIdAndMember(Long challengeId, Member member);
+
+    void deleteByChallengeAndMember(Challenge challenge, Member member);
 
     @Query("select c from ChallengeRecord c Where c.challengeRecordStatus = true and c.challenge = :challenge")
     List<ChallengeRecord> findAllByChallenge(Challenge challenge);

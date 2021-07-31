@@ -39,6 +39,8 @@ public class ChallengeRecordService {
     public void giveUpChallenge(Long challengeId, String email) {
         Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new ApiRequestException("존재하지 않는 유저입니다."));
-        challengeRecordRepository.deleteByChallengeIdAndMember(challengeId, member);
+        Challenge challenge = challengeRepository.findById(challengeId)
+                .orElseThrow(() -> new ApiRequestException("존재하지 않은 챌린지입니다."));
+        challengeRecordRepository.deleteByChallengeAndMember(challenge, member);
     }
 }

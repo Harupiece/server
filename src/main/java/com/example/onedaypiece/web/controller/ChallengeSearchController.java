@@ -3,11 +3,14 @@ package com.example.onedaypiece.web.controller;
 import com.example.onedaypiece.service.ChallengeSearchService;
 import com.example.onedaypiece.web.domain.challenge.CategoryName;
 import com.example.onedaypiece.web.dto.response.challenge.ChallengeListResponseDto;
+import com.example.onedaypiece.web.dto.response.search.ChallengeTitleSearchResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
@@ -25,5 +28,10 @@ public class ChallengeSearchController {
     public ResponseEntity<ChallengeListResponseDto> getChallengeSearchResult(@PathVariable int page,
                                                                              @PathVariable String searchWords) {
         return ResponseEntity.ok().body(challengeSearchService.getChallengeSearchResult(searchWords, page));
+    }
+
+    @GetMapping("/api/guest/challenge-title/{progress}")
+    public ResponseEntity<List<ChallengeTitleSearchResponseDto>> getChallengeTitle(@PathVariable Long progress) {
+        return ResponseEntity.ok().body(challengeSearchService.getChallengeTitle(progress));
     }
 }
