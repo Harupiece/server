@@ -40,6 +40,11 @@ public class SignupRequestDto {
             throw new ApiRequestException("비밀번호가 서로같지않습니다.");
         }
 
+        if(nickname.isEmpty()){
+            throw new ApiRequestException("닉네임을 입력해주세요");
+        }
+
+
         this.email = email;
         this.nickname = nickname;
         this.password = password;

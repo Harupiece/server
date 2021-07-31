@@ -2,7 +2,7 @@ package com.example.onedaypiece.web.domain.member;
 
 import com.example.onedaypiece.web.domain.common.Timestamped;
 import com.example.onedaypiece.web.domain.point.Point;
-import com.example.onedaypiece.web.dto.request.mypage.MyPageRequestDto;
+import com.example.onedaypiece.web.dto.request.mypage.ProfileUpdateRequestDto;
 import com.example.onedaypiece.web.dto.request.signup.SignupRequestDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -65,11 +65,15 @@ public class Member extends Timestamped {
         this.role = MemberRole.MEMBER;
     }
 
-    // 마이페이지 수정
-    public void update(MyPageRequestDto requestDto){
-        this.password = requestDto.getPassword();
+    // 마이페이지 비밀번호 수정
+    public void updatePassword(String newpassword){
+        this.password = newpassword;
+    }
+
+    // 마이페이지 프로필 수정
+    public void updateProfile(ProfileUpdateRequestDto requestDto){
         this.nickname = requestDto.getNickname();
-        this.profileImg = requestDto.getProfileImg();
+        this.profileImg = requestDto.getProfileImage();
     }
 
     // 업데이트완료된 토탈 포인트 보내주기
@@ -80,6 +84,8 @@ public class Member extends Timestamped {
         this.getPoint().setAcquiredPoint(result);
         return result;
     }
+
+
 
 
 
