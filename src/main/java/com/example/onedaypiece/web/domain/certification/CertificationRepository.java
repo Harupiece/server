@@ -1,6 +1,7 @@
 package com.example.onedaypiece.web.domain.certification;
 
 import com.example.onedaypiece.web.domain.member.Member;
+import com.example.onedaypiece.web.domain.pointhistory.PointHistory;
 import com.example.onedaypiece.web.domain.posting.Posting;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -26,6 +27,11 @@ public interface CertificationRepository extends JpaRepository<Certification, Lo
     List<Certification> findChallenge (Long challengeId, Pageable pageable);
 
 
-    @Query("select c from Certification c left outer join c.posting where c.posting.postingId in :postingId")
-    List<Certification> findTest(List<Long> postingId);
+    @Query(
+            value =
+            "select c, c.posting.challenge from Certification c "+
+            "join fetch c.member " +
+            "join fetch c.posting " +
+            "where c.member = :member")
+    List<Certification> findTest (Member member );
 }

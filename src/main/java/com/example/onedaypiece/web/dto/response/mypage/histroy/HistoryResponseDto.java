@@ -18,6 +18,7 @@ public class HistoryResponseDto {
     private Long memberLevel; // 멤버 레벨 계산해서하기
     private List<PointHistoryResponseDto> pointHistoryList;
 
+    // 원본
     public HistoryResponseDto(Member member, List<PointHistoryResponseDto> pointHistoryList){
         this.memberId = member.getMemberId();
         this.nickname = member.getNickname();
@@ -27,6 +28,7 @@ public class HistoryResponseDto {
         // 포인트히스토리
         this.pointHistoryList = pointHistoryList;
     }
+
 
     // 699면 5레벨
     public long calculLevel(Long memberPoint){
