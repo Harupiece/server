@@ -2,7 +2,6 @@ package com.example.onedaypiece.web.domain.challengeRecord;
 
 import com.example.onedaypiece.web.domain.challenge.Challenge;
 import com.example.onedaypiece.web.domain.member.Member;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -13,13 +12,25 @@ public interface ChallengeRecordRepository extends JpaRepository<ChallengeRecord
     @Query("select c from ChallengeRecord c Where c.challengeRecordStatus = true and c.challenge = :challenge")
     List<ChallengeRecord> findAllByChallenge(Challenge challenge);
 
-    @Query("select c from ChallengeRecord c Where c.challengeRecordStatus = true and c.challenge.challengeProgress = 1")
-    List<ChallengeRecord> findAllStatusTrueAndProgressNotStartedYet();
+    @Query("select c from ChallengeRecord c left join fetch c.challenge " +
+            "Where c.challengeRecordStatus = true and c.challenge in :challenge")
+    List<ChallengeRecord> findAllByChallengeList(List<Challenge> challenge);
+
+    @Query("select c from ChallengeRecord c Where c.challengeRecordStatus = true " +
+            "and c.challenge.challengeId = :challengeId")
+    List<ChallengeRecord> findAllByChallengeId(Long challengeId);
+
+    @Query("select c " +
+            "from ChallengeRecord c left join fetch c.challenge " +
+            "where c.member.email not in :email group by c.challenge.challengeId " +
+            "order by count(c.challenge.challengeId) desc")
+    List<ChallengeRecord> findAllStatusTrueAndProgressNotStartedYet(String email, Pageable pageable);
 
     void deleteAllByChallenge(Challenge challenge);
 
-    @Query("select c from ChallengeRecord c Where c.challengeRecordStatus = true and c.member = :member")
-    List<ChallengeRecord> findAllByMember(Member member);
+    @Query("select c from ChallengeRecord c join fetch c.challenge " +
+            "Where c.challengeRecordStatus = true and c.member.email = :email")
+    List<ChallengeRecord> findAllByMemberEmail(String email);
 
     @Query("select CASE WHEN count(c)>0 then true else false end " +
             "from ChallengeRecord c " +
