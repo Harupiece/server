@@ -13,7 +13,6 @@ import com.example.onedaypiece.web.domain.point.Point;
 import com.example.onedaypiece.web.domain.point.PointRepository;
 import com.example.onedaypiece.web.domain.pointhistory.PointHistory;
 import com.example.onedaypiece.web.domain.pointhistory.PointHistoryRepository;
-import com.example.onedaypiece.web.domain.posting.Posting;
 import com.example.onedaypiece.web.domain.posting.PostingRepository;
 import com.example.onedaypiece.web.domain.token.RefreshToken;
 import com.example.onedaypiece.web.domain.token.RefreshTokenRepository;
@@ -23,18 +22,17 @@ import com.example.onedaypiece.web.dto.request.mypage.ProfileUpdateRequestDto;
 import com.example.onedaypiece.web.dto.request.signup.SignupRequestDto;
 import com.example.onedaypiece.web.dto.request.token.TokenRequestDto;
 import com.example.onedaypiece.web.dto.response.member.MemberTokenResponseDto;
-import com.example.onedaypiece.web.dto.response.mypage.histroy.HistoryResponseDto;
+import com.example.onedaypiece.web.dto.response.member.reload.ReloadResponseDto;
 import com.example.onedaypiece.web.dto.response.mypage.end.EndResponseDto;
 import com.example.onedaypiece.web.dto.response.mypage.end.MyPageEndResponseDto;
+import com.example.onedaypiece.web.dto.response.mypage.histroy.HistoryResponseDto;
 import com.example.onedaypiece.web.dto.response.mypage.histroy.PointHistoryResponseDto;
 import com.example.onedaypiece.web.dto.response.mypage.proceed.MypageProceedResponseDto;
 import com.example.onedaypiece.web.dto.response.mypage.proceed.ProceedResponseDto;
 import com.example.onedaypiece.web.dto.response.mypage.scheduled.MyPageScheduledResponseDto;
 import com.example.onedaypiece.web.dto.response.mypage.scheduled.ScheduledResponseDto;
-import com.example.onedaypiece.web.dto.response.member.reload.ReloadResponseDto;
 import com.example.onedaypiece.web.dto.response.token.TokenDto;
 import lombok.RequiredArgsConstructor;
-
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -61,6 +59,7 @@ public class MemberService {
     private final ChallengeRecordRepository challengeRecordRepository;
     private final PointHistoryRepository pointHistoryRepository;
     private final PostingRepository postingRepository;
+    private final CertificationRepository certificationRepository;
 
     // 회원가입
     @Transactional
@@ -267,18 +266,37 @@ public class MemberService {
     // 마이 페이지 히스토리 1. 자기가 얻은 포인트 가져오기
     @Transactional
     public HistoryResponseDto getHistory(String email){
-        Member member = memberRepository.findByEmail(email).orElseThrow(
-                ()-> new ApiRequestException("마이페이지 히스토리에서 멤버 아이디찾는거실패")
-        );
+        // 원본
+//        Member member = memberRepository.findByEmail(email).orElseThrow(
+//                ()-> new ApiRequestException("마이페이지 히스토리에서 멤버 아이디찾는거실패")
+//        );
 
-        List<PointHistory> targetList = pointHistoryRepository.find(member);
+//        List<PointHistory> targetList = pointHistoryRepository.find(member);
 
+
+        // 1차
+//        List<Certification> certifications = certificationRepository.findTest(member);
+//        List<PointHistory> targetList = pointHistoryRepository.find(certifications);
+
+        // 2차
+        List<PointHistory> targetList = pointHistoryRepository.find(email);
         List<PointHistoryResponseDto> pointHistoryList =targetList.stream()
                 .map(pointHistory -> new PointHistoryResponseDto(pointHistory))
                 .collect(Collectors.toList());
 
+
+
+        if (pointHistoryList.size() == 0) {
+             throw new ApiRequestException("참여한 챌린지가 없습니다!");
+        }
+        // 어차피 userDetails 에서 가져온 email 로 조회했기 때문에 pointHistoryList 의 member 는 모두 같다. 그러므로 0번째를 조회해도 됨.
+        Member member = pointHistoryList.get(0).getMember();
+
+
         // 순위추가하면 여기에 파라미터로 순위 추가해줘야함
-        return new HistoryResponseDto(member, pointHistoryList);
+//        return new HistoryResponseDto(member, pointHistoryList);
+//        return new HistoryResponseDto(pointHistoryList);
+        return  new HistoryResponseDto(member, pointHistoryList);
     }
 
     // 닉네임 중복확인
