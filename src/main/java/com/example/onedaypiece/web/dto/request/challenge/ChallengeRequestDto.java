@@ -7,16 +7,16 @@ import java.time.LocalDateTime;
 
 @Getter
 public class ChallengeRequestDto {
-    private String challengeTitle;
-    private String challengeContent;
-    private String challengePassword;
-    private CategoryName categoryName;
-    private LocalDateTime challengeStartDate;
-    private LocalDateTime challengeEndDate;
-    private String challengeImgUrl;
-    private String challengeGood;
-    private String challengeBad;
-    private String challengeHoliday;
+    private final String challengeTitle;
+    private final String challengeContent;
+    private final String challengePassword;
+    private final CategoryName categoryName;
+    private final LocalDateTime challengeStartDate;
+    private final LocalDateTime challengeEndDate;
+    private final String challengeImgUrl;
+    private final String challengeGood;
+    private final String challengeBad;
+    private final String challengeHoliday;
 
 
     public ChallengeRequestDto(String challengeTitle, String challengeContent, String challengePassword, CategoryName categoryName,
@@ -26,8 +26,8 @@ public class ChallengeRequestDto {
         this.challengeContent = challengeContent;
         this.challengePassword = challengePassword;
         this.categoryName = categoryName;
-        this.challengeStartDate = challengeStartDate;
-        this.challengeEndDate = challengeEndDate.plusHours(23).plusMinutes(59).plusSeconds(59).plusNanos(999);
+        this.challengeStartDate = challengeStartDate.withHour(0).withMinute(0).withSecond(0);
+        this.challengeEndDate = challengeEndDate.withHour(23).withMinute(59).withSecond(59);
         this.challengeImgUrl = challengeImgUrl;
         this.challengeGood = challengeGood;
         this.challengeBad = challengeBad;

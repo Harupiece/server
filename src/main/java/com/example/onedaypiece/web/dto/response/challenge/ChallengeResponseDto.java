@@ -6,7 +6,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @NoArgsConstructor
 @Getter
@@ -26,7 +29,7 @@ public class ChallengeResponseDto {
     private String challengeGood;
     private String challengeBad;
     private String challengeHoliday;
-    private List<Long> challengeMember;
+    private final Set<Long> challengeMember = new HashSet<>();
 
     public ChallengeResponseDto(Challenge challenge,
                                 List<Long> challengeMember) {
@@ -44,6 +47,6 @@ public class ChallengeResponseDto {
         this.challengeGood = challenge.getChallengeGood();
         this.challengeBad = challenge.getChallengeBad();
         this.challengeHoliday = challenge.getChallengeHoliday();
-        this.challengeMember = challengeMember;
+        this.challengeMember.addAll(challengeMember);
     }
 }

@@ -19,7 +19,6 @@ import java.util.List;
 @Getter
 @Entity
 @NoArgsConstructor
-@ToString(exclude = {"challenge","certificationList"} )
 public class Posting extends Timestamped {
 
 
