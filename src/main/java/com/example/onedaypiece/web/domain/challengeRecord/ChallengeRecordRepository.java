@@ -9,20 +9,23 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 
 public interface ChallengeRecordRepository extends JpaRepository<ChallengeRecord, Long> {
+//    List<ChallengeRecord> findAllByChallengeRecordStatusTrue;
+
     @Query("select c from ChallengeRecord c Where c.challengeRecordStatus = true and c.challenge = :challenge")
     List<ChallengeRecord> findAllByChallenge(Challenge challenge);
-
-    @Query("select c from ChallengeRecord c left join fetch c.challenge " +
-            "Where c.challengeRecordStatus = true and c.challenge in :challenge")
-    List<ChallengeRecord> findAllByChallengeList(List<Challenge> challenge);
 
     @Query("select c from ChallengeRecord c Where c.challengeRecordStatus = true " +
             "and c.challenge.challengeId = :challengeId")
     List<ChallengeRecord> findAllByChallengeId(Long challengeId);
 
+    @Query("select c from ChallengeRecord c left join fetch c.challenge " +
+            "Where c.challengeRecordStatus = true and c.challenge in :challenge")
+    List<ChallengeRecord> findAllByChallengeList(List<Challenge> challenge);
+
     @Query("select c " +
             "from ChallengeRecord c left join fetch c.challenge " +
-            "where c.member.email not in :email group by c.challenge.challengeId " +
+            "where c.challenge.challengeStatus = true and c.challenge.challengeProgress = 1 " +
+            "and c.member.email not in :email group by c.challenge.challengeId " +
             "order by count(c.challenge.challengeId) desc")
     List<ChallengeRecord> findAllStatusTrueAndProgressNotStartedYet(String email, Pageable pageable);
 

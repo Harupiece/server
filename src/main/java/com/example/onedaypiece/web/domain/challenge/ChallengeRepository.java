@@ -35,4 +35,6 @@ public interface ChallengeRepository extends JpaRepository<Challenge, Long> {
 
     @Query("select c from Challenge c where c.challengeStatus = true and c.challengeId =:challengeId")
     Optional<Challenge> findChallengeStatusTrue(Long challengeId);
+
+    List<Challenge> findAllByChallengeStatusTrueAndChallengeProgressLessThan(Long challengeProgress);
 }

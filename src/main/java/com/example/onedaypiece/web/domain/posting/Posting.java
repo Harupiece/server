@@ -16,7 +16,6 @@ import javax.persistence.*;
 @Getter
 @Entity
 @NoArgsConstructor
-@ToString(exclude = {"challenge","certificationList"} )
 public class Posting extends Timestamped {
 
 

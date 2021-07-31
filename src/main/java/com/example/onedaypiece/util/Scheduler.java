@@ -1,6 +1,8 @@
 package com.example.onedaypiece.util;
 
-import com.example.onedaypiece.exception.ApiRequestException;
+import com.example.onedaypiece.web.domain.challenge.Challenge;
+import com.example.onedaypiece.web.domain.challenge.ChallengeRepository;
+import com.example.onedaypiece.web.domain.challengeRecord.ChallengeRecordRepository;
 import com.example.onedaypiece.web.domain.posting.Posting;
 import com.example.onedaypiece.web.domain.posting.PostingRepository;
 import lombok.RequiredArgsConstructor;
@@ -19,10 +21,14 @@ import java.util.List;
 public class Scheduler {
 
     final PostingRepository postingRepository;
-//    01 00 00
+    private final ChallengeRepository challengeRepository;
+    private final ChallengeRecordRepository challengeRecordRepository;
+
+    //    01 00 00
     @Scheduled(cron = "01 00 00 * * *") // 초, 분, 시, 일, 월, 주 순서
     @Transactional
     public void postingStatusUpdate() {
+
         LocalDateTime today = LocalDate.now().atStartOfDay();
         List<Posting> postingList = postingRepository.findAllByPostingStatusTrueAndPostingModifyOkTrue(today);
 
@@ -31,4 +37,26 @@ public class Scheduler {
 
         log.info("updateResult 벌크 연산 result: {} ",updateResult);
     }
+
+    @Scheduled(cron = "01 00 00 * * *") // 초, 분, 시, 일, 월, 주 순서
+    @Transactional
+    public void challengeStatusUpdate() {
+        List<Challenge> challengeList = challengeRepository.findAllByChallengeStatusTrueAndChallengeProgressLessThan(3L);
+
+        for (Challenge challenge : challengeList) {
+            LocalDateTime challengeStartDay = setTimeToZero(challenge.getChallengeStartDate());
+            LocalDateTime challengeEndDay = setTimeToZero(challenge.getChallengeEndDate());
+
+            // 오늘과 시작일이 같을 때
+            if (challenge.getChallengeProgress() == 1L && challengeStartDay.isEqual(today)) {
+                challenge.setChallengeProgress(2L);
+            } else if (challenge.getChallengeProgress() == 2L) {
+                break;
+            }
+        }
+
+    }
+
+    private LocalDateTime setTimeToZero(LocalDateTime time) {
+        return time.withHour(0).withMinute(0).withSecond(0);
 }
