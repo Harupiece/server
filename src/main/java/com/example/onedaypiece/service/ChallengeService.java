@@ -67,35 +67,27 @@ public class ChallengeService {
         challenge.putChallenge(requestDto);
     }
 
-    // Guest 메인 페이지
-    public ChallengeGuestMainResponseDto getGuestMainPage() {
-        ChallengeGuestMainResponseDto mainRequestDto = new ChallengeGuestMainResponseDto();
+    // 메인 페이지
+    public ChallengeMainResponseDto getMainPage(String userEmail) {
+        ChallengeMainResponseDto responseDto = new ChallengeMainResponseDto();
 
-        popularUpdate(mainRequestDto, "");
+        userSliderUpdate(userEmail, responseDto);
+        popularUpdate(responseDto, userEmail);
 
-        categoryCollector(EXERCISE).forEach(mainRequestDto::addExercise);
-        categoryCollector(LIVINGHABITS).forEach(mainRequestDto::addLivingHabits);
-        categoryCollector(NODRINKNOSMOKE).forEach(mainRequestDto::addNoDrinkNoSmoke);
-        return mainRequestDto;
+        categoryCollector(EXERCISE).forEach(responseDto::addExercise);
+        categoryCollector(LIVINGHABITS).forEach(responseDto::addLivingHabits);
+        categoryCollector(NODRINKNOSMOKE).forEach(responseDto::addNoDrinkNoSmoke);
+        return responseDto;
     }
 
-    // Member 메인 페이지
-    public ChallengeMemberMainResponseDto getMemberMainPage(String userEmail) {
-        ChallengeMemberMainResponseDto mainResponseDto = new ChallengeMemberMainResponseDto();
-
-        // 유저가 참가한 챌린지 추가
+    private void userSliderUpdate(String userEmail, ChallengeMainResponseDto responseDto) {
         List<ChallengeRecord> records = challengeRecordRepository.findAllByMemberEmail(userEmail);
-        mainResponseDto.addSlider(records
-                .stream()
-                .map(o -> (new ChallengeSliderSourceResponseDto(o.getChallenge(), records)))
-                .collect(Collectors.toList()));
+        List<ChallengeSliderSourceResponseDto> sliderSourceList = new ArrayList<>();
 
-        popularUpdate(mainResponseDto, userEmail);
-
-        categoryCollector(EXERCISE).forEach(mainResponseDto::addExercise);
-        categoryCollector(LIVINGHABITS).forEach(mainResponseDto::addLivingHabits);
-        categoryCollector(NODRINKNOSMOKE).forEach(mainResponseDto::addNoDrinkNoSmoke);
-        return mainResponseDto;
+        for (ChallengeRecord record : records) {
+            sliderSourceList.add(new ChallengeSliderSourceResponseDto(record.getChallenge(), records));
+        }
+        responseDto.addSlider(sliderSourceList);
     }
 
     private List<ChallengeSliderSourceResponseDto> categoryCollector(CategoryName categoryName) {
@@ -104,19 +96,19 @@ public class ChallengeService {
         Pageable pageable = PageRequest.of(0, categorySize);
 
         List<ChallengeRecord> records = challengeRecordRepository.findByCategoryName(categoryName, pageable);
-        List<Challenge> challenges = records.stream().map(ChallengeRecord::getChallenge).collect(Collectors.toList());
+        List<ChallengeSliderSourceResponseDto> categorySourceList = new ArrayList<>();
 
-        return challenges
-                .stream()
-                .map(challenge -> new ChallengeSliderSourceResponseDto(challenge, records))
-                .collect(Collectors.toList());
+        for (Challenge challenge : records.stream().map(ChallengeRecord::getChallenge).collect(Collectors.toList())) {
+            categorySourceList.add(new ChallengeSliderSourceResponseDto(challenge, records));
+        }
+        return categorySourceList;
     }
 
-    private void popularUpdate(ChallengeGuestMainResponseDto mainResponseDto, String email) {
+    private void popularUpdate(ChallengeMainResponseDto responseDto, String email) {
         final int popularSize = 4;
         Pageable pageable = PageRequest.of(0, popularSize);
 
-        mainResponseDto.addPopular(challengeRecordRepository.findPopularOrderByDesc(email, pageable));
+        responseDto.addPopular(challengeRecordRepository.findPopularOrderByDesc(email, pageable));
     }
 
     private Challenge ChallengeChecker(Long challengeId) {

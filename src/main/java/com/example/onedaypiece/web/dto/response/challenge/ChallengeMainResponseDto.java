@@ -9,9 +9,9 @@ import java.util.stream.Collectors;
 
 @NoArgsConstructor
 @Getter
-public class ChallengeMemberMainResponseDto extends ChallengeGuestMainResponseDto {
+public class ChallengeMainResponseDto {
 
-    private final List<ChallengeSliderSourceResponseDto> slider = new ArrayList<>();
+    private List<ChallengeSliderSourceResponseDto> slider;
     private final List<ChallengeSliderSourceResponseDto> popular = new ArrayList<>();
     private final List<ChallengeSliderSourceResponseDto> exercise = new ArrayList<>();
     private final List<ChallengeSliderSourceResponseDto> livinghabits = new ArrayList<>();
@@ -37,6 +37,7 @@ public class ChallengeMemberMainResponseDto extends ChallengeGuestMainResponseDt
     }
 
     public void addSlider(List<ChallengeSliderSourceResponseDto> sliderSource) {
+        this.slider = new ArrayList<>();
         this.slider.addAll(sliderSource);
     }
 

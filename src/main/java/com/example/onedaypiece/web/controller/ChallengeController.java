@@ -3,8 +3,7 @@ package com.example.onedaypiece.web.controller;
 import com.example.onedaypiece.service.ChallengeService;
 import com.example.onedaypiece.web.dto.request.challenge.ChallengeRequestDto;
 import com.example.onedaypiece.web.dto.request.challenge.PutChallengeRequestDto;
-import com.example.onedaypiece.web.dto.response.challenge.ChallengeGuestMainResponseDto;
-import com.example.onedaypiece.web.dto.response.challenge.ChallengeMemberMainResponseDto;
+import com.example.onedaypiece.web.dto.response.challenge.ChallengeMainResponseDto;
 import com.example.onedaypiece.web.dto.response.challenge.ChallengeResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -19,13 +18,13 @@ public class ChallengeController {
     private final ChallengeService challengeService;
 
     @GetMapping("/api/guest/main") // 비로그인 메인 페이지
-    public ResponseEntity<ChallengeGuestMainResponseDto> getGuestMainChallengeDetail() {
-        return ResponseEntity.ok().body(challengeService.getGuestMainPage());
+    public ResponseEntity<ChallengeMainResponseDto> getGuestMainChallengeDetail() {
+        return ResponseEntity.ok().body(challengeService.getMainPage(""));
     }
 
     @GetMapping("/api/member/main") // 로그인 메인 페이지
-    public ResponseEntity<ChallengeMemberMainResponseDto> getMemberMainChallengeDetail(@AuthenticationPrincipal UserDetails userDetails) {
-        return ResponseEntity.ok().body(challengeService.getMemberMainPage(userDetails.getUsername()));
+    public ResponseEntity<ChallengeMainResponseDto> getMemberMainChallengeDetail(@AuthenticationPrincipal UserDetails userDetails) {
+        return ResponseEntity.ok().body(challengeService.getMainPage(userDetails.getUsername()));
     }
 
     @GetMapping("/api/member/challenge/{challengeId}") // 챌린지 상세
