@@ -2,6 +2,8 @@ package com.example.onedaypiece.service;
 
 import com.example.onedaypiece.exception.ApiRequestException;
 import com.example.onedaypiece.security.TokenProvider;
+import com.example.onedaypiece.web.domain.certification.Certification;
+import com.example.onedaypiece.web.domain.certification.CertificationRepository;
 import com.example.onedaypiece.web.domain.challenge.Challenge;
 import com.example.onedaypiece.web.domain.challengeRecord.ChallengeRecord;
 import com.example.onedaypiece.web.domain.challengeRecord.ChallengeRecordRepository;
@@ -11,6 +13,7 @@ import com.example.onedaypiece.web.domain.point.Point;
 import com.example.onedaypiece.web.domain.point.PointRepository;
 import com.example.onedaypiece.web.domain.pointhistory.PointHistory;
 import com.example.onedaypiece.web.domain.pointhistory.PointHistoryRepository;
+import com.example.onedaypiece.web.domain.posting.PostingRepository;
 import com.example.onedaypiece.web.domain.token.RefreshToken;
 import com.example.onedaypiece.web.domain.token.RefreshTokenRepository;
 import com.example.onedaypiece.web.dto.request.login.LoginRequestDto;
@@ -19,18 +22,17 @@ import com.example.onedaypiece.web.dto.request.mypage.ProfileUpdateRequestDto;
 import com.example.onedaypiece.web.dto.request.signup.SignupRequestDto;
 import com.example.onedaypiece.web.dto.request.token.TokenRequestDto;
 import com.example.onedaypiece.web.dto.response.member.MemberTokenResponseDto;
-import com.example.onedaypiece.web.dto.response.mypage.histroy.HistoryResponseDto;
+import com.example.onedaypiece.web.dto.response.member.reload.ReloadResponseDto;
 import com.example.onedaypiece.web.dto.response.mypage.end.EndResponseDto;
 import com.example.onedaypiece.web.dto.response.mypage.end.MyPageEndResponseDto;
+import com.example.onedaypiece.web.dto.response.mypage.histroy.HistoryResponseDto;
 import com.example.onedaypiece.web.dto.response.mypage.histroy.PointHistoryResponseDto;
 import com.example.onedaypiece.web.dto.response.mypage.proceed.MypageProceedResponseDto;
 import com.example.onedaypiece.web.dto.response.mypage.proceed.ProceedResponseDto;
 import com.example.onedaypiece.web.dto.response.mypage.scheduled.MyPageScheduledResponseDto;
 import com.example.onedaypiece.web.dto.response.mypage.scheduled.ScheduledResponseDto;
-import com.example.onedaypiece.web.dto.response.member.reload.ReloadResponseDto;
 import com.example.onedaypiece.web.dto.response.token.TokenDto;
 import lombok.RequiredArgsConstructor;
-
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -55,7 +57,9 @@ public class MemberService {
     private final RefreshTokenRepository refreshTokenRepository;
     private final PointRepository pointRepository;
     private final ChallengeRecordRepository challengeRecordRepository;
-    private PointHistoryRepository pointHistoryRepository;
+    private final PointHistoryRepository pointHistoryRepository;
+    private final PostingRepository postingRepository;
+    private final CertificationRepository certificationRepository;
 
     // 회원가입
     @Transactional
@@ -74,9 +78,7 @@ public class MemberService {
         }
 
         // 닉네임 중복확인
-        if(memberRepository.existsByNickname(nickname)){
-            throw  new ApiRequestException("이미 존재하는 닉네임입니다.");
-        }
+        existNickname(nickname);
 
         // 패스워드 인코딩
         String password= passwordEncoder.encode(requestDto.getPassword());
@@ -253,27 +255,57 @@ public class MemberService {
         Member member = memberRepository.findByEmail(email).orElseThrow(
                 ()-> new ApiRequestException("마이페이지수정에서 멤버 수정하는 아이디찾는거실패")
         );
-        log.info("프로필 들어오는지 확인: {}", requestDto.getProfileImage());
+
+        existNickname(requestDto.getNickname());
+//        log.info("프로필 들어오는지 확인: {}", requestDto.getProfileImage());
 
         member.updateProfile(requestDto);
     }
 
 
-    // 마이 페이지 히스토리
+    // 마이 페이지 히스토리 1. 자기가 얻은 포인트 가져오기
     @Transactional
     public HistoryResponseDto getHistory(String email){
-        Member member = memberRepository.findByEmail(email).orElseThrow(
-                ()-> new ApiRequestException("마이페이지 히스토리에서 멤버 아이디찾는거실패")
-        );
+        // 원본
+//        Member member = memberRepository.findByEmail(email).orElseThrow(
+//                ()-> new ApiRequestException("마이페이지 히스토리에서 멤버 아이디찾는거실패")
+//        );
 
-        List<PointHistory> targetList = pointHistoryRepository.findAllByMember(member);
+//        List<PointHistory> targetList = pointHistoryRepository.find(member);
 
-        List<PointHistoryResponseDto> pointHistoryList = targetList.stream()
-                .map(pointHistory -> new PointHistoryResponseDto(pointHistory)).collect(Collectors.toList());
+
+        // 1차
+//        List<Certification> certifications = certificationRepository.findTest(member);
+//        List<PointHistory> targetList = pointHistoryRepository.find(certifications);
+
+        // 2차
+        List<PointHistory> targetList = pointHistoryRepository.find(email);
+        List<PointHistoryResponseDto> pointHistoryList =targetList.stream()
+                .map(pointHistory -> new PointHistoryResponseDto(pointHistory))
+                .collect(Collectors.toList());
+
+
+
+        if (pointHistoryList.size() == 0) {
+             throw new ApiRequestException("참여한 챌린지가 없습니다!");
+        }
+        // 어차피 userDetails 에서 가져온 email 로 조회했기 때문에 pointHistoryList 의 member 는 모두 같다. 그러므로 0번째를 조회해도 됨.
+        Member member = pointHistoryList.get(0).getMember();
 
 
         // 순위추가하면 여기에 파라미터로 순위 추가해줘야함
-        return new HistoryResponseDto(member, pointHistoryList);
+//        return new HistoryResponseDto(member, pointHistoryList);
+//        return new HistoryResponseDto(pointHistoryList);
+        return  new HistoryResponseDto(member, pointHistoryList);
     }
+
+    // 닉네임 중복확인
+    public void existNickname(String nickname){
+        if(memberRepository.existsByNickname(nickname)){
+            throw  new ApiRequestException("이미 존재하는 닉네임입니다.");
+        }
+    }
+
+
 }
 

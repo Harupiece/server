@@ -18,6 +18,7 @@ import java.time.LocalDateTime;
 public class Challenge extends Timestamped {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
+    @Column(name="challenge_id")
     private Long challengeId;
 
     @Column(nullable = false)
@@ -59,6 +60,7 @@ public class Challenge extends Timestamped {
     private String challengeHoliday;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="member_id")
     private Member member;
 
     @Transient
