@@ -6,19 +6,16 @@ import com.example.onedaypiece.web.domain.common.Timestamped;
 import com.example.onedaypiece.web.domain.member.Member;
 import com.example.onedaypiece.web.dto.request.posting.PostingCreateRequestDto;
 import com.example.onedaypiece.web.dto.request.posting.PostingUpdateRequestDto;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 
 import javax.persistence.*;
 
 @Getter
 @Entity
 @NoArgsConstructor
+@Table(indexes = {@Index(name = "idx_modify_status", columnList = "postingModifyOk")})
 public class Posting extends Timestamped {
-
-
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name="posting_id")
@@ -46,8 +43,6 @@ public class Posting extends Timestamped {
     @JoinColumn(name="challenge_id")
     private Challenge challenge;
 
-
-    @Builder
     public Posting(String postingImg, String postingContent, Member member, Challenge challenge) {
         this.postingImg = postingImg;
         this.postingContent =postingContent;

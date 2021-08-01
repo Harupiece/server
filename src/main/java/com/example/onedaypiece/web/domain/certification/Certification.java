@@ -1,19 +1,18 @@
 package com.example.onedaypiece.web.domain.certification;
 
 
+import com.example.onedaypiece.web.domain.common.Timestamped;
 import com.example.onedaypiece.web.domain.member.Member;
 import com.example.onedaypiece.web.domain.posting.Posting;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 
 import javax.persistence.*;
 
 @Entity
 @Getter
 @NoArgsConstructor
-@ToString
-public class Certification {
+public class Certification extends Timestamped {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
@@ -32,6 +31,7 @@ public class Certification {
         this.member=member;
         this.posting=posting;
     }
+
 
     public static Certification createCertification(Member member, Posting posting) {
         Certification certification =new Certification(member,posting);

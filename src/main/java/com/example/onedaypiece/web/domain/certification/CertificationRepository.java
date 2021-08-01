@@ -13,7 +13,6 @@ public interface CertificationRepository extends JpaRepository<Certification, Lo
 
     boolean existsByPostingAndMember(Posting posting, Member member);
 
-
     @Query("select c  " +
             "from Certification c " +
             "where c.posting.challenge.challengeId = :challengeId")
@@ -34,4 +33,6 @@ public interface CertificationRepository extends JpaRepository<Certification, Lo
             "join fetch c.posting " +
             "where c.member = :member")
     List<Certification> findTest (Member member );
+
+
 }

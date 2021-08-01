@@ -2,20 +2,15 @@ package com.example.onedaypiece.web.dto.response.posting;
 
 import com.example.onedaypiece.web.domain.certification.Certification;
 import com.example.onedaypiece.web.domain.posting.Posting;
-import com.example.onedaypiece.web.dto.response.certification.CertificationResponseDto;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @NoArgsConstructor
-@AllArgsConstructor
 @Getter
-@ToString
 public class PostingResponseDto {
 
     private Long postingId;
@@ -28,8 +23,10 @@ public class PostingResponseDto {
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
     private Long postingCount;
-    private List<CertificationResponseDto> certificationUserInfo ;
     private List<Long> memberResponseDto;
+
+    // 사진필요할 때 추가
+//    private List<CertificationResponseDto> certificationUserInfo ;
 
     public PostingResponseDto(Posting posting,List<Certification> certificationList) {
         this.postingId = posting.getPostingId();

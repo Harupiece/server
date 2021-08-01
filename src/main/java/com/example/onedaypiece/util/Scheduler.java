@@ -31,7 +31,7 @@ public class Scheduler {
     @Scheduled(cron = "01 00 00 * * *") // 초, 분, 시, 일, 월, 주 순서
     @Transactional
     public void postingStatusUpdate() {
-        List<Posting> postingList = postingRepository.findAllByPostingStatusTrueAndPostingModifyOkTrue(today);
+        List<Posting> postingList = postingRepository.findSchedulerPosting(today);
 
         // 벌크성 쿼리 업데이트
         int updateResult = postingRepository.updatePostingStatus(postingList);

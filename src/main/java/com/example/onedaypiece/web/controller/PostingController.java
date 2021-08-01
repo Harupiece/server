@@ -11,6 +11,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @Slf4j
@@ -23,7 +24,7 @@ public class PostingController {
      * 1.포스트 저장
      */
     @PostMapping("")
-    public ResponseEntity<Long> createPosting(@RequestBody PostingCreateRequestDto postingRequestDto,
+    public ResponseEntity<Long> createPosting(@RequestBody @Valid PostingCreateRequestDto postingRequestDto,
                                               @AuthenticationPrincipal UserDetails userDetails){
         log.info("createPosting 포스트 저장: {} ",postingRequestDto);
         String email = userDetails.getUsername();
