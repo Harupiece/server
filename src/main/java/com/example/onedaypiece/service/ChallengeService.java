@@ -13,7 +13,6 @@ import com.example.onedaypiece.web.dto.request.challenge.PutChallengeRequestDto;
 import com.example.onedaypiece.web.dto.response.challenge.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -104,11 +103,14 @@ public class ChallengeService {
     private List<ChallengeSourceResponseDto> categoryCollector(CategoryName category, List<ChallengeRecord> records) {
         final int categorySize = 3;
 
-        List<ChallengeRecord> recordList = records
-                .stream()
-                .filter(r -> r.getChallenge().getCategoryName().equals(category))
-                .limit(categorySize)
-                .collect(Collectors.toList());
+        Set<Long> recordIdList = new HashSet<>();
+        List<ChallengeRecord> recordList = new ArrayList<>();
+        records.stream().filter(r -> !recordIdList.contains(r.getChallenge().getChallengeId()) &&
+                r.getChallenge().getCategoryName().equals(category) &&
+                recordIdList.size() < categorySize).forEach(r -> {
+            recordIdList.add(r.getChallenge().getChallengeId());
+            recordList.add(r);
+        });
         List<ChallengeSourceResponseDto> categorySourceList = new ArrayList<>();
 
         for (Challenge c : recordList.stream().map(ChallengeRecord::getChallenge).collect(Collectors.toList())) {

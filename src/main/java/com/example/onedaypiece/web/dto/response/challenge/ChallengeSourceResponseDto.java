@@ -7,7 +7,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @NoArgsConstructor
@@ -22,7 +24,7 @@ public class ChallengeSourceResponseDto {
     private String challengeImgUrl;
     private List<Long> challengeMember;
 
-    public ChallengeSourceResponseDto(Challenge challenge, List<ChallengeRecord> records) {
+    public ChallengeSourceResponseDto(Challenge challenge, Collection<ChallengeRecord> records) {
         this.challengeId = challenge.getChallengeId();
         this.challengeTitle = challenge.getChallengeTitle();
         this.categoryName = challenge.getCategoryName();
