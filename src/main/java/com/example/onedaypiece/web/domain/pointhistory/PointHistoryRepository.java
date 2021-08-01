@@ -29,7 +29,11 @@ public interface PointHistoryRepository extends JpaRepository<PointHistory, Long
 //            "where p.certification.member = :member")
 //    List<PointHistory> find(Member member);
     //3 차
-    @Query("select p,p.certification.member, p.certification.member.point,p.certification.posting.challenge,  p.certification.posting " +
+    @Query("select p, " +
+            "p.certification.member, " +
+            "p.certification.member.point, " +
+            "p.certification.posting.challenge, " +
+            "p.certification.posting " +
             "from PointHistory p " +
             "join fetch p.certification " +
             "where p.certification.member.email = :email")
