@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 
 @NoArgsConstructor
 @Getter
-public class ChallengeSliderSourceResponseDto {
+public class ChallengeSourceResponseDto {
 
     private Long challengeId;
     private String challengeTitle;
@@ -22,13 +22,17 @@ public class ChallengeSliderSourceResponseDto {
     private String challengeImgUrl;
     private List<Long> challengeMember;
 
-    public ChallengeSliderSourceResponseDto(Challenge challenge, List<ChallengeRecord> allByMember) {
+    public ChallengeSourceResponseDto(Challenge challenge, List<ChallengeRecord> records) {
         this.challengeId = challenge.getChallengeId();
         this.challengeTitle = challenge.getChallengeTitle();
         this.categoryName = challenge.getCategoryName();
         this.challengeStartDate = challenge.getChallengeStartDate();
         this.challengeEndDate = challenge.getChallengeEndDate();
         this.challengeImgUrl = challenge.getChallengeImgUrl();
-        this.challengeMember = allByMember.stream().filter(member -> member.getChallenge().equals(challenge)).map(o -> o.getMember().getMemberId()).collect(Collectors.toList());
+        this.challengeMember = records
+                .stream()
+                .filter(r -> r.getChallenge().equals(challenge))
+                .map(r -> r.getMember().getMemberId())
+                .collect(Collectors.toList());
     }
 }

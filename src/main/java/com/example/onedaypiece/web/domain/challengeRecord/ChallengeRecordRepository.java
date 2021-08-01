@@ -33,10 +33,12 @@ public interface ChallengeRecordRepository extends JpaRepository<ChallengeRecord
 
     void deleteByChallengeAndMember(Challenge challenge, Member member);
 
-    @Query("select c from ChallengeRecord c Where c.challengeRecordStatus = true and c.challenge = :challenge")
+    @Query("select c from ChallengeRecord c left join fetch c.challenge " +
+            "Where c.challengeRecordStatus = true and c.challenge = :challenge")
     List<ChallengeRecord> findAllByChallenge(Challenge challenge);
 
-    @Query("select c from ChallengeRecord c Where c.challengeRecordStatus = true " +
+    @Query("select c from ChallengeRecord c left join fetch c.challenge " +
+            "Where c.challengeRecordStatus = true " +
             "and c.challenge.challengeId = :challengeId")
     List<ChallengeRecord> findAllByChallengeId(Long challengeId);
 
@@ -53,9 +55,13 @@ public interface ChallengeRecordRepository extends JpaRepository<ChallengeRecord
 
     void deleteAllByChallenge(Challenge challenge);
 
-    @Query("select c from ChallengeRecord c join fetch c.challenge " +
-            "Where c.challengeRecordStatus = true and c.member.email = :email")
-    List<ChallengeRecord> findAllByMemberEmail(String email);
+    @Query("select c " +
+            "from ChallengeRecord c " +
+            "left join fetch c.challenge " +
+            "left join fetch c.member " +
+            "Where c.challengeRecordStatus = true and c.challenge.challengeProgress < 3 " +
+            "order by c.modifiedAt desc")
+    List<ChallengeRecord> findAllByStatusTrueOrderByModifiedAtDesc();
 
     @Query("select CASE WHEN count(c)>0 then true else false end " +
             "from ChallengeRecord c " +
