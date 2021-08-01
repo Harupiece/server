@@ -11,11 +11,11 @@ import java.util.stream.Collectors;
 @Getter
 public class ChallengeMainResponseDto {
 
-    private List<ChallengeSourceResponseDto> slider;
-    private final List<ChallengeSourceResponseDto> popular = new ArrayList<>();
-    private final List<ChallengeSourceResponseDto> exercise = new ArrayList<>();
-    private final List<ChallengeSourceResponseDto> livinghabits = new ArrayList<>();
-    private final List<ChallengeSourceResponseDto> nodrinknosmoke = new ArrayList<>();
+    private final Set<ChallengeSourceResponseDto> slider = new HashSet<>();
+    private final Set<ChallengeSourceResponseDto> popular = new HashSet<>();
+    private final Set<ChallengeSourceResponseDto> exercise = new HashSet<>();
+    private final Set<ChallengeSourceResponseDto> livinghabits = new HashSet<>();
+    private final Set<ChallengeSourceResponseDto> nodrinknosmoke = new HashSet<>();
 
     public void addExercise(ChallengeSourceResponseDto responseDto) {
         exercise.add(responseDto);
@@ -37,7 +37,6 @@ public class ChallengeMainResponseDto {
     }
 
     public void addSlider(List<ChallengeSourceResponseDto> sliderSource) {
-        this.slider = new ArrayList<>();
         this.slider.addAll(sliderSource);
     }
 
