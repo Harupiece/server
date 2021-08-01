@@ -20,12 +20,12 @@ public class ChallengeController {
 
     @GetMapping("/api/guest/main") // 비로그인 메인 페이지
     public ResponseEntity<ChallengeGuestMainResponseDto> getGuestMainChallengeDetail() {
-        return ResponseEntity.ok().body(challengeService.getGuestMainChallengeDetail());
+        return ResponseEntity.ok().body(challengeService.getGuestMainPage());
     }
 
     @GetMapping("/api/member/main") // 로그인 메인 페이지
     public ResponseEntity<ChallengeMemberMainResponseDto> getMemberMainChallengeDetail(@AuthenticationPrincipal UserDetails userDetails) {
-        return ResponseEntity.ok().body(challengeService.getMemberMainChallengeDetail(userDetails.getUsername()));
+        return ResponseEntity.ok().body(challengeService.getMemberMainPage(userDetails.getUsername()));
     }
 
     @GetMapping("/api/member/challenge/{challengeId}") // 챌린지 상세
