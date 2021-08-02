@@ -60,7 +60,6 @@ public class Challenge extends Timestamped {
     private String challengeHoliday;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="member_id")
     private Member member;
 
     @Transient

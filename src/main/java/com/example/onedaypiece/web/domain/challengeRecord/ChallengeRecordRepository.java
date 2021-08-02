@@ -8,17 +8,16 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
-import java.util.Set;
 
 public interface ChallengeRecordRepository extends JpaRepository<ChallengeRecord, Long> {
 
-    @Query("select c from ChallengeRecord c join fetch c.challenge " +
+    @Query("select c from ChallengeRecord c inner join fetch c.challenge " +
             "where c.challengeRecordStatus = true " +
             "and c.challenge.challengeStatus = true " +
             "and c.challenge.challengeProgress < 3")
     List<ChallengeRecord> findAllByChallengeStatusTrue();
 
-    @Query("select c from ChallengeRecord c left join fetch c.challenge " +
+    @Query("select c from ChallengeRecord c inner join fetch c.challenge " +
             "where c.challengeRecordStatus = true " +
             "and c.challenge.challengeStatus = true " +
             "and c.challenge.challengeProgress = 1 " +
@@ -34,11 +33,11 @@ public interface ChallengeRecordRepository extends JpaRepository<ChallengeRecord
 
     void deleteByChallengeAndMember(Challenge challenge, Member member);
 
-    @Query("select c from ChallengeRecord c left join fetch c.challenge " +
+    @Query("select c from ChallengeRecord c inner join fetch c.challenge " +
             "Where c.challengeRecordStatus = true and c.challenge = :challenge")
     List<ChallengeRecord> findAllByChallenge(Challenge challenge);
 
-    @Query("select c from ChallengeRecord c left join fetch c.challenge " +
+    @Query("select c from ChallengeRecord c inner join fetch c.challenge " +
             "Where c.challengeRecordStatus = true " +
             "and c.challenge.challengeId = :challengeId")
     List<ChallengeRecord> findAllByChallengeId(Long challengeId);
@@ -48,7 +47,7 @@ public interface ChallengeRecordRepository extends JpaRepository<ChallengeRecord
 //    List<ChallengeRecord> findAllByChallengeList(List<Challenge> challenge);
 
     @Query("select c " +
-            "from ChallengeRecord c left join fetch c.challenge " +
+            "from ChallengeRecord c inner join fetch c.challenge " +
             "where c.challenge.challengeStatus = true and c.challenge.challengeProgress = 1 " +
             "and c.member.email not in :email group by c.challenge.challengeId " +
             "order by count(c.challenge.challengeId) desc")
