@@ -2,16 +2,21 @@ package com.example.onedaypiece.web.dto.request.mypage;
 
 
 import com.example.onedaypiece.exception.ApiRequestException;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @Getter
-public class PasswordUpdateRequestDto {
+public class PwUpdateRequestDto {
 
     private String currentPassword;
     private String newPassword;
     private String newPasswordCheck;
 
-    public PasswordUpdateRequestDto(String currentPassword, String newPassword, String newPasswordCheck){
+    public PwUpdateRequestDto(String currentPassword, String newPassword, String newPasswordCheck){
 
         if(currentPassword.isEmpty()){
             throw new ApiRequestException("현재 비밀번호를 입력해주세요.");
@@ -29,7 +34,7 @@ public class PasswordUpdateRequestDto {
             throw new ApiRequestException("변경할 비밀번호는  4~20자리를 사용해야 합니다.");
         }
 
-        if ( !(newPassword.equals(newPasswordCheck))){
+        if ( !newPassword.equals(newPasswordCheck)){
             throw new ApiRequestException("새로운 비밀번호와 비밀번호확인이 서로같지않습니다.");
         }
 
@@ -37,4 +42,10 @@ public class PasswordUpdateRequestDto {
         this.newPassword = newPassword;
         this.newPasswordCheck = newPasswordCheck;
     }
+
+    public void setNewPassword(String newPassword){
+        this.newPassword = newPassword;
+    }
+
+
 }

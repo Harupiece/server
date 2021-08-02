@@ -17,8 +17,8 @@ import com.example.onedaypiece.web.domain.posting.PostingRepository;
 import com.example.onedaypiece.web.domain.token.RefreshToken;
 import com.example.onedaypiece.web.domain.token.RefreshTokenRepository;
 import com.example.onedaypiece.web.dto.request.login.LoginRequestDto;
-import com.example.onedaypiece.web.dto.request.mypage.PasswordUpdateRequestDto;
 import com.example.onedaypiece.web.dto.request.mypage.ProfileUpdateRequestDto;
+import com.example.onedaypiece.web.dto.request.mypage.PwUpdateRequestDto;
 import com.example.onedaypiece.web.dto.request.signup.SignupRequestDto;
 import com.example.onedaypiece.web.dto.request.token.TokenRequestDto;
 import com.example.onedaypiece.web.dto.response.member.MemberTokenResponseDto;
@@ -233,18 +233,20 @@ public class MemberService {
 
     // 마이 페이지 비밀번호 수정
     @Transactional
-    public void updatePassword(PasswordUpdateRequestDto requestDto, String email){
+    public void updatePassword(PwUpdateRequestDto requestDto, String email){
         Member member = memberRepository.findByEmail(email).orElseThrow(
                 ()-> new ApiRequestException("마이페이지수정에서 멤버 수정하는 아이디찾는거실패")
         );
+
 
         if(!passwordEncoder.matches(requestDto.getCurrentPassword(), member.getPassword())){
             throw new ApiRequestException("현재 비밀번호가 일치하지 않습니다.");
         }
 
         String newPassword = passwordEncoder.encode(requestDto.getNewPassword());
+        requestDto.setNewPassword(newPassword);
 
-        member.updatePassword(newPassword);
+        member.updatePassword(requestDto);
     }
 
     // 마이 페이지 프로필 수정
@@ -257,8 +259,8 @@ public class MemberService {
         );
 
         existNickname(requestDto.getNickname());
-//        log.info("프로필 들어오는지 확인: {}", requestDto.getProfileImage());
-
+        log.info("프로필 들어오는지 확인: {}", requestDto.getProfileImage());
+        log.info("닉네임 들어오는지확인: {}",requestDto.getNickname());
         member.updateProfile(requestDto);
     }
 

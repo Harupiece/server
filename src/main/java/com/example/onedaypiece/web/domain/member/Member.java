@@ -3,6 +3,7 @@ package com.example.onedaypiece.web.domain.member;
 import com.example.onedaypiece.web.domain.common.Timestamped;
 import com.example.onedaypiece.web.domain.point.Point;
 import com.example.onedaypiece.web.dto.request.mypage.ProfileUpdateRequestDto;
+import com.example.onedaypiece.web.dto.request.mypage.PwUpdateRequestDto;
 import com.example.onedaypiece.web.dto.request.signup.SignupRequestDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -67,8 +68,8 @@ public class Member extends Timestamped {
     }
 
     // 마이페이지 비밀번호 수정
-    public void updatePassword(String newpassword){
-        this.password = newpassword;
+    public void updatePassword(PwUpdateRequestDto requestDto){
+        this.password = requestDto.getNewPassword();
     }
 
     // 마이페이지 프로필 수정
@@ -85,10 +86,6 @@ public class Member extends Timestamped {
         this.getPoint().setAcquiredPoint(result);
         return result;
     }
-
-
-
-
 
 }
 

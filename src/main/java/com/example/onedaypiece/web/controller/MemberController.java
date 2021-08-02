@@ -2,8 +2,8 @@ package com.example.onedaypiece.web.controller;
 
 import com.example.onedaypiece.service.MemberService;
 import com.example.onedaypiece.web.dto.request.login.LoginRequestDto;
-import com.example.onedaypiece.web.dto.request.mypage.PasswordUpdateRequestDto;
 import com.example.onedaypiece.web.dto.request.mypage.ProfileUpdateRequestDto;
+import com.example.onedaypiece.web.dto.request.mypage.PwUpdateRequestDto;
 import com.example.onedaypiece.web.dto.request.signup.SignupRequestDto;
 import com.example.onedaypiece.web.dto.request.token.TokenRequestDto;
 import com.example.onedaypiece.web.dto.response.member.MemberTokenResponseDto;
@@ -17,6 +17,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @RequestMapping("/api/member")
 @RequiredArgsConstructor
@@ -51,20 +53,17 @@ public class MemberController {
 
     // 마이 페이지 수정 비밀번호변경만
     @PutMapping("/mypage/password")
-    public ResponseEntity<Void> updateMyPageInfoPassword(@RequestBody PasswordUpdateRequestDto requestDto, @AuthenticationPrincipal UserDetails userDetails){
+    public ResponseEntity<Void> updateMyPageInfoPassword(@RequestBody PwUpdateRequestDto requestDto, @AuthenticationPrincipal UserDetails userDetails){
         memberService.updatePassword(requestDto, userDetails.getUsername());
         return ResponseEntity.ok().build();
     }
 
     // 마이 페이지 수정 프로필 + 닉네임
     @PutMapping("/mypage/profile")
-    public ResponseEntity<Void> updateMyPageInfoProfile(@RequestBody ProfileUpdateRequestDto requestDto, @AuthenticationPrincipal UserDetails userDetails){
+    public ResponseEntity<Void> updateMyPageInfoProfile(@RequestBody @Valid ProfileUpdateRequestDto requestDto, @AuthenticationPrincipal UserDetails userDetails){
         memberService.updateProfile(requestDto, userDetails.getUsername());
         return ResponseEntity.ok().build();
     }
-
-
-
 
     // 현재 진해중인거
     @GetMapping("/mypage/proceed")
