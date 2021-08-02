@@ -48,10 +48,6 @@ public class Member extends Timestamped {
     @JoinColumn(name = "POINT_ID")
     private Point point;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "USER_HISTORY_ID")
-    private UserHistory userHistory;
-
     public Member(SignupRequestDto requestDto, Point point){
         this.email = requestDto.getEmail();
         this.password = requestDto.getPassword();

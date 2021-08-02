@@ -13,7 +13,7 @@ import java.util.Optional;
 public interface ChallengeRepository extends JpaRepository<Challenge, Long> {
 
     @Query("select c from Challenge c " +
-            "Where c.challengeStatus = true and c.challengeProgress = 1 " +
+            "Where c.challengeStatus = true and c.challengeProgress < 3 " +
             "and c.member.memberStatus = 1 and c.member = :member")
     List<Challenge> findAllByMember(Member member);
 

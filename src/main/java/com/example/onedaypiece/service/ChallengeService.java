@@ -6,6 +6,8 @@ import com.example.onedaypiece.web.domain.challenge.Challenge;
 import com.example.onedaypiece.web.domain.challenge.ChallengeRepository;
 import com.example.onedaypiece.web.domain.challengeRecord.ChallengeRecord;
 import com.example.onedaypiece.web.domain.challengeRecord.ChallengeRecordRepository;
+import com.example.onedaypiece.web.domain.history.UserHistory;
+import com.example.onedaypiece.web.domain.history.UserHistoryRepository;
 import com.example.onedaypiece.web.domain.member.Member;
 import com.example.onedaypiece.web.domain.member.MemberRepository;
 import com.example.onedaypiece.web.dto.request.challenge.ChallengeRequestDto;
@@ -29,6 +31,7 @@ public class ChallengeService {
     private final ChallengeRepository challengeRepository;
     private final ChallengeRecordRepository challengeRecordRepository;
     private final MemberRepository memberRepository;
+    private final UserHistoryRepository userHistoryRepository;
 
     private final LocalDateTime currentLocalDateTime = LocalDateTime.now();
 
@@ -76,6 +79,8 @@ public class ChallengeService {
         categoryCollector(EXERCISE, records).forEach(responseDto::addExercise);
         categoryCollector(LIVINGHABITS, records).forEach(responseDto::addLivingHabits);
         categoryCollector(NODRINKNOSMOKE, records).forEach(responseDto::addNoDrinkNoSmoke);
+
+        responseDto.setHistoryCount(userHistoryRepository.countAllByStatusFalseAndMemberEmail(email));
         return responseDto;
     }
 
