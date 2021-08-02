@@ -8,6 +8,7 @@ import com.example.onedaypiece.web.domain.posting.Posting;
 import com.example.onedaypiece.web.domain.posting.PostingRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.tomcat.jni.Local;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,14 +50,15 @@ public class Scheduler {
             Challenge challenge = record.getChallenge();
             if (!updatedChallengeList.contains(challenge)) {
                 updatedChallengeList.add(challenge);
-                LocalDateTime challengeStartDay = setTimeToZero(challenge.getChallengeStartDate());
-                LocalDateTime challengeEndDay = setTimeToZero(challenge.getChallengeEndDate().plusDays(1));
 
-                if (challenge.getChallengeProgress() == 1L && challengeStartDay.isEqual(today)) {
+                if (challenge.getChallengeProgress() == 1L && setTimeToZero(challenge.getChallengeStartDate()).isEqual(today)) {
                     challenge.setChallengeProgress(2L);
-                } else if (challenge.getChallengeProgress() == 2L && challengeEndDay.isEqual(today)) {
+                    log.info(challenge.getChallengeId() + " 챌린지의 progress 1 -> " + challenge.getChallengeProgress());
+                } else if (challenge.getChallengeProgress() == 2L && setTimeToZero(challenge.getChallengeEndDate()).isEqual(today)) {
                     challenge.setChallengeProgress(3L);
                     record.setStatusFalse();
+                    log.info(challenge.getChallengeId() + " 챌린지의 progress가 2 -> " +  + challenge.getChallengeProgress());
+                    log.info(record + " 챌린지기록의 status가 " + record.isChallengeRecordStatus());
                 }
             }
         }

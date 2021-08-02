@@ -1,6 +1,7 @@
 package com.example.onedaypiece.web.domain.member;
 
 import com.example.onedaypiece.web.domain.common.Timestamped;
+import com.example.onedaypiece.web.domain.history.UserHistory;
 import com.example.onedaypiece.web.domain.point.Point;
 import com.example.onedaypiece.web.dto.request.mypage.ProfileUpdateRequestDto;
 import com.example.onedaypiece.web.dto.request.signup.SignupRequestDto;
@@ -33,7 +34,6 @@ public class Member extends Timestamped {
     @Enumerated(value = EnumType.STRING)
     private MemberRole role;
 
-
     @Column(columnDefinition="TEXT")
     private String profileImg;
 
@@ -45,7 +45,9 @@ public class Member extends Timestamped {
     @JoinColumn(name = "POINT_ID")
     private Point point;
 
-
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "USER_HISTORY_ID")
+    private UserHistory userHistory;
 
     public Member(SignupRequestDto requestDto, Point point){
         this.email = requestDto.getEmail();

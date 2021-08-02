@@ -105,18 +105,21 @@ public class ChallengeService {
 
         Set<Long> recordIdList = new HashSet<>();
         List<ChallengeRecord> recordList = new ArrayList<>();
+
         records.stream().filter(r -> !recordIdList.contains(r.getChallenge().getChallengeId()) &&
                 r.getChallenge().getCategoryName().equals(category) &&
                 recordIdList.size() < categorySize).forEach(r -> {
             recordIdList.add(r.getChallenge().getChallengeId());
             recordList.add(r);
         });
+
         List<ChallengeSourceResponseDto> categorySourceList = new ArrayList<>();
 
         for (Challenge c : recordList.stream().map(ChallengeRecord::getChallenge).collect(Collectors.toList())) {
             ChallengeSourceResponseDto dto = new ChallengeSourceResponseDto(c, recordList);
             categorySourceList.add(dto);
         }
+
         return categorySourceList;
     }
 

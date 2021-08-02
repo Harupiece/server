@@ -60,10 +60,8 @@ public class Challenge extends Timestamped {
     private String challengeHoliday;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="member_id")
     private Member member;
-
-    @Transient
-    private Long memberForAdminCall;
 
     public void setChallengeStatus(boolean challengeStatus) {
         this.challengeStatus = challengeStatus;
@@ -99,9 +97,5 @@ public class Challenge extends Timestamped {
         this.challengeBad = requestDto.getChallengeBad();
         this.challengeHoliday = requestDto.getChallengeHoliday();
         this.member = member;
-    }
-
-    public void setMemberForAdminCall(Long memberId) {
-        this.memberForAdminCall = memberId;
     }
 }
