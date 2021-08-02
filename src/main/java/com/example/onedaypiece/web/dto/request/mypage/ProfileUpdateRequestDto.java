@@ -5,12 +5,13 @@ import com.example.onedaypiece.exception.ApiRequestException;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
+import lombok.extern.slf4j.Slf4j;
 
 import javax.validation.constraints.NotBlank;
+import javax.persistence.Lob;
 import javax.validation.constraints.NotNull;
 
-
+@Slf4j
 @Getter
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ProfileUpdateRequestDto {

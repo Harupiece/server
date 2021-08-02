@@ -1,15 +1,18 @@
 package com.example.onedaypiece.web.domain.member;
 
 import com.example.onedaypiece.web.domain.common.Timestamped;
+import com.example.onedaypiece.web.domain.history.UserHistory;
 import com.example.onedaypiece.web.domain.point.Point;
 import com.example.onedaypiece.web.dto.request.mypage.ProfileUpdateRequestDto;
 import com.example.onedaypiece.web.dto.request.mypage.PwUpdateRequestDto;
 import com.example.onedaypiece.web.dto.request.signup.SignupRequestDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.persistence.*;
 
+@Slf4j
 @NoArgsConstructor
 @Entity
 @Getter
@@ -34,7 +37,6 @@ public class Member extends Timestamped {
     @Enumerated(value = EnumType.STRING)
     private MemberRole role;
 
-
     @Column(columnDefinition="TEXT")
     private String profileImg;
 
@@ -45,8 +47,6 @@ public class Member extends Timestamped {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "POINT_ID")
     private Point point;
-
-
 
     public Member(SignupRequestDto requestDto, Point point){
         this.email = requestDto.getEmail();
@@ -73,9 +73,12 @@ public class Member extends Timestamped {
     }
 
     // 마이페이지 프로필 수정
-    public void updateProfile(ProfileUpdateRequestDto requestDto){
+    public String updateProfile(ProfileUpdateRequestDto requestDto){
+        log.info("member에서업데이트 전: {}",requestDto.getProfileImage());
         this.nickname = requestDto.getNickname();
         this.profileImg = requestDto.getProfileImage();
+        log.info("member에서업데이트 후: {}",this.profileImg);
+        return this.profileImg;
     }
 
     // 업데이트완료된 토탈 포인트 보내주기

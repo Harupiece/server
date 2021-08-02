@@ -11,11 +11,12 @@ import java.util.stream.Collectors;
 @Getter
 public class ChallengeMainResponseDto {
 
-    private final Set<ChallengeSourceResponseDto> slider = new HashSet<>();
-    private final Set<ChallengeSourceResponseDto> popular = new HashSet<>();
-    private final Set<ChallengeSourceResponseDto> exercise = new HashSet<>();
-    private final Set<ChallengeSourceResponseDto> livinghabits = new HashSet<>();
-    private final Set<ChallengeSourceResponseDto> nodrinknosmoke = new HashSet<>();
+    private final List<ChallengeSourceResponseDto> slider = new ArrayList<>();
+    private final List<ChallengeSourceResponseDto> popular = new ArrayList<>();
+    private final List<ChallengeSourceResponseDto> exercise = new ArrayList<>();
+    private final List<ChallengeSourceResponseDto> livinghabits = new ArrayList<>();
+    private final List<ChallengeSourceResponseDto> nodrinknosmoke = new ArrayList<>();
+    private Long historyCount;
 
     public void addExercise(ChallengeSourceResponseDto responseDto) {
         exercise.add(responseDto);
@@ -40,4 +41,7 @@ public class ChallengeMainResponseDto {
         this.slider.addAll(sliderSource);
     }
 
+    public void setHistoryCount(Long historyCount) {
+        this.historyCount = historyCount;
+    }
 }
