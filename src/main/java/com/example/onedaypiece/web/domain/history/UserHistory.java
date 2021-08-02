@@ -11,6 +11,7 @@ import javax.persistence.*;
 @Getter
 @Entity
 @NoArgsConstructor
+@Table(indexes = {@Index(name = "idx_history_status", columnList = "check_status")})
 public class UserHistory extends Timestamped {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,7 +22,7 @@ public class UserHistory extends Timestamped {
     private String content;
 
     // 유저가 히스토리를 확인했는지 여부
-    @Column
+    @Column(name = "check_status")
     private boolean checkStatus;
 
     @ManyToOne
