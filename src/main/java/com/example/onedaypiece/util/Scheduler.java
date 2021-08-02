@@ -1,13 +1,13 @@
 package com.example.onedaypiece.util;
 
 import com.example.onedaypiece.web.domain.challenge.Challenge;
-import com.example.onedaypiece.web.domain.challenge.ChallengeRepository;
 import com.example.onedaypiece.web.domain.challengeRecord.ChallengeRecord;
 import com.example.onedaypiece.web.domain.challengeRecord.ChallengeRecordRepository;
 import com.example.onedaypiece.web.domain.posting.Posting;
 import com.example.onedaypiece.web.domain.posting.PostingRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,17 +49,20 @@ public class Scheduler {
             Challenge c = record.getChallenge();
             if (!updatedChallengeList.contains(c)) {
                 updatedChallengeList.add(c);
-
-                if (c.getChallengeProgress() == 1L && setTimeToZero(c.getChallengeStartDate()).isEqual(today)) {
-                    c.setChallengeProgress(2L);
-                    log.info(c.getChallengeId() + " 챌린지의 progress 1 -> " + c.getChallengeProgress());
-                } else if (c.getChallengeProgress() == 2L && setTimeToZero(c.getChallengeEndDate()).isEqual(today)) {
-                    c.setChallengeProgress(3L);
-                    records.stream().filter(r -> r.getChallenge().equals(c)).forEach(ChallengeRecord::setStatusFalse);
-                    log.info(c.getChallengeId() + " 챌린지의 progress가 2 -> " +  + c.getChallengeProgress());
-                    log.info(record + " 챌린지기록의 status가 " + record.isChallengeRecordStatus());
-                }
+                challengeProgressUpdate(records, record, c);
             }
+        }
+    }
+
+    private void challengeProgressUpdate(List<ChallengeRecord> records, ChallengeRecord record, Challenge c) {
+        if (c.getChallengeProgress() == 1L && setTimeToZero(c.getChallengeStartDate()).isEqual(today)) {
+            c.setChallengeProgress(2L);
+            log.info(c.getChallengeId() + " 챌린지의 progress 1 -> " + c.getChallengeProgress());
+        } else if (c.getChallengeProgress() == 2L && setTimeToZero(c.getChallengeEndDate()).isEqual(today)) {
+            c.setChallengeProgress(3L);
+            records.stream().filter(r -> r.getChallenge().equals(c)).forEach(ChallengeRecord::setStatusFalse);
+            log.info(c.getChallengeId() + " 챌린지의 progress가 2 -> " +  + c.getChallengeProgress());
+            log.info(record + " 챌린지기록의 status가 " + record.isChallengeRecordStatus());
         }
     }
 
