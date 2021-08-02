@@ -47,6 +47,6 @@ public class UserHistory extends Timestamped {
     }
 
     public void setContentEarnPointWhenChallengeEnd(Challenge challenge) {
-        this.content = challenge.getChallengeTitle() + " 챌린지의 완료 보상으로 " + "xxxx" + "의 포인트를 획득했어요!";
+        this.content = challenge.getChallengeTitle() + " 챌린지의 완료 보상으로 " + "xxxx" + "의 조각을 획득했어요!";
     }
 }
