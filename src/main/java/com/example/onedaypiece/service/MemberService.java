@@ -250,18 +250,28 @@ public class MemberService {
     }
 
     // 마이 페이지 프로필 수정
-
     @Transactional
-    public void updateProfile(ProfileUpdateRequestDto requestDto, String email){
+    public String updateProfile(ProfileUpdateRequestDto requestDto, String email){
 
+        log.info("프로필수정 닉네임:{} 이미지{}",requestDto.getNickname(), requestDto.getProfileImage());
         Member member = memberRepository.findByEmail(email).orElseThrow(
                 ()-> new ApiRequestException("마이페이지수정에서 멤버 수정하는 아이디찾는거실패")
         );
+        // 사진만바꾸는경우....
+        if(!member.getNickname().equals(requestDto.getNickname())){
+            existNickname(requestDto.getNickname());
+        } else{
+            log.info("같은닉네임 변경안하는거임");
+        }
 
-        existNickname(requestDto.getNickname());
+        if(member.getProfileImg().equals(requestDto.getProfileImage())){
+
+        }
         log.info("프로필 들어오는지 확인: {}", requestDto.getProfileImage());
         log.info("닉네임 들어오는지확인: {}",requestDto.getNickname());
-        member.updateProfile(requestDto);
+        String asd =member.updateProfile(requestDto);
+        log.info("업데이트후 이미지: {}",asd);
+        return asd;
     }
 
 
