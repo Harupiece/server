@@ -47,17 +47,17 @@ public class Scheduler {
         List<Challenge> updatedChallengeList = new ArrayList<>();
 
         for (ChallengeRecord record : records) {
-            Challenge challenge = record.getChallenge();
-            if (!updatedChallengeList.contains(challenge)) {
-                updatedChallengeList.add(challenge);
+            Challenge c = record.getChallenge();
+            if (!updatedChallengeList.contains(c)) {
+                updatedChallengeList.add(c);
 
-                if (challenge.getChallengeProgress() == 1L && setTimeToZero(challenge.getChallengeStartDate()).isEqual(today)) {
-                    challenge.setChallengeProgress(2L);
-                    log.info(challenge.getChallengeId() + " 챌린지의 progress 1 -> " + challenge.getChallengeProgress());
-                } else if (challenge.getChallengeProgress() == 2L && setTimeToZero(challenge.getChallengeEndDate()).isEqual(today)) {
-                    challenge.setChallengeProgress(3L);
-                    record.setStatusFalse();
-                    log.info(challenge.getChallengeId() + " 챌린지의 progress가 2 -> " +  + challenge.getChallengeProgress());
+                if (c.getChallengeProgress() == 1L && setTimeToZero(c.getChallengeStartDate()).isEqual(today)) {
+                    c.setChallengeProgress(2L);
+                    log.info(c.getChallengeId() + " 챌린지의 progress 1 -> " + c.getChallengeProgress());
+                } else if (c.getChallengeProgress() == 2L && setTimeToZero(c.getChallengeEndDate()).isEqual(today)) {
+                    c.setChallengeProgress(3L);
+                    records.stream().filter(r -> r.getChallenge().equals(c)).forEach(ChallengeRecord::setStatusFalse);
+                    log.info(c.getChallengeId() + " 챌린지의 progress가 2 -> " +  + c.getChallengeProgress());
                     log.info(record + " 챌린지기록의 status가 " + record.isChallengeRecordStatus());
                 }
             }
