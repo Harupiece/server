@@ -60,9 +60,9 @@ public class MemberController {
 
     // 마이 페이지 수정 프로필 + 닉네임
     @PutMapping("/mypage/profile")
-    public ResponseEntity<Void> updateMyPageInfoProfile(@RequestBody @Valid ProfileUpdateRequestDto requestDto, @AuthenticationPrincipal UserDetails userDetails){
-        memberService.updateProfile(requestDto, userDetails.getUsername());
-        return ResponseEntity.ok().build();
+    public ResponseEntity<String> updateMyPageInfoProfile(@RequestBody ProfileUpdateRequestDto requestDto, @AuthenticationPrincipal UserDetails userDetails){
+        String asd = memberService.updateProfile(requestDto, userDetails.getUsername());
+        return ResponseEntity.ok(asd);
     }
 
     // 현재 진해중인거
