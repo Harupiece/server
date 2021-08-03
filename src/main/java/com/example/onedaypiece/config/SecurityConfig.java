@@ -63,6 +63,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/member/signup/**").permitAll()
                 .antMatchers("/api/member/login/**").permitAll()
                 .antMatchers("/api/member/reissue").permitAll()
+                .antMatchers("/api/guest/main").permitAll()
                 //여기에카카오 요청넣어보기
                 .anyRequest().authenticated()   // 나머지 API 는 전부 인증 필요
 
