@@ -54,18 +54,26 @@ public class Scheduler {
         List<Challenge> updatedChallengeList = new ArrayList<>();
 
         for (ChallengeRecord record : recordList) {
-            Challenge c = record.getChallenge();
-            if (!updatedChallengeList.contains(c)) {
-                updatedChallengeList.add(c);
+            Challenge challenge = record.getChallenge();
 
-                if (c.getChallengeProgress() == 1L && setTimeToZero(c.getChallengeStartDate()).isEqual(today)) {
-                    whenChallengeStart(recordList, c);
+            if (!updatedChallengeList.contains(challenge)) {
+                updatedChallengeList.add(challenge);
 
-                } else if (c.getChallengeProgress() == 2L && setTimeToZero(c.getChallengeEndDate()).isEqual(today)) {
-                    whenChallengeEnd(recordList, record, c);
+                if (isChallengeTimeToStart(challenge)) {
+                    whenChallengeStart(recordList, challenge);
+                } else if (isChallengeTimeToEnd(challenge)) {
+                    whenChallengeEnd(recordList, record, challenge);
                 }
             }
         }
+    }
+
+    private boolean isChallengeTimeToStart(Challenge c) {
+        return c.getChallengeProgress() == 1L && setTimeToZero(c.getChallengeStartDate()).isEqual(today);
+    }
+
+    private boolean isChallengeTimeToEnd(Challenge c) {
+        return c.getChallengeProgress() == 2L && setTimeToZero(c.getChallengeEndDate()).isEqual(today);
     }
 
     private void whenChallengeStart(List<ChallengeRecord> recordList, Challenge c) {
