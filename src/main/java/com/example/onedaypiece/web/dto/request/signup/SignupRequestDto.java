@@ -19,13 +19,17 @@ public class SignupRequestDto {
     public SignupRequestDto(String email,  String password, String nickname, String passwordConfirm,
                             String profileImg){
 
-        if(email.isEmpty()) {
+        if(email == null || email.isEmpty()) {
             throw new ApiRequestException("email(ID)를 입력해주세요");
         }
 
         // email형식인지 확인하는 정규식 넣기
         if(!email.matches("^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$")){
             throw new ApiRequestException("올바른 이메일 형식이 아닙니다.");
+        }
+
+        if(password == null || passwordConfirm == null){
+            throw new ApiRequestException("패스워드가 null이므로 입력해 주세요.");
         }
 
         if(password.isEmpty() || passwordConfirm.isEmpty()) {
@@ -40,7 +44,7 @@ public class SignupRequestDto {
             throw new ApiRequestException("비밀번호가 서로같지않습니다.");
         }
 
-        if(nickname.isEmpty()){
+        if(nickname == null || nickname.isEmpty()){
             throw new ApiRequestException("닉네임을 입력해주세요");
         }
 
