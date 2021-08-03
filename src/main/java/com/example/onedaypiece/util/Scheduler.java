@@ -79,12 +79,12 @@ public class Scheduler {
     private void whenChallengeStart(List<ChallengeRecord> recordList, Challenge c) {
         List<Member> userList = whenSetProgressAndSetUserList(recordList, c, 2L);
 
-        for (Member member : userList) {
-            //~님의 ~챌린지가 시작되었어요
-            UserHistory history = new UserHistory(member);
-            history.setContentWhenChallengeStart(c);
-            userHistoryRepository.save(history);
-        }
+//        for (Member member : userList) {
+//            //~님의 ~챌린지가 시작되었어요
+//            UserHistory history = new UserHistory(member);
+//            history.setContentWhenChallengeStart(c);
+//            userHistoryRepository.save(history);
+//        }
     }
 
     private List<Member> whenSetProgressAndSetUserList(List<ChallengeRecord> recordList, Challenge c, Long l) {
@@ -96,17 +96,17 @@ public class Scheduler {
         List<Member> userList = whenSetProgressAndSetUserList(recordList, c, 3L);
         record.setStatusFalse();
 
-        for (Member member : userList) {
-            //축하드려요! ~님의 챌린지가 완료되었어요
-            UserHistory challengeHistory = new UserHistory(member);
-            challengeHistory.setContentWhenChallengeEnd(c);
-            userHistoryRepository.save(challengeHistory);
-
-            //챌린지에 80% 이상 성실히 참여하여 50 * 일수의 포인트를 획득하셨어요
-            UserHistory pointHistory = new UserHistory(member);
-            pointHistory.setContentEarnPointWhenChallengeEnd(c);
-            userHistoryRepository.save(pointHistory);
-        }
+//        for (Member member : userList) {
+//            //축하드려요! ~님의 챌린지가 완료되었어요
+//            UserHistory challengeHistory = new UserHistory(member);
+//            challengeHistory.setContentWhenChallengeEnd(c);
+//            userHistoryRepository.save(challengeHistory);
+//
+//            //챌린지에 80% 이상 성실히 참여하여 50 * 일수의 포인트를 획득하셨어요
+//            UserHistory pointHistory = new UserHistory(member);
+//            pointHistory.setContentEarnPointWhenChallengeEnd(c);
+//            userHistoryRepository.save(pointHistory);
+//        }
     }
 
     private LocalDateTime setTimeToZero(LocalDateTime time) {
