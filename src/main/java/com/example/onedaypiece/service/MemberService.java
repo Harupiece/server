@@ -2,8 +2,6 @@ package com.example.onedaypiece.service;
 
 import com.example.onedaypiece.exception.ApiRequestException;
 import com.example.onedaypiece.security.TokenProvider;
-import com.example.onedaypiece.web.domain.certification.Certification;
-import com.example.onedaypiece.web.domain.certification.CertificationRepository;
 import com.example.onedaypiece.web.domain.challenge.Challenge;
 import com.example.onedaypiece.web.domain.challengeRecord.ChallengeRecord;
 import com.example.onedaypiece.web.domain.challengeRecord.ChallengeRecordRepository;
@@ -11,9 +9,7 @@ import com.example.onedaypiece.web.domain.member.Member;
 import com.example.onedaypiece.web.domain.member.MemberRepository;
 import com.example.onedaypiece.web.domain.point.Point;
 import com.example.onedaypiece.web.domain.point.PointRepository;
-import com.example.onedaypiece.web.domain.pointhistory.PointHistory;
-import com.example.onedaypiece.web.domain.pointhistory.PointHistoryRepository;
-import com.example.onedaypiece.web.domain.posting.PostingRepository;
+import com.example.onedaypiece.web.domain.pointHistory.PointHistoryRepository;
 import com.example.onedaypiece.web.domain.token.RefreshToken;
 import com.example.onedaypiece.web.domain.token.RefreshTokenRepository;
 import com.example.onedaypiece.web.dto.request.login.LoginRequestDto;
@@ -26,8 +22,9 @@ import com.example.onedaypiece.web.dto.response.member.MemberTokenResponseDto;
 import com.example.onedaypiece.web.dto.response.member.reload.ReloadResponseDto;
 import com.example.onedaypiece.web.dto.response.mypage.end.EndResponseDto;
 import com.example.onedaypiece.web.dto.response.mypage.end.MyPageEndResponseDto;
-import com.example.onedaypiece.web.dto.response.mypage.histroy.HistoryResponseDto;
-import com.example.onedaypiece.web.dto.response.mypage.histroy.PointHistoryResponseDto;
+import com.example.onedaypiece.web.dto.response.mypage.histroy.MemberHistoryResponseDto;
+import com.example.onedaypiece.web.dto.response.mypage.histroy.MemberHistoryDto;
+import com.example.onedaypiece.web.dto.response.mypage.histroy.PointHistoryDto;
 import com.example.onedaypiece.web.dto.response.mypage.proceed.MypageProceedResponseDto;
 import com.example.onedaypiece.web.dto.response.mypage.proceed.ProceedResponseDto;
 import com.example.onedaypiece.web.dto.response.mypage.scheduled.MyPageScheduledResponseDto;
@@ -59,8 +56,6 @@ public class MemberService {
     private final PointRepository pointRepository;
     private final ChallengeRecordRepository challengeRecordRepository;
     private final PointHistoryRepository pointHistoryRepository;
-    private final PostingRepository postingRepository;
-    private final CertificationRepository certificationRepository;
 
     // 회원가입
     @Transactional
@@ -273,13 +268,9 @@ public class MemberService {
                 ()-> new ApiRequestException("마이페이지수정에서 멤버 수정하는 아이디찾는거실패")
         );
 
-        // 사진만바꾸는경우
+        // 닉네임 중복 처리 다를경우만 예외처리 같은경우는 닉네임변경안하는경우
         if(!member.getNickname().equals(requestDto.getNickname())){
             existNickname(requestDto.getNickname());
-        }
-
-        if(member.getProfileImg().equals(requestDto.getProfileImage())){
-
         }
 
         String afterProfileImg =member.updateProfile(requestDto);
@@ -287,55 +278,27 @@ public class MemberService {
     }
 
 
-    // 마이 페이지 히스토리 1. 자기가 얻은 포인트 가져오기
+    // 마이 페이지 히스토리
     @Transactional
-    public HistoryResponseDto getHistory(String email){
-        // 원본
-//        Member member = memberRepository.findByEmail(email).orElseThrow(
-//                ()-> new ApiRequestException("마이페이지 히스토리에서 멤버 아이디찾는거실패")
-//        );
+    public MemberHistoryResponseDto getHistory(String email){
 
-//        List<PointHistory> targetList = pointHistoryRepository.find(member);
+        // 1. 자기가 얻은 포인트 가져오기
+        List<MemberHistoryDto> memberHistoryList = pointHistoryRepository.findHistory(email);
 
+        if(memberHistoryList.size() == 0){
+            throw new ApiRequestException("참여한 챌린지가 없습니다!");
+        }
 
-        // 1차
-//        List<Certification> certifications = certificationRepository.findTest(member);
-//        List<PointHistory> targetList = pointHistoryRepository.find(certifications);\
-        // 2차
-//        List<PointHistory> targetList = pointHistoryRepository.find(email);
-//        List<PointHistoryResponseDto> pointHistoryList =targetList.stream()
-//                .map(pointHistory -> new PointHistoryResponseDto(pointHistory))
-//                .collect(Collectors.toList());
-//        if (pointHistoryList.size() == 0) {
-//             throw new ApiRequestException("참여한 챌린지가 없습니다!");
-//        }
-//        // 어차피 userDetails 에서 가져온 email 로 조회했기 때문에 pointHistoryList 의 member 는 모두 같다. 그러므로 0번째를 조회해도 됨.
-//        Member member = pointHistoryList.get(0).getMember();
-
-        //////////////////////////
-
-        //3차
-        List<PostingTestDto> testDtos = pointHistoryRepository.findtest(email);
-
-//        List<PointHistoryResponseDto> collect = testDtos
-//                .stream()
-//                .map(PointHistoryResponseDto::new)
-//                .collect(Collectors.toList());
-//
-        List<PointHistoryTest> testDtos1 = testDtos
-                .stream()
-                .map(PointHistoryTest::new)
+        // 2. 포인트에 관한것만 빼기 원하는정보만 빼기 히스토리에관한것만 따로뺴고
+        List<PointHistoryDto> pointHistoryList = memberHistoryList.stream()
+                .map(memberHistory -> new PointHistoryDto(memberHistory))
                 .collect(Collectors.toList());
 
+        // 3. 멤버에 관한정보만 빼기
         // 어차피 userDetails 에서 가져온 email 로 조회했기 때문에 pointHistoryList 의 member 는 모두 같다. 그러므로 0번째를 조회해도 됨.
-        MemberResponseDto member = new MemberResponseDto(testDtos.get(0));
-//
+        MemberResponseDto member = new MemberResponseDto(memberHistoryList.get(0));
 
-
-        // 순위추가하면 여기에 파라미터로 순위 추가해줘야함
-//        return new HistoryResponseDto(member, pointHistoryList);
-//        return new HistoryResponseDto(pointHistoryList);
-        return  new HistoryResponseDto(member , testDtos1);
+        return new MemberHistoryResponseDto(member , pointHistoryList);
     }
 
     // 닉네임 중복확인

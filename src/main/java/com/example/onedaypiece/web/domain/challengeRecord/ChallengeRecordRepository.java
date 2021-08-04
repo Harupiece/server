@@ -49,8 +49,8 @@ public interface ChallengeRecordRepository extends JpaRepository<ChallengeRecord
 
     @Query("select c " +
             "from ChallengeRecord c " +
-            "left join fetch c.challenge " +
-            "left join fetch c.member " +
+            "inner join fetch c.challenge " +
+            "inner join fetch c.member " +
             "Where c.challengeRecordStatus = true and c.challenge.challengeProgress < 3 " +
             "order by c.modifiedAt desc")
     List<ChallengeRecord> findAllByStatusTrueOrderByModifiedAtDesc();

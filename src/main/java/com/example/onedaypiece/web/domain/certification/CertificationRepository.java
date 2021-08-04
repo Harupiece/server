@@ -1,7 +1,7 @@
 package com.example.onedaypiece.web.domain.certification;
 
+import com.example.onedaypiece.web.domain.challenge.Challenge;
 import com.example.onedaypiece.web.domain.member.Member;
-import com.example.onedaypiece.web.domain.pointhistory.PointHistory;
 import com.example.onedaypiece.web.domain.posting.Posting;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -33,6 +33,4 @@ public interface CertificationRepository extends JpaRepository<Certification, Lo
             "join fetch c.posting " +
             "where c.member = :member")
     List<Certification> findTest (Member member );
-
-
 }

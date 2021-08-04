@@ -1,6 +1,7 @@
 package com.example.onedaypiece.web.domain.posting;
 
-import com.example.onedaypiece.service.PostingTestDto;
+
+import com.example.onedaypiece.web.domain.challenge.Challenge;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -32,6 +33,6 @@ public interface PostingRepository extends JpaRepository<Posting,Long> {
     @Query("update Posting p set p.postingModifyOk = false where p in :postingList")
     int updatePostingStatus(List<Posting> postingList);
 
-
-
+    @Query("select p from Posting as p where p.postingApproval = true and p.challenge = :c")
+    List<Posting> findAllByChallengeAndPostingApprovalTrue(Challenge c);
 }
