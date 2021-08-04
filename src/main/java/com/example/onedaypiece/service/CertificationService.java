@@ -5,8 +5,8 @@ import com.example.onedaypiece.web.domain.certification.Certification;
 import com.example.onedaypiece.web.domain.certification.CertificationRepository;
 import com.example.onedaypiece.web.domain.member.Member;
 import com.example.onedaypiece.web.domain.member.MemberRepository;
-import com.example.onedaypiece.web.domain.pointhistory.PointHistory;
-import com.example.onedaypiece.web.domain.pointhistory.PointHistoryRepository;
+import com.example.onedaypiece.web.domain.pointHistory.PointHistory;
+import com.example.onedaypiece.web.domain.pointHistory.PointHistoryRepository;
 import com.example.onedaypiece.web.domain.posting.Posting;
 import com.example.onedaypiece.web.domain.posting.PostingRepository;
 import com.example.onedaypiece.web.dto.request.certification.CertificationRequestDto;
@@ -24,7 +24,6 @@ public class CertificationService {
     private final PostingRepository postingRepository;
     private final MemberRepository memberRepository;
     private final PointHistoryRepository pointHistoryRepository;
-
 
 
     @Transactional
@@ -53,9 +52,9 @@ public class CertificationService {
     private void checkMemberCountAndAddPoint (Posting posting, Member member, Long memberCount, Certification certification) {
 
         if(memberCount /2 <= posting.getPostingCount()){
-            PointHistory pointHistory = new PointHistory(5L, certification);
+            PointHistory pointHistory = new PointHistory(1L, certification);
             pointHistoryRepository.save(pointHistory);
-            member.updatePoint(5L);
+            member.updatePoint(1L);
             posting.updateApproval();
             posting.updatePoint();
         }

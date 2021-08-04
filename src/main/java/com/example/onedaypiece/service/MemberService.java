@@ -9,7 +9,7 @@ import com.example.onedaypiece.web.domain.member.Member;
 import com.example.onedaypiece.web.domain.member.MemberRepository;
 import com.example.onedaypiece.web.domain.point.Point;
 import com.example.onedaypiece.web.domain.point.PointRepository;
-import com.example.onedaypiece.web.domain.pointhistory.PointHistoryRepository;
+import com.example.onedaypiece.web.domain.pointHistory.PointHistoryRepository;
 import com.example.onedaypiece.web.domain.token.RefreshToken;
 import com.example.onedaypiece.web.domain.token.RefreshTokenRepository;
 import com.example.onedaypiece.web.dto.request.login.LoginRequestDto;
