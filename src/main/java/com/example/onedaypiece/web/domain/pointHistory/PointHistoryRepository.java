@@ -22,7 +22,7 @@ public interface PointHistoryRepository extends JpaRepository<PointHistory, Long
 
 
     @Query("select new com.example.onedaypiece.web.dto.response.mypage.histroy.MemberHistoryDto( " +
-            "p.pointhistoryId," +
+            "p.pointHistoryId," +
             "p.createdAt, " +
             "p.certification.posting.challenge.challengeTitle, " +
             "p.getPoint," +
