@@ -150,7 +150,7 @@ public class ChallengeService {
         }
         if (currentLocalDateTime.isBefore(challenge.getChallengeStartDate())) {
             challenge.setChallengeStatus(false);
-            challenge.setChallengeProgress(3L);
+            challenge.updateChallengeProgress(3L);
         } else {
             throw new ApiRequestException("이미 시작된 챌린지는 삭제할 수 없습니다.");
         }

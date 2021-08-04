@@ -4,6 +4,8 @@ import com.example.onedaypiece.web.domain.challenge.Challenge;
 import com.example.onedaypiece.web.domain.challengeRecord.ChallengeRecord;
 import com.example.onedaypiece.web.domain.challengeRecord.ChallengeRecordRepository;
 import com.example.onedaypiece.web.domain.member.Member;
+import com.example.onedaypiece.web.domain.pointHistory.PointHistory;
+import com.example.onedaypiece.web.domain.pointHistory.PointHistoryRepository;
 import com.example.onedaypiece.web.domain.posting.Posting;
 import com.example.onedaypiece.web.domain.posting.PostingRepository;
 import lombok.RequiredArgsConstructor;
@@ -15,9 +17,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -26,7 +28,7 @@ public class Scheduler {
 
     private final PostingRepository postingRepository;
     private final ChallengeRecordRepository challengeRecordRepository;
-//    private final UserHistoryRepository userHistoryRepository;
+    private final PointHistoryRepository pointHistoryRepository;
 
     private final LocalDateTime today = LocalDate.now().atStartOfDay();
 
@@ -56,9 +58,25 @@ public class Scheduler {
                 updatedChallengeList.add(challenge);
 
                 if (isChallengeTimeToStart(challenge)) {
-                    whenChallengeStart(recordList, challenge);
+                    challenge.updateChallengeProgress(2L);
+                    log.info("id: " + challenge.getChallengeId() + " Challenge Start");
+
                 } else if (isChallengeTimeToEnd(challenge)) {
-                    whenChallengeEnd(recordList, record, challenge);
+                    challenge.updateChallengeProgress(3L);
+                    record.setStatusFalse();
+                    log.info("id: " + challenge.getChallengeId() + " Challenge End");
+
+                    Member member = record.getMember();
+                    List<Posting> postingList = postingRepository.findAllByChallengeAndPostingApprovalTrue(challenge);
+                    long certificatedPostingCount = postingList.stream().filter(p -> p.getMember().equals(member)).count();
+
+                    if (canGetChallengePoint(challenge, certificatedPostingCount)) { // 80% 이상 인증을 받았는가?
+                        final Long getPoint = certificatedPostingCount * 50L;
+                        PointHistory pointHistory = new PointHistory(getPoint, record);
+                        pointHistoryRepository.save(pointHistory);
+                        member.updatePoint(getPoint);
+                        record.updateChallengePointTrue();
+                    }
                 }
             }
         }
@@ -72,46 +90,9 @@ public class Scheduler {
         return c.getChallengeProgress() == 2L && setTimeToZero(c.getChallengeEndDate()).isEqual(today);
     }
 
-    private void whenChallengeStart(List<ChallengeRecord> recordList, Challenge c) {
-        List<Member> userList = setProgressAndSetUserList(recordList, c, 2L);
-        log.info("id: " + c.getChallengeId() + " Challenge Start");
-
-//        for (Member member : userList) {
-//            //~님의 ~챌린지가 시작되었어요
-//            UserHistory history = new UserHistory(member);
-//            history.setContentWhenChallengeStart(c);
-//            userHistoryRepository.save(history);
-//        }
-    }
-
-    private List<Member> setProgressAndSetUserList(List<ChallengeRecord> recordList, Challenge c, Long l) {
-        c.setChallengeProgress(l);
-        return recordList.stream().filter(r -> r.getChallenge().equals(c)).map(ChallengeRecord::getMember).collect(Collectors.toList());
-    }
-
-    private void whenChallengeEnd(List<ChallengeRecord> recordList, ChallengeRecord record, Challenge c) {
-        List<Member> userList = setProgressAndSetUserList(recordList, c, 3L);
-        record.setStatusFalse();
-        log.info("id: " + c.getChallengeId() + " Challenge End");
-
-        List<Posting> postingList = postingRepository.findAllByChallengeAndPostingApprovalTrue(c);
-
-        for (Member member : userList) {
-
-        }
-
-
-//        for (Member member : userList) {
-//            //축하드려요! ~님의 챌린지가 완료되었어요
-//            UserHistory challengeHistory = new UserHistory(member);
-//            challengeHistory.setContentWhenChallengeEnd(c);
-//            userHistoryRepository.save(challengeHistory);
-//
-//            //챌린지에 80% 이상 성실히 참여하여 50 * 일수의 포인트를 획득하셨어요
-//            UserHistory pointHistory = new UserHistory(member);
-//            pointHistory.setContentEarnPointWhenChallengeEnd(c);
-//            userHistoryRepository.save(pointHistory);
-//        }
+    private boolean canGetChallengePoint(Challenge challenge, Long certificatedPostingCount) {
+        return certificatedPostingCount /
+                ChronoUnit.DAYS.between(challenge.getChallengeStartDate(), challenge.getChallengeEndDate()) * 100 > 80;
     }
 
     private LocalDateTime setTimeToZero(LocalDateTime time) {
