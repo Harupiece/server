@@ -16,9 +16,11 @@ import javax.persistence.*;
 @Table(indexes = {@Index(name = "idx_record_status", columnList = "challenge_record_status")})
 public class ChallengeRecord extends Timestamped {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long challengeRecordId;
 
+    // 챌린지 참여율이 80% 이상이어서 포인트를 받았는지 여부
     @Column
     private boolean challengePoint;
 
@@ -35,6 +37,7 @@ public class ChallengeRecord extends Timestamped {
     private boolean challengeRecordStatus;
 
     public ChallengeRecord(Challenge challenge, Member member) {
+        this.challengePoint = false;
         this.challenge = challenge;
         this.member = member;
         this.challengeRecordStatus = true;
@@ -42,5 +45,9 @@ public class ChallengeRecord extends Timestamped {
 
     public void setStatusFalse() {
         this.challengeRecordStatus = false;
+    }
+
+    public void setChallengePointTrue() {
+        this.challengePoint = true;
     }
 }

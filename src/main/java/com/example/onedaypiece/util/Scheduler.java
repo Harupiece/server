@@ -73,7 +73,7 @@ public class Scheduler {
     }
 
     private void whenChallengeStart(List<ChallengeRecord> recordList, Challenge c) {
-        List<Member> userList = whenSetProgressAndSetUserList(recordList, c, 2L);
+        List<Member> userList = setProgressAndSetUserList(recordList, c, 2L);
         log.info("id: " + c.getChallengeId() + " Challenge Start");
 
 //        for (Member member : userList) {
@@ -84,16 +84,21 @@ public class Scheduler {
 //        }
     }
 
-    private List<Member> whenSetProgressAndSetUserList(List<ChallengeRecord> recordList, Challenge c, Long l) {
+    private List<Member> setProgressAndSetUserList(List<ChallengeRecord> recordList, Challenge c, Long l) {
         c.setChallengeProgress(l);
         return recordList.stream().filter(r -> r.getChallenge().equals(c)).map(ChallengeRecord::getMember).collect(Collectors.toList());
     }
 
     private void whenChallengeEnd(List<ChallengeRecord> recordList, ChallengeRecord record, Challenge c) {
-        List<Member> userList = whenSetProgressAndSetUserList(recordList, c, 3L);
+        List<Member> userList = setProgressAndSetUserList(recordList, c, 3L);
         record.setStatusFalse();
         log.info("id: " + c.getChallengeId() + " Challenge End");
 
+        List<Posting> postingList = postingRepository.findAllByChallengeAndPostingApprovalTrue(c);
+
+        for (Member member : userList) {
+
+        }
 
 
 //        for (Member member : userList) {
