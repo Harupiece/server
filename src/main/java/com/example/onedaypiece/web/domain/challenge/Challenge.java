@@ -67,7 +67,7 @@ public class Challenge extends Timestamped {
         this.challengeStatus = challengeStatus;
     }
 
-    public void setChallengeProgress(Long challengeProgress) {
+    public void updateChallengeProgress(Long challengeProgress) {
         this.challengeProgress = challengeProgress;
     }
 

@@ -14,11 +14,12 @@ import javax.persistence.*;
 @Getter
 @Entity
 @NoArgsConstructor
-@Table(indexes = {@Index(name = "idx_modify_status", columnList = "postingModifyOk")})
+@Table(indexes = {@Index(name = "idx_modify_status", columnList = "postingModifyOk"),
+        @Index(name = "idx_status", columnList = "postingApproval")})
 public class Posting extends Timestamped {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
-    @Column(name="posting_id")
+    @Column(name = "posting_id")
     private Long postingId;
     @Column
     private String postingImg;
@@ -36,23 +37,23 @@ public class Posting extends Timestamped {
     private Long postingCount;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="member_id")
+    @JoinColumn(name = "member_id")
     private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="challenge_id")
+    @JoinColumn(name = "challenge_id")
     private Challenge challenge;
 
     public Posting(String postingImg, String postingContent, Member member, Challenge challenge) {
         this.postingImg = postingImg;
-        this.postingContent =postingContent;
+        this.postingContent = postingContent;
         this.postingStatus = true;
-        this.postingApproval=false;
-        this.postingPoint=false;
-        this.postingModifyOk=true;
-        this.postingCount =0L;
-        this.member =member;
-        this.challenge=challenge;
+        this.postingApproval = false;
+        this.postingPoint = false;
+        this.postingModifyOk = true;
+        this.postingCount = 0L;
+        this.member = member;
+        this.challenge = challenge;
     }
 
     //==생성 메서드==//
@@ -71,9 +72,10 @@ public class Posting extends Timestamped {
         this.postingContent = postingRequestDto.getPostingContent();
 
     }
+
     // 삭제 로직
     public void deletePosting() {
-        this.postingStatus =false;
+        this.postingStatus = false;
 
     }
 
