@@ -273,13 +273,9 @@ public class MemberService {
                 ()-> new ApiRequestException("마이페이지수정에서 멤버 수정하는 아이디찾는거실패")
         );
 
-        // 사진만바꾸는경우
+        // 닉네임 중복 처리 다를경우만 예외처리 같은경우는 닉네임변경안하는경우
         if(!member.getNickname().equals(requestDto.getNickname())){
             existNickname(requestDto.getNickname());
-        }
-
-        if(member.getProfileImg().equals(requestDto.getProfileImage())){
-
         }
 
         String afterProfileImg =member.updateProfile(requestDto);
