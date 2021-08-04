@@ -26,7 +26,6 @@ public class CertificationService {
     private final PointHistoryRepository pointHistoryRepository;
 
 
-
     @Transactional
     public Boolean createCertification(CertificationRequestDto certificationRequestDto, UserDetails userDetails) {
         Posting posting = getPosting(certificationRequestDto.getPostingId());
