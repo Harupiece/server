@@ -8,6 +8,7 @@ import com.example.onedaypiece.web.domain.challenge.ChallengeRepository;
 import com.example.onedaypiece.web.domain.member.Member;
 import com.example.onedaypiece.web.domain.member.MemberRepository;
 import com.example.onedaypiece.web.domain.posting.Posting;
+import com.example.onedaypiece.web.domain.posting.PostingQueryRepository;
 import com.example.onedaypiece.web.domain.posting.PostingRepository;
 import com.example.onedaypiece.web.dto.request.posting.PostingCreateRequestDto;
 import com.example.onedaypiece.web.dto.request.posting.PostingUpdateRequestDto;
@@ -34,6 +35,8 @@ public class PostingService {
     private final ChallengeRepository challengeRepository;
     private final CertificationRepository certificationRepository;
 
+    private final PostingQueryRepository postingQueryRepository;
+
     /**
      * 1.포스트 저장
      *
@@ -42,6 +45,7 @@ public class PostingService {
         Member member = getMemberByEmail(email);
         Challenge challenge = getChallenge(postingCreateRequestDto.getChallengeId());
         Posting posting = Posting.createPosting(postingCreateRequestDto,member,challenge);
+
 
         // 포스팅 검사
         validatePosting(challenge);
@@ -60,7 +64,10 @@ public class PostingService {
 
         Pageable pageable = PageRequest.of(page-1,6);
 
-        List<Posting> postingList =postingRepository.findPostingList(challengeId,pageable);
+//        List<Posting> postingList =postingRepository.findPostingList(challengeId,pageable);
+
+        // QueryRepository 적용
+        List<Posting> postingList =postingQueryRepository.findPostingList(challengeId,pageable);
 
         List<Certification> certifications = certificationRepository.findAllByPosting(challengeId);
 

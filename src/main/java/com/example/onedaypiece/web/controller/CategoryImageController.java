@@ -13,6 +13,9 @@ public class CategoryImageController {
 
     private final CategoryImageService categoryImageService;
 
+    /**
+     * 1. 카테고리 이미지등록
+     */
     @PostMapping("/api/category-image") // 카테고리 이미지 등록
     public void postCategoryImage(@RequestBody CategoryImageRequestDto requestDto) {
         categoryImageService.postCategoryImage(requestDto);
