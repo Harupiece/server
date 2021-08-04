@@ -94,6 +94,8 @@ public class Scheduler {
         record.setStatusFalse();
         log.info("id: " + c.getChallengeId() + " Challenge End");
 
+
+
 //        for (Member member : userList) {
 //            //축하드려요! ~님의 챌린지가 완료되었어요
 //            UserHistory challengeHistory = new UserHistory(member);

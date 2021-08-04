@@ -15,9 +15,12 @@ import javax.persistence.*;
 @ToString
 @Table(indexes = {@Index(name = "idx_record_status", columnList = "challenge_record_status")})
 public class ChallengeRecord extends Timestamped {
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Id
+
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long challengeRecordId;
+
+    @Column
+    private boolean challengePoint;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "challenge_id")

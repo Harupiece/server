@@ -1,4 +1,4 @@
-package com.example.onedaypiece.web.domain.pointhistory;
+package com.example.onedaypiece.web.domain.pointHistory;
 
 import com.example.onedaypiece.web.dto.response.mypage.histroy.MemberHistoryDto;
 import org.springframework.data.jpa.repository.JpaRepository;
