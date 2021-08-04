@@ -27,7 +27,7 @@ public class ChallengeController {
         return ResponseEntity.ok().body(challengeService.getMainPage(userDetails.getUsername()));
     }
 
-    @GetMapping("/api/member/challenge/{challengeId}") // 챌린지 상세
+    @GetMapping("/api/guest/challenge/{challengeId}") // 챌린지 상세
     public ResponseEntity<ChallengeResponseDto> getChallengeDetail(@PathVariable Long challengeId) {
         return ResponseEntity.ok().body(challengeService.getChallengeDetail(challengeId));
     }

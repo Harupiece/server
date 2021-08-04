@@ -6,7 +6,6 @@ import com.example.onedaypiece.web.domain.challenge.Challenge;
 import com.example.onedaypiece.web.domain.challenge.ChallengeRepository;
 import com.example.onedaypiece.web.domain.challengeRecord.ChallengeRecord;
 import com.example.onedaypiece.web.domain.challengeRecord.ChallengeRecordRepository;
-import com.example.onedaypiece.web.domain.history.UserHistory;
 import com.example.onedaypiece.web.domain.history.UserHistoryRepository;
 import com.example.onedaypiece.web.domain.member.Member;
 import com.example.onedaypiece.web.domain.member.MemberRepository;
@@ -20,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static com.example.onedaypiece.web.domain.challenge.CategoryName.*;
@@ -32,6 +32,8 @@ public class ChallengeService {
     private final ChallengeRecordRepository challengeRecordRepository;
     private final MemberRepository memberRepository;
     private final UserHistoryRepository userHistoryRepository;
+
+    private final int categorySize = 3;
 
     private final LocalDateTime currentLocalDateTime = LocalDateTime.now();
 
@@ -106,14 +108,10 @@ public class ChallengeService {
     }
 
     private List<ChallengeSourceResponseDto> categoryCollector(CategoryName category, List<ChallengeRecord> records) {
-        final int categorySize = 3;
-
         Set<Long> recordIdList = new HashSet<>();
         List<ChallengeRecord> recordList = new ArrayList<>();
 
-        records.stream().filter(r -> !recordIdList.contains(r.getChallenge().getChallengeId()) &&
-                r.getChallenge().getCategoryName().equals(category) &&
-                recordIdList.size() < categorySize).forEach(r -> {
+        records.stream().filter(categoryListDeduplicator(category, recordIdList)).forEach(r -> {
             recordIdList.add(r.getChallenge().getChallengeId());
             recordList.add(r);
         });
@@ -126,6 +124,12 @@ public class ChallengeService {
         }
 
         return categorySourceList;
+    }
+
+    private Predicate<ChallengeRecord> categoryListDeduplicator(CategoryName category, Set<Long> recordIdList) {
+        return r -> !recordIdList.contains(r.getChallenge().getChallengeId()) &&
+                r.getChallenge().getCategoryName().equals(category) &&
+                recordIdList.size() < categorySize;
     }
 
     private Challenge ChallengeChecker(Long challengeId) {

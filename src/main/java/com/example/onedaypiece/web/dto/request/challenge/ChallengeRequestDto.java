@@ -32,10 +32,6 @@ public class ChallengeRequestDto {
             throw new ApiRequestException("내용이 비었습니다.");
         }
 
-        if(challengePassword == null){
-            throw new ApiRequestException("비밀번호가 null입니다.");
-        }
-
         if(challengeImgUrl == null || challengeImgUrl.isEmpty()){
             throw new ApiRequestException("챌린지 이미지가 비었습니다.");
         }

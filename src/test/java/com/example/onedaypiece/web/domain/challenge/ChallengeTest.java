@@ -1,3 +1,4 @@
+
 package com.example.onedaypiece.web.domain.challenge;
 
 import com.example.onedaypiece.exception.ApiRequestException;
@@ -345,3 +346,4 @@ class ChallengeTest {
         }
     }
 }
+
