@@ -74,10 +74,8 @@ public class Member extends Timestamped {
 
     // 마이페이지 프로필 수정
     public String updateProfile(ProfileUpdateRequestDto requestDto){
-        log.info("member에서업데이트 전: {}",requestDto.getProfileImage());
         this.nickname = requestDto.getNickname();
         this.profileImg = requestDto.getProfileImage();
-        log.info("member에서업데이트 후: {}",this.profileImg);
         return this.profileImg;
     }
 

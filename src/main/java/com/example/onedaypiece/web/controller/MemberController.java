@@ -61,11 +61,11 @@ public class MemberController {
     // 마이 페이지 수정 프로필 + 닉네임
     @PutMapping("/mypage/profile")
     public ResponseEntity<String> updateMyPageInfoProfile(@RequestBody ProfileUpdateRequestDto requestDto, @AuthenticationPrincipal UserDetails userDetails){
-        String asd = memberService.updateProfile(requestDto, userDetails.getUsername());
-        return ResponseEntity.ok(asd);
+        String afterProfileImg = memberService.updateProfile(requestDto, userDetails.getUsername());
+        return ResponseEntity.ok(afterProfileImg);
     }
 
-    // 현재 진해중인거
+    // 현재 진행중인거
     @GetMapping("/mypage/proceed")
     public ResponseEntity<MypageProceedResponseDto> getprocedd(@AuthenticationPrincipal UserDetails userDetails){
         MypageProceedResponseDto responseDto = memberService.getProceed(userDetails.getUsername());
