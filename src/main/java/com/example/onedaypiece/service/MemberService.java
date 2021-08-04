@@ -21,6 +21,7 @@ import com.example.onedaypiece.web.dto.request.mypage.ProfileUpdateRequestDto;
 import com.example.onedaypiece.web.dto.request.mypage.PwUpdateRequestDto;
 import com.example.onedaypiece.web.dto.request.signup.SignupRequestDto;
 import com.example.onedaypiece.web.dto.request.token.TokenRequestDto;
+import com.example.onedaypiece.web.dto.response.member.MemberResponseDto;
 import com.example.onedaypiece.web.dto.response.member.MemberTokenResponseDto;
 import com.example.onedaypiece.web.dto.response.member.reload.ReloadResponseDto;
 import com.example.onedaypiece.web.dto.response.mypage.end.EndResponseDto;
@@ -115,7 +116,12 @@ public class MemberService {
         Member member = memberRepository.findByEmail(requestDto.getEmail()).orElseThrow(
                 ()-> new ApiRequestException("로그인할떄 아이디가 존재하지않습니다.")
         );
-        MemberTokenResponseDto loginResponseDto = new MemberTokenResponseDto(tokenDto, member);
+
+        // 자기가 참여한 챌린지에서 현재 진행중인리스트
+        List<ChallengeRecord> targetList = challengeRecordRepository.findAllByMemberAndProgress(member,2L);
+        int countChallenge = targetList.size();
+
+        MemberTokenResponseDto loginResponseDto = new MemberTokenResponseDto(tokenDto, member, countChallenge);
         return loginResponseDto;
     }
 
@@ -126,7 +132,11 @@ public class MemberService {
                 ()-> new ApiRequestException("새로고침중 찾을수없는 아이디")
         );
 
-        return new ReloadResponseDto(member);
+        // 자기가 참여한 챌린지에서 현재 진행중인리스트
+        List<ChallengeRecord> targetList = challengeRecordRepository.findAllByMemberAndProgress(member,2L);
+        int countChallenge = targetList.size();
+
+        return new ReloadResponseDto(member, countChallenge);
     }
 
 
@@ -162,7 +172,11 @@ public class MemberService {
         RefreshToken newRefreshToken = refreshToken.updateValue(tokenDto.getRefreshToken());
         refreshTokenRepository.save(newRefreshToken);
 
-        MemberTokenResponseDto reIssueResponseDto = new MemberTokenResponseDto(tokenDto, member);
+        // 자기가 참여한 챌린지에서 현재 진행중인리스트
+        List<ChallengeRecord> targetList = challengeRecordRepository.findAllByMemberAndProgress(member,2L);
+        int countChallenge = targetList.size();
+
+        MemberTokenResponseDto reIssueResponseDto = new MemberTokenResponseDto(tokenDto, member, countChallenge);
         // 토큰 발급
         return reIssueResponseDto;
     }
@@ -176,12 +190,14 @@ public class MemberService {
         );
         Long pointSum = member.getPoint().getAcquiredPoint();
 
-        //본인이 참여한 챌린지 리스트  1: 진행 예정, 2: 진행 중, 3 : 진행 완료
+        //본인이 참여한 챌린지 기록리스트  1: 진행 예정, 2: 진행 중, 3 : 진행 완료
         List<ChallengeRecord> targetList = challengeRecordRepository.findAllByMemberAndProgress(member,2L);
-//        List<Challenge> proceeding = challengeRepository.findAllByChallengeProgressAndMember(2L, member);
+
+        // 본인이 참여한 챌린지 기록리스트 -> 챌린지 가져옴
         List<Challenge> proceeding = targetList.stream()
                 .map(challengeRecord -> challengeRecord.getChallenge()).collect(Collectors.toList());
 
+        // 본인이 참여한 챌린지 리스트 -> 가공
         List<ProceedResponseDto> proceedingResult = proceeding.stream()
                 .map(challenge -> new ProceedResponseDto(challenge, challengeRecordRepository.findAllByChallenge(challenge)))
                 .collect(Collectors.toList());
@@ -253,25 +269,21 @@ public class MemberService {
     @Transactional
     public String updateProfile(ProfileUpdateRequestDto requestDto, String email){
 
-        log.info("프로필수정 닉네임:{} 이미지{}",requestDto.getNickname(), requestDto.getProfileImage());
         Member member = memberRepository.findByEmail(email).orElseThrow(
                 ()-> new ApiRequestException("마이페이지수정에서 멤버 수정하는 아이디찾는거실패")
         );
-        // 사진만바꾸는경우....
+
+        // 사진만바꾸는경우
         if(!member.getNickname().equals(requestDto.getNickname())){
             existNickname(requestDto.getNickname());
-        } else{
-            log.info("같은닉네임 변경안하는거임");
         }
 
         if(member.getProfileImg().equals(requestDto.getProfileImage())){
 
         }
-        log.info("프로필 들어오는지 확인: {}", requestDto.getProfileImage());
-        log.info("닉네임 들어오는지확인: {}",requestDto.getNickname());
-        String asd =member.updateProfile(requestDto);
-        log.info("업데이트후 이미지: {}",asd);
-        return asd;
+
+        String afterProfileImg =member.updateProfile(requestDto);
+        return afterProfileImg;
     }
 
 
@@ -288,27 +300,42 @@ public class MemberService {
 
         // 1차
 //        List<Certification> certifications = certificationRepository.findTest(member);
-//        List<PointHistory> targetList = pointHistoryRepository.find(certifications);
-
+//        List<PointHistory> targetList = pointHistoryRepository.find(certifications);\
         // 2차
-        List<PointHistory> targetList = pointHistoryRepository.find(email);
-        List<PointHistoryResponseDto> pointHistoryList =targetList.stream()
-                .map(pointHistory -> new PointHistoryResponseDto(pointHistory))
+//        List<PointHistory> targetList = pointHistoryRepository.find(email);
+//        List<PointHistoryResponseDto> pointHistoryList =targetList.stream()
+//                .map(pointHistory -> new PointHistoryResponseDto(pointHistory))
+//                .collect(Collectors.toList());
+//        if (pointHistoryList.size() == 0) {
+//             throw new ApiRequestException("참여한 챌린지가 없습니다!");
+//        }
+//        // 어차피 userDetails 에서 가져온 email 로 조회했기 때문에 pointHistoryList 의 member 는 모두 같다. 그러므로 0번째를 조회해도 됨.
+//        Member member = pointHistoryList.get(0).getMember();
+
+        //////////////////////////
+
+        //3차
+        List<PostingTestDto> testDtos = pointHistoryRepository.findtest(email);
+
+//        List<PointHistoryResponseDto> collect = testDtos
+//                .stream()
+//                .map(PointHistoryResponseDto::new)
+//                .collect(Collectors.toList());
+//
+        List<PointHistoryTest> testDtos1 = testDtos
+                .stream()
+                .map(PointHistoryTest::new)
                 .collect(Collectors.toList());
 
-
-
-        if (pointHistoryList.size() == 0) {
-             throw new ApiRequestException("참여한 챌린지가 없습니다!");
-        }
         // 어차피 userDetails 에서 가져온 email 로 조회했기 때문에 pointHistoryList 의 member 는 모두 같다. 그러므로 0번째를 조회해도 됨.
-        Member member = pointHistoryList.get(0).getMember();
+        MemberResponseDto member = new MemberResponseDto(testDtos.get(0));
+//
 
 
         // 순위추가하면 여기에 파라미터로 순위 추가해줘야함
 //        return new HistoryResponseDto(member, pointHistoryList);
 //        return new HistoryResponseDto(pointHistoryList);
-        return  new HistoryResponseDto(member, pointHistoryList);
+        return  new HistoryResponseDto(member , testDtos1);
     }
 
     // 닉네임 중복확인

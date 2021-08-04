@@ -1,7 +1,10 @@
 package com.example.onedaypiece.web.dto.response.member;
 
 
+import com.example.onedaypiece.service.PointHistoryTest;
+import com.example.onedaypiece.service.PostingTestDto;
 import com.example.onedaypiece.web.domain.member.Member;
+import com.example.onedaypiece.web.dto.response.mypage.histroy.PointHistoryResponseDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -13,14 +16,27 @@ public class MemberResponseDto {
     private String profileImg;
     private Long point;
     private Long memberLevel; // 멤버 레벨 계산해서하기
+    private int challengeCount; // 자기가 참여한 챌린지 개수
 
-    public MemberResponseDto(Member member){
+    public MemberResponseDto(Member member, int challengeCount){
         this.memberId = member.getMemberId();
         this.nickname = member.getNickname();
         this.profileImg = member.getProfileImg();
         this.point = member.getPoint().getAcquiredPoint();
         this.memberLevel = calculLevel(member.getPoint().getAcquiredPoint());
+
+        this.challengeCount = challengeCount;
     }
+
+
+    public MemberResponseDto(PostingTestDto pointHistoryResponseDto) {
+        this.nickname = pointHistoryResponseDto.getNickname();
+        this.memberId = pointHistoryResponseDto.getMemberId();
+        this.profileImg = pointHistoryResponseDto.getProfileImg();
+        this.point = pointHistoryResponseDto.getAcquiredPoint();
+
+    }
+
     // 699면 5레벨
     public long calculLevel(Long memberPoint){
         long level = 1;

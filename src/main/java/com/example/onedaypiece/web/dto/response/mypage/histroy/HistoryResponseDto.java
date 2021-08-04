@@ -1,7 +1,9 @@
 package com.example.onedaypiece.web.dto.response.mypage.histroy;
 
 
+import com.example.onedaypiece.service.PointHistoryTest;
 import com.example.onedaypiece.web.domain.member.Member;
+import com.example.onedaypiece.web.dto.response.member.MemberResponseDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -17,16 +19,31 @@ public class HistoryResponseDto {
     private Long point;
     private Long memberLevel; // 멤버 레벨 계산해서하기
     private List<PointHistoryResponseDto> pointHistoryList;
+    private List<PointHistoryTest> pointHistoryTests;
 
     // 원본
-    public HistoryResponseDto(Member member, List<PointHistoryResponseDto> pointHistoryList){
+//    public HistoryResponseDto(Member member, List<PointHistoryResponseDto> pointHistoryList){
+//        this.memberId = member.getMemberId();
+//        this.nickname = member.getNickname();
+//        this.profileImage = member.getProfileImg();
+//        this.point = member.getPoint().getAcquiredPoint();
+//        this.memberLevel = calculLevel(member.getPoint().getAcquiredPoint());
+//        // 포인트히스토리
+//        this.pointHistoryList = pointHistoryList;
+//    }
+
+
+
+
+    public HistoryResponseDto(MemberResponseDto member, List<PointHistoryTest> testDtos1) {
         this.memberId = member.getMemberId();
         this.nickname = member.getNickname();
         this.profileImage = member.getProfileImg();
-        this.point = member.getPoint().getAcquiredPoint();
-        this.memberLevel = calculLevel(member.getPoint().getAcquiredPoint());
+        this.point = member.getPoint();
+        this.memberLevel = calculLevel(member.getPoint());
         // 포인트히스토리
-        this.pointHistoryList = pointHistoryList;
+        this.pointHistoryTests = testDtos1;
+
     }
 
 

@@ -6,6 +6,7 @@ import com.example.onedaypiece.web.domain.point.Point;
 import com.example.onedaypiece.web.dto.request.mypage.ProfileUpdateRequestDto;
 import com.example.onedaypiece.web.dto.request.mypage.PwUpdateRequestDto;
 import com.example.onedaypiece.web.dto.request.signup.SignupRequestDto;
+import com.example.onedaypiece.web.dto.response.mypage.histroy.PointHistoryResponseDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -67,6 +68,8 @@ public class Member extends Timestamped {
         this.role = MemberRole.MEMBER;
     }
 
+
+
     // 마이페이지 비밀번호 수정
     public void updatePassword(PwUpdateRequestDto requestDto){
         this.password = requestDto.getNewPassword();
@@ -74,10 +77,8 @@ public class Member extends Timestamped {
 
     // 마이페이지 프로필 수정
     public String updateProfile(ProfileUpdateRequestDto requestDto){
-        log.info("member에서업데이트 전: {}",requestDto.getProfileImage());
         this.nickname = requestDto.getNickname();
         this.profileImg = requestDto.getProfileImage();
-        log.info("member에서업데이트 후: {}",this.profileImg);
         return this.profileImg;
     }
 
