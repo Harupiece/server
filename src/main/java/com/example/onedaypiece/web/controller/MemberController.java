@@ -7,7 +7,7 @@ import com.example.onedaypiece.web.dto.request.mypage.PwUpdateRequestDto;
 import com.example.onedaypiece.web.dto.request.signup.SignupRequestDto;
 import com.example.onedaypiece.web.dto.request.token.TokenRequestDto;
 import com.example.onedaypiece.web.dto.response.member.MemberTokenResponseDto;
-import com.example.onedaypiece.web.dto.response.mypage.histroy.HistoryResponseDto;
+import com.example.onedaypiece.web.dto.response.mypage.histroy.MemberHistoryResponseDto;
 import com.example.onedaypiece.web.dto.response.mypage.end.MyPageEndResponseDto;
 import com.example.onedaypiece.web.dto.response.mypage.proceed.MypageProceedResponseDto;
 import com.example.onedaypiece.web.dto.response.mypage.scheduled.MyPageScheduledResponseDto;
@@ -17,8 +17,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
-
-import javax.validation.Valid;
 
 @RequestMapping("/api/member")
 @RequiredArgsConstructor
@@ -88,8 +86,8 @@ public class MemberController {
     
     // 마이페이지 히스토리 ... 순위하면 HistoryResponseDto에 순위추가하고
     @GetMapping("/mypage/history")
-    public ResponseEntity<HistoryResponseDto> getHistory(@AuthenticationPrincipal UserDetails userDetails){
-        HistoryResponseDto responseDto = memberService.getHistory(userDetails.getUsername());
+    public ResponseEntity<MemberHistoryResponseDto> getHistory(@AuthenticationPrincipal UserDetails userDetails){
+        MemberHistoryResponseDto responseDto = memberService.getHistory(userDetails.getUsername());
          return ResponseEntity.ok().body(responseDto);
     }
 
