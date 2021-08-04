@@ -1,17 +1,13 @@
 package com.example.onedaypiece.util;
 
 import com.example.onedaypiece.web.domain.challenge.Challenge;
-import com.example.onedaypiece.web.domain.challenge.ChallengeRepository;
 import com.example.onedaypiece.web.domain.challengeRecord.ChallengeRecord;
 import com.example.onedaypiece.web.domain.challengeRecord.ChallengeRecordRepository;
-import com.example.onedaypiece.web.domain.history.UserHistory;
-import com.example.onedaypiece.web.domain.history.UserHistoryRepository;
 import com.example.onedaypiece.web.domain.member.Member;
 import com.example.onedaypiece.web.domain.posting.Posting;
 import com.example.onedaypiece.web.domain.posting.PostingRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.tomcat.jni.Local;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -30,7 +26,7 @@ public class Scheduler {
 
     private final PostingRepository postingRepository;
     private final ChallengeRecordRepository challengeRecordRepository;
-    private final UserHistoryRepository userHistoryRepository;
+//    private final UserHistoryRepository userHistoryRepository;
 
     private final LocalDateTime today = LocalDate.now().atStartOfDay();
 
@@ -78,6 +74,7 @@ public class Scheduler {
 
     private void whenChallengeStart(List<ChallengeRecord> recordList, Challenge c) {
         List<Member> userList = whenSetProgressAndSetUserList(recordList, c, 2L);
+        log.info("id: " + c.getChallengeId() + " Challenge Start");
 
 //        for (Member member : userList) {
 //            //~님의 ~챌린지가 시작되었어요
@@ -95,6 +92,7 @@ public class Scheduler {
     private void whenChallengeEnd(List<ChallengeRecord> recordList, ChallengeRecord record, Challenge c) {
         List<Member> userList = whenSetProgressAndSetUserList(recordList, c, 3L);
         record.setStatusFalse();
+        log.info("id: " + c.getChallengeId() + " Challenge End");
 
 //        for (Member member : userList) {
 //            //축하드려요! ~님의 챌린지가 완료되었어요

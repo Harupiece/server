@@ -58,7 +58,8 @@ public class ChallengeService {
         Member member = memberChecker(email);
         createChallengeException(requestDto, member);
         Challenge challenge = new Challenge(requestDto, member);
-        challengeRecordRepository.save(new ChallengeRecord(challenge, member));
+        ChallengeRecord challengeRecord = new ChallengeRecord(challenge, member);
+        challengeRecordRepository.save(challengeRecord);
         return challengeRepository.save(challenge).getChallengeId();
     }
 
@@ -70,7 +71,6 @@ public class ChallengeService {
         challenge.putChallenge(requestDto);
     }
 
-    // 메인 페이지
     public ChallengeMainResponseDto getMainPage(String email) {
         ChallengeMainResponseDto responseDto = new ChallengeMainResponseDto();
         List<ChallengeRecord> records = challengeRecordRepository.findAllByStatusTrueOrderByModifiedAtDesc();
@@ -82,7 +82,7 @@ public class ChallengeService {
         categoryCollector(LIVINGHABITS, records).forEach(responseDto::addLivingHabits);
         categoryCollector(NODRINKNOSMOKE, records).forEach(responseDto::addNoDrinkNoSmoke);
 
-        responseDto.setHistoryCount(userHistoryRepository.countAllByStatusFalseAndMemberEmail(email));
+//        responseDto.setHistoryCount(userHistoryRepository.countAllByStatusFalseAndMemberEmail(email));
         return responseDto;
     }
 
@@ -92,12 +92,10 @@ public class ChallengeService {
                 .filter(r -> r.getMember().getEmail().equals(email))
                 .map(ChallengeRecord::getChallenge)
                 .collect(Collectors.toList());
-        List<ChallengeSourceResponseDto> sliderSourceList = new ArrayList<>();
-
-        for (Challenge challenge : userChallengeList) {
-            ChallengeSourceResponseDto dto = new ChallengeSourceResponseDto(challenge, records);
-            sliderSourceList.add(dto);
-        }
+        List<ChallengeSourceResponseDto> sliderSourceList = userChallengeList
+                .stream()
+                .map(challenge -> new ChallengeSourceResponseDto(challenge, records))
+                .collect(Collectors.toList());
         responseDto.addSlider(sliderSourceList);
     }
 
@@ -116,14 +114,11 @@ public class ChallengeService {
             recordList.add(r);
         });
 
-        List<ChallengeSourceResponseDto> categorySourceList = new ArrayList<>();
-
-        for (Challenge c : recordList.stream().map(ChallengeRecord::getChallenge).collect(Collectors.toList())) {
-            ChallengeSourceResponseDto dto = new ChallengeSourceResponseDto(c, recordList);
-            categorySourceList.add(dto);
-        }
-
-        return categorySourceList;
+        List<Challenge> list = recordList.stream().map(ChallengeRecord::getChallenge).collect(Collectors.toList());
+        return list
+                .stream()
+                .map(c -> new ChallengeSourceResponseDto(c, recordList))
+                .collect(Collectors.toList());
     }
 
     private Predicate<ChallengeRecord> categoryListDeduplicator(CategoryName category, Set<Long> recordIdList) {
