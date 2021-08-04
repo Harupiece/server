@@ -7,7 +7,7 @@ import com.example.onedaypiece.web.dto.request.mypage.PwUpdateRequestDto;
 import com.example.onedaypiece.web.dto.request.signup.SignupRequestDto;
 import com.example.onedaypiece.web.dto.request.token.TokenRequestDto;
 import com.example.onedaypiece.web.dto.response.member.MemberTokenResponseDto;
-import com.example.onedaypiece.web.dto.response.mypage.histroy.HistoryResponseDto;
+import com.example.onedaypiece.web.dto.response.mypage.histroy.MemberHistoryResponseDto;
 import com.example.onedaypiece.web.dto.response.mypage.end.MyPageEndResponseDto;
 import com.example.onedaypiece.web.dto.response.mypage.proceed.MypageProceedResponseDto;
 import com.example.onedaypiece.web.dto.response.mypage.scheduled.MyPageScheduledResponseDto;
@@ -17,8 +17,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
-
-import javax.validation.Valid;
 
 @RequestMapping("/api/member")
 @RequiredArgsConstructor
@@ -61,11 +59,11 @@ public class MemberController {
     // 마이 페이지 수정 프로필 + 닉네임
     @PutMapping("/mypage/profile")
     public ResponseEntity<String> updateMyPageInfoProfile(@RequestBody ProfileUpdateRequestDto requestDto, @AuthenticationPrincipal UserDetails userDetails){
-        String asd = memberService.updateProfile(requestDto, userDetails.getUsername());
-        return ResponseEntity.ok(asd);
+        String afterProfileImg = memberService.updateProfile(requestDto, userDetails.getUsername());
+        return ResponseEntity.ok(afterProfileImg);
     }
 
-    // 현재 진해중인거
+    // 현재 진행중인거
     @GetMapping("/mypage/proceed")
     public ResponseEntity<MypageProceedResponseDto> getprocedd(@AuthenticationPrincipal UserDetails userDetails){
         MypageProceedResponseDto responseDto = memberService.getProceed(userDetails.getUsername());
@@ -88,8 +86,8 @@ public class MemberController {
     
     // 마이페이지 히스토리 ... 순위하면 HistoryResponseDto에 순위추가하고
     @GetMapping("/mypage/history")
-    public ResponseEntity<HistoryResponseDto> getHistory(@AuthenticationPrincipal UserDetails userDetails){
-        HistoryResponseDto responseDto = memberService.getHistory(userDetails.getUsername());
+    public ResponseEntity<MemberHistoryResponseDto> getHistory(@AuthenticationPrincipal UserDetails userDetails){
+        MemberHistoryResponseDto responseDto = memberService.getHistory(userDetails.getUsername());
          return ResponseEntity.ok().body(responseDto);
     }
 

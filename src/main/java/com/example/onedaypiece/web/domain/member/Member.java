@@ -1,7 +1,6 @@
 package com.example.onedaypiece.web.domain.member;
 
 import com.example.onedaypiece.web.domain.common.Timestamped;
-import com.example.onedaypiece.web.domain.history.UserHistory;
 import com.example.onedaypiece.web.domain.point.Point;
 import com.example.onedaypiece.web.dto.request.mypage.ProfileUpdateRequestDto;
 import com.example.onedaypiece.web.dto.request.mypage.PwUpdateRequestDto;
@@ -67,6 +66,8 @@ public class Member extends Timestamped {
         this.role = MemberRole.MEMBER;
     }
 
+
+
     // 마이페이지 비밀번호 수정
     public void updatePassword(PwUpdateRequestDto requestDto){
         this.password = requestDto.getNewPassword();
@@ -74,10 +75,8 @@ public class Member extends Timestamped {
 
     // 마이페이지 프로필 수정
     public String updateProfile(ProfileUpdateRequestDto requestDto){
-        log.info("member에서업데이트 전: {}",requestDto.getProfileImage());
         this.nickname = requestDto.getNickname();
         this.profileImg = requestDto.getProfileImage();
-        log.info("member에서업데이트 후: {}",this.profileImg);
         return this.profileImg;
     }
 
