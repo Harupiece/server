@@ -1,4 +1,4 @@
-package com.example.onedaypiece.service;
+package com.example.onedaypiece.web.dto.response.mypage.histroy;
 
 import com.example.onedaypiece.web.domain.point.Point;
 import lombok.AllArgsConstructor;
@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class PostingTestDto {
+public class MemberHistoryDto {
 
     private Long pointHistoryId;
     private LocalDateTime createdAt;
@@ -20,6 +20,5 @@ public class PostingTestDto {
     private String nickname;
     private String profileImg;
     private Long acquiredPoint;
-    private Point point;
-
+    private Point point; // 나중에지우기 불필요 Repository도 쿼리문에서 제외시키기
 }
