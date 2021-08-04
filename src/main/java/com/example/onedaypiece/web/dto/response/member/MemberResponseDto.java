@@ -1,7 +1,10 @@
 package com.example.onedaypiece.web.dto.response.member;
 
 
+import com.example.onedaypiece.service.PointHistoryTest;
+import com.example.onedaypiece.service.PostingTestDto;
 import com.example.onedaypiece.web.domain.member.Member;
+import com.example.onedaypiece.web.dto.response.mypage.histroy.PointHistoryResponseDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -24,6 +27,16 @@ public class MemberResponseDto {
 
         this.challengeCount = challengeCount;
     }
+
+
+    public MemberResponseDto(PostingTestDto pointHistoryResponseDto) {
+        this.nickname = pointHistoryResponseDto.getNickname();
+        this.memberId = pointHistoryResponseDto.getMemberId();
+        this.profileImg = pointHistoryResponseDto.getProfileImg();
+        this.point = pointHistoryResponseDto.getAcquiredPoint();
+
+    }
+
     // 699면 5레벨
     public long calculLevel(Long memberPoint){
         long level = 1;

@@ -21,6 +21,7 @@ import com.example.onedaypiece.web.dto.request.mypage.ProfileUpdateRequestDto;
 import com.example.onedaypiece.web.dto.request.mypage.PwUpdateRequestDto;
 import com.example.onedaypiece.web.dto.request.signup.SignupRequestDto;
 import com.example.onedaypiece.web.dto.request.token.TokenRequestDto;
+import com.example.onedaypiece.web.dto.response.member.MemberResponseDto;
 import com.example.onedaypiece.web.dto.response.member.MemberTokenResponseDto;
 import com.example.onedaypiece.web.dto.response.member.reload.ReloadResponseDto;
 import com.example.onedaypiece.web.dto.response.mypage.end.EndResponseDto;
@@ -299,27 +300,42 @@ public class MemberService {
 
         // 1차
 //        List<Certification> certifications = certificationRepository.findTest(member);
-//        List<PointHistory> targetList = pointHistoryRepository.find(certifications);
-
+//        List<PointHistory> targetList = pointHistoryRepository.find(certifications);\
         // 2차
-        List<PointHistory> targetList = pointHistoryRepository.find(email);
-        List<PointHistoryResponseDto> pointHistoryList =targetList.stream()
-                .map(pointHistory -> new PointHistoryResponseDto(pointHistory))
+//        List<PointHistory> targetList = pointHistoryRepository.find(email);
+//        List<PointHistoryResponseDto> pointHistoryList =targetList.stream()
+//                .map(pointHistory -> new PointHistoryResponseDto(pointHistory))
+//                .collect(Collectors.toList());
+//        if (pointHistoryList.size() == 0) {
+//             throw new ApiRequestException("참여한 챌린지가 없습니다!");
+//        }
+//        // 어차피 userDetails 에서 가져온 email 로 조회했기 때문에 pointHistoryList 의 member 는 모두 같다. 그러므로 0번째를 조회해도 됨.
+//        Member member = pointHistoryList.get(0).getMember();
+
+        //////////////////////////
+
+        //3차
+        List<PostingTestDto> testDtos = pointHistoryRepository.findtest(email);
+
+//        List<PointHistoryResponseDto> collect = testDtos
+//                .stream()
+//                .map(PointHistoryResponseDto::new)
+//                .collect(Collectors.toList());
+//
+        List<PointHistoryTest> testDtos1 = testDtos
+                .stream()
+                .map(PointHistoryTest::new)
                 .collect(Collectors.toList());
 
-
-
-        if (pointHistoryList.size() == 0) {
-             throw new ApiRequestException("참여한 챌린지가 없습니다!");
-        }
         // 어차피 userDetails 에서 가져온 email 로 조회했기 때문에 pointHistoryList 의 member 는 모두 같다. 그러므로 0번째를 조회해도 됨.
-        Member member = pointHistoryList.get(0).getMember();
+        MemberResponseDto member = new MemberResponseDto(testDtos.get(0));
+//
 
 
         // 순위추가하면 여기에 파라미터로 순위 추가해줘야함
 //        return new HistoryResponseDto(member, pointHistoryList);
 //        return new HistoryResponseDto(pointHistoryList);
-        return  new HistoryResponseDto(member, pointHistoryList);
+        return  new HistoryResponseDto(member , testDtos1);
     }
 
     // 닉네임 중복확인
