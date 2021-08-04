@@ -58,27 +58,35 @@ public class Scheduler {
                 updatedChallengeList.add(challenge);
 
                 if (isChallengeTimeToStart(challenge)) {
-                    challenge.updateChallengeProgress(2L);
-                    log.info("id: " + challenge.getChallengeId() + " Challenge Start");
+                    whenChallengeStart(challenge);
 
                 } else if (isChallengeTimeToEnd(challenge)) {
-                    challenge.updateChallengeProgress(3L);
-                    record.setStatusFalse();
-                    log.info("id: " + challenge.getChallengeId() + " Challenge End");
-
-                    Member member = record.getMember();
-                    List<Posting> postingList = postingRepository.findAllByChallengeAndPostingApprovalTrue(challenge);
-                    long certificatedPostingCount = postingList.stream().filter(p -> p.getMember().equals(member)).count();
-
-                    if (canGetChallengePoint(challenge, certificatedPostingCount)) { // 80% 이상 인증을 받았는가?
-                        final Long getPoint = certificatedPostingCount * 50L;
-                        PointHistory pointHistory = new PointHistory(getPoint, record);
-                        pointHistoryRepository.save(pointHistory);
-                        member.updatePoint(getPoint);
-                        record.updateChallengePointTrue();
-                    }
+                    whenChallengeEnd(record, challenge);
                 }
             }
+        }
+    }
+
+    private void whenChallengeStart(Challenge challenge) {
+        challenge.updateChallengeProgress(2L);
+        log.info("id: " + challenge.getChallengeId() + " Challenge Start");
+    }
+
+    private void whenChallengeEnd(ChallengeRecord record, Challenge challenge) {
+        challenge.updateChallengeProgress(3L);
+        record.setStatusFalse();
+        log.info("id: " + challenge.getChallengeId() + " Challenge End");
+
+        Member member = record.getMember();
+        List<Posting> postingList = postingRepository.findAllByChallengeAndPostingApprovalTrue(challenge);
+        long certificatedPostingCount = postingList.stream().filter(p -> p.getMember().equals(member)).count();
+
+        if (canGetChallengePoint(challenge, certificatedPostingCount)) { // 80% 이상 인증을 받았는가?
+            final Long getPoint = certificatedPostingCount * 50L;
+            PointHistory pointHistory = new PointHistory(getPoint, record);
+            pointHistoryRepository.save(pointHistory);
+            member.updatePoint(getPoint);
+            record.updateChallengePointTrue();
         }
     }
 
