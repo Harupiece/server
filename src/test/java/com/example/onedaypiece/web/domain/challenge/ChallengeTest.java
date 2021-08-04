@@ -191,33 +191,6 @@ class ChallengeTest {
             }
 
             @Nested
-            @DisplayName("패스워드")
-            class cPassword{
-                @Test
-                @DisplayName("null")
-                void fail1(){
-                    // given
-                    challengePassword = null;
-                    // when
-                    Exception exception = assertThrows(ApiRequestException.
-                            class, ()-> {
-                        new ChallengeRequestDto(challengeTitle,
-                                challengeContent,
-                                challengePassword,
-                                categoryName,
-                                challengeStartDate,
-                                challengeEndDate,
-                                challengeImgUrl,
-                                challengeGood,
-                                challengeBad,
-                                challengeHoliday);
-                    });
-                    // then
-                    assertEquals("비밀번호가 null입니다.", exception.getMessage());
-                }
-            }
-
-            @Nested
             @DisplayName("이미지")
             class cImgUrl{
                 @Test
