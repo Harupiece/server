@@ -17,7 +17,7 @@ public class PostingQueryRepository {
         return em.createQuery("select p " +
                 "from Posting p " +
                 "left join fetch p.member " +
-                "where p.challenge.challengeId = :challengeId ",Posting.class)
+                "where p.challenge.challengeId = :challengeId and p.postingStatus = true", Posting.class)
                 .setParameter("challengeId",challengeId)
                 .getResultList();
     }

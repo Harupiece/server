@@ -150,6 +150,8 @@ public class PostingService {
         if(challenge.getChallengeStartDate().isBefore(now)){
             throw new ApiRequestException("챌린지 시작 후에 게시글 등록 가능합니다.");
         }
+
+
     }
 
 }
