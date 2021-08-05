@@ -59,7 +59,6 @@ public class Scheduler {
 
                 if (isChallengeTimeToStart(challenge)) {
                     whenChallengeStart(challenge);
-
                 } else if (isChallengeTimeToEnd(challenge)) {
                     whenChallengeEnd(record, challenge);
                 }
