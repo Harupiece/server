@@ -45,7 +45,7 @@ public class Scheduler {
     }
 
     @Async
-    @Scheduled(cron = "0/10 * * * * *") // 초, 분, 시, 일, 월, 주 순서
+    @Scheduled(cron = "01 00 00 * * *") // 초, 분, 시, 일, 월, 주 순서
     @Transactional
     public void challengeStatusUpdate() {
         List<ChallengeRecord> recordList = challengeRecordRepository.findAllByChallengeStatusTrue();

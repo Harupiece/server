@@ -70,14 +70,8 @@ public class ChallengeService {
         ChallengeMainResponseDto responseDto = new ChallengeMainResponseDto();
         List<ChallengeRecord> records = challengeRecordRepository.findAllByStatusTrueOrderByModifiedAtDesc();
 
-        for (ChallengeRecord r : records) {
-            Long memberId = r.getMember().getMemberId();
-            System.out.print(r.getChallenge().getChallengeId() + "  /  " + memberId);
-            System.out.println();
-        }
-
         userSliderUpdate(responseDto, email, records);
-        popularUpdate(responseDto, email);
+        popularUpdate(responseDto, email, records);
 
         categoryCollector(EXERCISE, records).forEach(responseDto::addExercise);
         categoryCollector(LIVINGHABITS, records).forEach(responseDto::addLivingHabits);
@@ -100,10 +94,10 @@ public class ChallengeService {
         responseDto.addSlider(sliderSourceList);
     }
 
-    private void popularUpdate(ChallengeMainResponseDto responseDto, String email) {
+    private void popularUpdate(ChallengeMainResponseDto responseDto, String email, List<ChallengeRecord> records) {
         final int popularSize = 4;
-        List<ChallengeRecord> records = challengeRecordRepository.findPopularOrderByDesc(email, PageRequest.of(0, popularSize));
-        responseDto.addPopular(records);
+        List<ChallengeRecord> popularRecords = challengeRecordRepository.findPopularOrderByDesc(email, PageRequest.of(0, popularSize));
+        responseDto.addPopular(popularRecords, records);
     }
 
     private List<ChallengeSourceResponseDto> categoryCollector(CategoryName category, List<ChallengeRecord> records) {
@@ -122,7 +116,7 @@ public class ChallengeService {
         List<Challenge> list = recordList.stream().map(ChallengeRecord::getChallenge).collect(Collectors.toList());
         return list
                 .stream()
-                .map(c -> new ChallengeSourceResponseDto(c, recordList))
+                .map(c -> new ChallengeSourceResponseDto(c, records))
                 .collect(Collectors.toList());
     }
 
