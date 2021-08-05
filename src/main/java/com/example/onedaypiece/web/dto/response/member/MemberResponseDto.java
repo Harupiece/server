@@ -33,6 +33,13 @@ public class MemberResponseDto {
         this.profileImg = responseDto.getProfileImg();
         this.point = responseDto.getAcquiredPoint();
     }
+    // 혹시모를 프론트를 위한 대책
+    public MemberResponseDto(Member member){
+        this.nickname = member.getNickname();
+        this.memberId = member.getMemberId();
+        this.profileImg = member.getProfileImg();
+        this.point = 0L; // 어차피 획득한게없는사람은 이렇게해야함.
+    }
 
     // 699면 5레벨
     public long calculLevel(Long memberPoint){

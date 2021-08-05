@@ -28,6 +28,10 @@ public class SignupRequestDto {
             throw new ApiRequestException("올바른 이메일 형식이 아닙니다.");
         }
 
+        if(email.length() > 40){
+            throw new ApiRequestException("이메일이 40글자 초과입니다.");
+        }
+
         if(password == null || passwordConfirm == null){
             throw new ApiRequestException("패스워드가 null이므로 입력해 주세요.");
         }
@@ -36,16 +40,24 @@ public class SignupRequestDto {
             throw new ApiRequestException("패스워드를 입력해 주세요.");
         }
 
-        if(password.length() < 4 || password.length() > 20) {
-            throw new ApiRequestException("비밀번호는  4~20자리를 사용해야 합니다.");
+        if(!(password.matches("^(?=.*[A-Za-z])(?=.*\\d)(?=.*[~!@#$%^&*()+|=])[A-Za-z\\d~!@#$%^&*()+|=]{8,20}$"))){
+            throw new ApiRequestException("비밀번호는 8~20 자리이며 숫자 문자 특수문자를 한번씩 포함해야하며 공백이 들어가면안됩니다.");
         }
 
         if ( !(password.equals(passwordConfirm))){
             throw new ApiRequestException("비밀번호가 서로같지않습니다.");
         }
 
+        if(nickname.trim().contains(" ") ){
+            throw new ApiRequestException("닉네임 공백을 포함할수없습니다.");
+        }
+
         if(nickname == null || nickname.isEmpty()){
             throw new ApiRequestException("닉네임을 입력해주세요");
+        }
+
+        if(nickname.length() > 20){
+            throw new ApiRequestException("닉네임은 20글자를 초과할 수 없습니다.");
         }
 
 
