@@ -24,7 +24,7 @@ public class ChallengeSourceResponseDto {
     private String challengeImgUrl;
     private List<Long> challengeMember;
 
-    public ChallengeSourceResponseDto(Challenge challenge, Collection<ChallengeRecord> records) {
+    public ChallengeSourceResponseDto(Challenge challenge, List<ChallengeRecord> records) {
         this.challengeId = challenge.getChallengeId();
         this.challengeTitle = challenge.getChallengeTitle();
         this.categoryName = challenge.getCategoryName();

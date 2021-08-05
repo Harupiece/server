@@ -70,6 +70,12 @@ public class ChallengeService {
         ChallengeMainResponseDto responseDto = new ChallengeMainResponseDto();
         List<ChallengeRecord> records = challengeRecordRepository.findAllByStatusTrueOrderByModifiedAtDesc();
 
+        for (ChallengeRecord r : records) {
+            Long memberId = r.getMember().getMemberId();
+            System.out.print(r.getChallenge().getChallengeId() + "  /  " + memberId);
+            System.out.println();
+        }
+
         userSliderUpdate(responseDto, email, records);
         popularUpdate(responseDto, email);
 
