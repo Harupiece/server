@@ -113,7 +113,7 @@ public class MemberService {
         );
 
         // 자기가 참여한 챌린지에서 현재 진행중인리스트
-        List<ChallengeRecord> targetList = challengeRecordRepository.findAllByMemberAndProgress(member,2L);
+        List<ChallengeRecord> targetList = challengeRecordRepository.findAllByMemberAndProgressAndExpected(member,2L, 1L);
         int countChallenge = targetList.size();
 
         MemberTokenResponseDto loginResponseDto = new MemberTokenResponseDto(tokenDto, member, countChallenge);
@@ -128,7 +128,7 @@ public class MemberService {
         );
 
         // 자기가 참여한 챌린지에서 현재 진행중인리스트
-        List<ChallengeRecord> targetList = challengeRecordRepository.findAllByMemberAndProgress(member,2L);
+        List<ChallengeRecord> targetList = challengeRecordRepository.findAllByMemberAndProgressAndExpected(member,2L, 1L);
         int countChallenge = targetList.size();
 
         return new ReloadResponseDto(member, countChallenge);
@@ -168,7 +168,7 @@ public class MemberService {
         refreshTokenRepository.save(newRefreshToken);
 
         // 자기가 참여한 챌린지에서 현재 진행중인리스트
-        List<ChallengeRecord> targetList = challengeRecordRepository.findAllByMemberAndProgress(member,2L);
+        List<ChallengeRecord> targetList = challengeRecordRepository.findAllByMemberAndProgressAndExpected(member,2L, 1L);
         int countChallenge = targetList.size();
 
         MemberTokenResponseDto reIssueResponseDto = new MemberTokenResponseDto(tokenDto, member, countChallenge);
@@ -278,15 +278,45 @@ public class MemberService {
     }
 
 
-    // 마이 페이지 히스토리
+//    // 마이 페이지 히스토리 버전1
+//    @Transactional
+//    public MemberHistoryResponseDto getHistory(String email){
+//
+//        // 1. 자기가 얻은 포인트 가져오기
+//        List<MemberHistoryDto> memberHistoryList = pointHistoryRepository.findHistory(email);
+//
+//        if(memberHistoryList.size() == 0){
+//            throw new ApiRequestException("참여한 챌린지가 없습니다!");
+//        }
+//
+//        // 2. 포인트에 관한것만 빼기 원하는정보만 빼기 히스토리에관한것만 따로뺴고
+//        List<PointHistoryDto> pointHistoryList = memberHistoryList.stream()
+//                .map(memberHistory -> new PointHistoryDto(memberHistory))
+//                .collect(Collectors.toList());
+//
+//        // 3. 멤버에 관한정보만 빼기
+//        // 어차피 userDetails 에서 가져온 email 로 조회했기 때문에 pointHistoryList 의 member 는 모두 같다. 그러므로 0번째를 조회해도 됨.
+//        MemberResponseDto member = new MemberResponseDto(memberHistoryList.get(0));
+//
+//        return new MemberHistoryResponseDto(member , pointHistoryList);
+//    }
+
+    // 마이 페이지 히스토리 버전2 이거사용하기로함
     @Transactional
     public MemberHistoryResponseDto getHistory(String email){
+        Member member ;
+        MemberResponseDto memberResponseDto;
 
         // 1. 자기가 얻은 포인트 가져오기
         List<MemberHistoryDto> memberHistoryList = pointHistoryRepository.findHistory(email);
 
         if(memberHistoryList.size() == 0){
-            throw new ApiRequestException("참여한 챌린지가 없습니다!");
+           member = memberRepository.findByEmail(email).orElseThrow(
+                    ()-> new ApiRequestException("멤버를 찾을 수 없습니다.")
+            );
+            memberResponseDto = new MemberResponseDto(member);
+        } else{
+            memberResponseDto = new MemberResponseDto(memberHistoryList.get(0));
         }
 
         // 2. 포인트에 관한것만 빼기 원하는정보만 빼기 히스토리에관한것만 따로뺴고
@@ -294,11 +324,7 @@ public class MemberService {
                 .map(memberHistory -> new PointHistoryDto(memberHistory))
                 .collect(Collectors.toList());
 
-        // 3. 멤버에 관한정보만 빼기
-        // 어차피 userDetails 에서 가져온 email 로 조회했기 때문에 pointHistoryList 의 member 는 모두 같다. 그러므로 0번째를 조회해도 됨.
-        MemberResponseDto member = new MemberResponseDto(memberHistoryList.get(0));
-
-        return new MemberHistoryResponseDto(member , pointHistoryList);
+        return new MemberHistoryResponseDto(memberResponseDto , pointHistoryList);
     }
 
     // 닉네임 중복확인
