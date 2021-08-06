@@ -1,6 +1,5 @@
 package com.example.onedaypiece.web.domain.challengeRecord;
 
-import com.example.onedaypiece.web.domain.challenge.CategoryName;
 import com.example.onedaypiece.web.domain.challenge.Challenge;
 import com.example.onedaypiece.web.domain.member.Member;
 import org.springframework.data.domain.Pageable;
