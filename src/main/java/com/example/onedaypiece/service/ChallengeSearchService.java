@@ -22,20 +22,18 @@ public class ChallengeSearchService {
     private final ChallengeRepository challengeRepository;
     private final ChallengeRecordRepository challengeRecordRepository;
 
-    public ChallengeListResponseDto getChallengeByCategoryName(CategoryName categoryName, int page) {
-        final int pageSize = 6;
+    final static int pageSize = 8;
 
+    public ChallengeListResponseDto getChallengeByCategoryName(CategoryName categoryName, int page) {
         List<Challenge> challengeList = challengeRepository.
                 findAllByCategoryNameOrderByModifiedAtDescListed(categoryName, PageRequest.of(page - 1, pageSize));
         return listResponseDtoSource(challengeList);
     }
 
     public ChallengeListResponseDto getChallengeSearchResult(String searchWords, int page) {
-        final int searchPageSize = 6;
-
         List<Challenge> challengeList = challengeRepository.
                 findAllByWordsAndChallengeStatusTrueOrderByModifiedAtDesc(
-                        searchWords.trim(), PageRequest.of(page - 1, searchPageSize));
+                        searchWords.trim(), PageRequest.of(page - 1, pageSize));
         return listResponseDtoSource(challengeList);
     }
 

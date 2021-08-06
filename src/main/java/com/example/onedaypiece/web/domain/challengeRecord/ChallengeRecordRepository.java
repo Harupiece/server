@@ -13,8 +13,17 @@ public interface ChallengeRecordRepository extends JpaRepository<ChallengeRecord
     @Query("select c from ChallengeRecord c inner join fetch c.challenge " +
             "where c.challengeRecordStatus = true " +
             "and c.challenge.challengeStatus = true " +
-            "and c.challenge.challengeProgress < 3")
+            "and c.challenge.challengeProgress < 3 " +
+            "order by c.modifiedAt desc")
     List<ChallengeRecord> findAllByChallengeStatusTrue();
+
+    @Query("select c from ChallengeRecord c inner join fetch c.challenge " +
+            "where c.challengeRecordStatus = true " +
+            "and c.challenge.challengeStatus = true " +
+            "and c.challenge.challengeProgress < 3 " +
+            "order by c.modifiedAt desc")
+    List<ChallengeRecord> findAllByChallengeStatusTrueByPaged(Pageable pageable);
+
 
 //    @Modifying
 //    @Query("delete from ChallengeRecord c " +
