@@ -30,10 +30,10 @@ public class ChallengeMainResponseDto {
         nodrinknosmoke.add(responseDto);
     }
 
-    public void addPopular(List<ChallengeRecord> popularSource) {
+    public void addPopular(List<ChallengeRecord> popularSource, List<ChallengeRecord> records) {
         this.popular.addAll(popularSource
                 .stream()
-                .map(record -> (new ChallengeSourceResponseDto(record.getChallenge(), popularSource)))
+                .map(record -> (new ChallengeSourceResponseDto(record.getChallenge(), records)))
                 .collect(Collectors.toList()));
     }
 
