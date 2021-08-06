@@ -20,6 +20,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -49,11 +50,14 @@ public class PostingService {
 
         // 포스팅 검사
         validatePosting(challenge);
+        duplicatePosting(member,challenge);
 
         postingRepository.save(posting);
 
         return posting.getPostingId();
     }
+
+
 
     /**
      * 2.포스트 리스트
@@ -90,11 +94,16 @@ public class PostingService {
         validateMember(member,posting.getMember().getMemberId());
 
         // 포스팅 검사
-        validatePosting(posting.getChallenge());
+        validateUpdatePosting(posting);
+
+
 
         posting.updatePosting(postingUpdateRequestDto);
         return posting.getPostingId();
     }
+
+
+
     /**
      * 4.포스트 삭제
      *
@@ -144,11 +153,28 @@ public class PostingService {
     }
 
     private void validatePosting(Challenge challenge){
-
         LocalDateTime now = LocalDateTime.now();
-
         if(challenge.getChallengeStartDate().isAfter(now)){
             throw new ApiRequestException("챌린지 시작 후에 게시글 등록 가능합니다.");
+        }
+    }
+
+    private void duplicatePosting(Member member, Challenge challenge) {
+
+        LocalDateTime now = LocalDate.now().atStartOfDay();
+
+        Posting posting = postingRepository.existsTodayPosting(now,member,challenge);
+
+        if(posting != null){
+            throw new ApiRequestException("동일한 챌린지에는 한번의 인증글만 작성할 수 있습니다.");
+        }
+
+    }
+    private void validateUpdatePosting(Posting posting) {
+        LocalDateTime now = LocalDate.now().atStartOfDay();
+
+        if(posting.getCreatedAt().isBefore(now)){
+            throw new ApiRequestException("작성 후 하루가 지나면 수정 할 수 없습니다.");
         }
     }
 
