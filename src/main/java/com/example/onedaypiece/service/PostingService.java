@@ -147,7 +147,7 @@ public class PostingService {
 
         LocalDateTime now = LocalDateTime.now();
 
-        if(challenge.getChallengeStartDate().isBefore(now)){
+        if(challenge.getChallengeStartDate().isAfter(now)){
             throw new ApiRequestException("챌린지 시작 후에 게시글 등록 가능합니다.");
         }
     }
