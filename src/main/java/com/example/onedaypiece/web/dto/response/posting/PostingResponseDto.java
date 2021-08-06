@@ -15,6 +15,7 @@ public class PostingResponseDto {
 
     private Long postingId;
     private String nickName;
+    private Long memberId;
     private String profileImg;
     private String postingImg;
     private String postingContent;
@@ -32,6 +33,7 @@ public class PostingResponseDto {
         this.postingId = posting.getPostingId();
         this.postingContent = posting.getPostingContent();
         this.nickName = posting.getMember().getNickname();
+        this.memberId = posting.getMember().getMemberId();
         this.profileImg = posting.getMember().getProfileImg();
         this.postingImg = posting.getPostingImg();
         this.postingCount = posting.getPostingCount();
