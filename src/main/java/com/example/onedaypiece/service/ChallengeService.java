@@ -67,8 +67,8 @@ public class ChallengeService {
         challenge.putChallenge(requestDto);
     }
 
-    public List<ChallengeSourceResponseDto> getAllChallenge(int page) {
-        List<ChallengeRecord> records = challengeRecordRepository.findAllByChallengeStatusTrueByPaged(PageRequest.of(page, pageSize));
+    public List<ChallengeSourceResponseDto> getAllChallenge() {
+        List<ChallengeRecord> records = challengeRecordRepository.findAllByChallengeStatusTrueAndProgressNotStart();
         List<Challenge> challenges = records.stream().map(ChallengeRecord::getChallenge).collect(Collectors.toList());
         List<Long> challengeIdList = new ArrayList<>();
         return challenges
