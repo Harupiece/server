@@ -48,7 +48,7 @@ public class PostingService {
 
 
         // 포스팅 검사
-        validateCreatePosting(challenge);
+        validatePosting(challenge);
 
         postingRepository.save(posting);
 
@@ -90,7 +90,7 @@ public class PostingService {
         validateMember(member,posting.getMember().getMemberId());
 
         // 포스팅 검사
-        validateUpdatePosting(posting.getChallenge());
+        validatePosting(posting.getChallenge());
 
         posting.updatePosting(postingUpdateRequestDto);
         return posting.getPostingId();
@@ -143,7 +143,7 @@ public class PostingService {
         }
     }
 
-    private void validateUpdatePosting(Challenge challenge){
+    private void validatePosting(Challenge challenge){
 
         LocalDateTime now = LocalDateTime.now();
 
@@ -151,15 +151,5 @@ public class PostingService {
             throw new ApiRequestException("챌린지 시작 후에 게시글 등록 가능합니다.");
         }
     }
-
-    private void validateCreatePosting(Challenge challenge){
-
-        LocalDateTime now = LocalDateTime.now();
-
-        if(challenge.getChallengeStartDate().isAfter(now)){
-            throw new ApiRequestException("챌린지 시작 후에 게시글 등록 가능합니다.");
-        }
-    }
-
 
 }
