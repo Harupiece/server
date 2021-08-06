@@ -30,7 +30,7 @@ public class ChallengeController {
         return ResponseEntity.ok().body(challengeService.getMainPage(userDetails.getUsername()));
     }
 
-    @GetMapping("/api/guest/challenge/{page}") // 모든 챌린지
+    @GetMapping("/api/guest/challenge-all/{page}") // 모든 챌린지
     public ResponseEntity<List<ChallengeSourceResponseDto>> getAllChallenge(@PathVariable int page) {
         return ResponseEntity.ok().body(challengeService.getAllChallenge(page - 1));
     }
