@@ -80,7 +80,7 @@ public class Scheduler {
         List<Posting> postingList = postingRepository.findAllByChallengeAndPostingApprovalTrue(challenge);
         long certificatedPostingCount = postingList.stream().filter(p -> p.getMember().equals(member)).count();
 
-        if (canGetChallengePoint(challenge, certificatedPostingCount)) { // 80% 이상 인증을 받았는가?
+        if (canGetChallengePoint(challenge, certificatedPostingCount)) { // 80% 이상 인증샷을 올렸는가?
             final Long getPoint = certificatedPostingCount * 50L;
             PointHistory pointHistory = new PointHistory(getPoint, record);
             pointHistoryRepository.save(pointHistory);
