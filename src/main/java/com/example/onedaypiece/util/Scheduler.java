@@ -1,5 +1,6 @@
 package com.example.onedaypiece.util;
 
+import com.example.onedaypiece.web.domain.challenge.CategoryName;
 import com.example.onedaypiece.web.domain.challenge.Challenge;
 import com.example.onedaypiece.web.domain.challengeRecord.ChallengeRecord;
 import com.example.onedaypiece.web.domain.challengeRecord.ChallengeRecordRepository;
@@ -81,7 +82,8 @@ public class Scheduler {
         long certificatedPostingCount = postingList.stream().filter(p -> p.getMember().equals(member)).count();
 
         if (canGetChallengePoint(challenge, certificatedPostingCount)) { // 80% 이상 인증샷을 올렸는가?
-            final Long getPoint = certificatedPostingCount * 50L;
+            final Long getPoint = certificatedPostingCount *
+                    50L * (challenge.getCategoryName().equals(CategoryName.OFFICIAL) ? 2L : 1L);
             PointHistory pointHistory = new PointHistory(getPoint, record);
             pointHistoryRepository.save(pointHistory);
             member.updatePoint(getPoint);
