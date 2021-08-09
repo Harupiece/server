@@ -5,11 +5,14 @@ import com.example.onedaypiece.web.dto.request.challenge.ChallengeRequestDto;
 import com.example.onedaypiece.web.dto.request.challenge.PutChallengeRequestDto;
 import com.example.onedaypiece.web.dto.response.challenge.ChallengeMainResponseDto;
 import com.example.onedaypiece.web.dto.response.challenge.ChallengeResponseDto;
+import com.example.onedaypiece.web.dto.response.challenge.ChallengeSourceResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
@@ -25,6 +28,11 @@ public class ChallengeController {
     @GetMapping("/api/member/main") // 로그인 메인 페이지
     public ResponseEntity<ChallengeMainResponseDto> getMemberMainChallengeDetail(@AuthenticationPrincipal UserDetails userDetails) {
         return ResponseEntity.ok().body(challengeService.getMainPage(userDetails.getUsername()));
+    }
+
+    @GetMapping("/api/guest/challenge") // 모든 챌린지
+    public ResponseEntity<List<ChallengeSourceResponseDto>> getAllChallenge() {
+        return ResponseEntity.ok().body(challengeService.getAllChallenge());
     }
 
     @GetMapping("/api/guest/challenge/{challengeId}") // 챌린지 상세

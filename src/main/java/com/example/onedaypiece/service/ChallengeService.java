@@ -20,6 +20,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.example.onedaypiece.service.ChallengeSearchService.pageSize;
 import static com.example.onedaypiece.web.domain.challenge.CategoryName.*;
 
 @Service
@@ -64,6 +65,18 @@ public class ChallengeService {
         Challenge challenge = ChallengeChecker(requestDto.getChallengeId());
         putChallengeException(member, challenge);
         challenge.putChallenge(requestDto);
+    }
+
+    public List<ChallengeSourceResponseDto> getAllChallenge() {
+        List<ChallengeRecord> records = challengeRecordRepository.findAllByChallengeStatusTrueAndProgressNotStart();
+        List<Challenge> challenges = records.stream().map(ChallengeRecord::getChallenge).collect(Collectors.toList());
+        List<Long> challengeIdList = new ArrayList<>();
+        return challenges
+                .stream()
+                .filter(c -> !challengeIdList.contains(c.getChallengeId()))
+                .peek(c -> challengeIdList.add(c.getChallengeId()))
+                .map(c -> new ChallengeSourceResponseDto(c, records))
+                .collect(Collectors.toList());
     }
 
     public ChallengeMainResponseDto getMainPage(String email) {
