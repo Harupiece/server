@@ -54,7 +54,7 @@ public class CertificationService {
         if(memberCount /2 <= posting.getPostingCount()){
             PointHistory pointHistory = new PointHistory(1L, certification);
             pointHistoryRepository.save(pointHistory);
-            member.updatePoint(1L);
+            posting.getMember().updatePoint(1L);
             posting.updateApproval();
             posting.updatePoint();
         }
