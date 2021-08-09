@@ -68,10 +68,10 @@ public class PostingService {
 
         Pageable pageable = PageRequest.of(page-1,6);
 
-//        List<Posting> postingList =postingRepository.findPostingList(challengeId,pageable);
+        List<Posting> postingList =postingRepository.findPostingList(challengeId,pageable);
 
         // QueryRepository 적용
-        List<Posting> postingList =postingQueryRepository.findPostingList(challengeId,pageable);
+//        List<Posting> postingList =postingQueryRepository.findPostingList(challengeId,pageable);
 
         List<Certification> certifications = certificationRepository.findAllByPosting(challengeId);
 
@@ -124,11 +124,6 @@ public class PostingService {
 
     }
 
-    private void isApprovalIsTrue(Posting posting) {
-        if(posting.isPostingApproval()){
-             throw new ApiRequestException("이미 인증된 게시글은 삭제할 수 없습니다.");
-        }
-    }
 
     private Posting getPosting(Long postingId) {
         return postingRepository.findById(postingId)
@@ -144,6 +139,12 @@ public class PostingService {
     private Member getMemberByEmail(String email) {
         return memberRepository.findByEmail(email)
                 .orElseThrow(() -> new ApiRequestException("등록된 멤버가 없습니다."));
+    }
+
+    private void isApprovalIsTrue(Posting posting) {
+        if(posting.isPostingApproval()){
+            throw new ApiRequestException("이미 인증된 게시글은 삭제할 수 없습니다.");
+        }
     }
 
     private void validateMember(Member member, Long memberId) {
