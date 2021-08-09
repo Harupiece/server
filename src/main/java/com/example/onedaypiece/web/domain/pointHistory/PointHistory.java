@@ -15,6 +15,7 @@ public class PointHistory extends Timestamped {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
+    @Column(name="pointhistory_id")
     private Long pointHistoryId;
 
     @Column
