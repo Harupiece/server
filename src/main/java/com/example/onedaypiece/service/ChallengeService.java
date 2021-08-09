@@ -20,7 +20,6 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.example.onedaypiece.service.ChallengeSearchService.pageSize;
 import static com.example.onedaypiece.web.domain.challenge.CategoryName.*;
 
 @Service
