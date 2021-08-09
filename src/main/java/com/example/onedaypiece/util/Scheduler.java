@@ -92,11 +92,15 @@ public class Scheduler {
     }
 
     private boolean isChallengeTimeToStart(Challenge c) {
-        return c.getChallengeProgress() == 1L && setTimeToZero(c.getChallengeStartDate()).isEqual(today);
+        return c.getChallengeProgress() == 1L &&
+                (setTimeToZero(c.getChallengeStartDate()).isEqual(today) ||
+                        (setTimeToZero(c.getChallengeStartDate()).isBefore(today)));
     }
 
     private boolean isChallengeTimeToEnd(Challenge c) {
-        return c.getChallengeProgress() == 2L && setTimeToZero(c.getChallengeEndDate()).isEqual(today);
+        return c.getChallengeProgress() == 2L &&
+                (setTimeToZero(c.getChallengeEndDate()).isEqual(today) ||
+                        (setTimeToZero(c.getChallengeEndDate()).isBefore(today)));
     }
 
     private boolean canGetChallengePoint(Challenge challenge, Long certificatedPostingCount) {

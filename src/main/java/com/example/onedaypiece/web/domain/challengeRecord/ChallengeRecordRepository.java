@@ -21,7 +21,7 @@ public interface ChallengeRecordRepository extends JpaRepository<ChallengeRecord
             "where c.challengeRecordStatus = true " +
             "and c.challenge.challengeStatus = true " +
             "and c.challenge.challengeProgress = 1 " +
-            "order by c.modifiedAt desc")
+            "order by c.challenge.challengeStartDate asc")
     List<ChallengeRecord> findAllByChallengeStatusTrueAndProgressNotStart();
 
     @Query("select c from ChallengeRecord c inner join fetch c.challenge " +
