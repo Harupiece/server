@@ -5,6 +5,7 @@ import com.example.onedaypiece.security.JwtAuthenticationEntryPoint;
 import com.example.onedaypiece.security.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -64,12 +65,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/member/reissue").permitAll()
                 .antMatchers("/api/guest/**").permitAll()
                 .antMatchers("/api/category-image/**").permitAll()
+                .antMatchers(HttpMethod.GET,"/api/posting/**").permitAll()
+
 
                 // 스웨거 접속 풀어주기
                 .antMatchers("/swagger-ui/**").permitAll()
                 .antMatchers("/swagger-resources/**").permitAll()
                 .antMatchers("/v2/api-docs").permitAll()
                 .antMatchers("/webjars").permitAll()
+
 
                 //여기에카카오 요청넣어보기
                 .anyRequest().authenticated()   // 나머지 API 는 전부 인증 필요

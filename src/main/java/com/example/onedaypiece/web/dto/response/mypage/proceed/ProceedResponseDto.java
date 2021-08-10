@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 
 
 
-// 진행중만글면 진도율나타내면되는거네 시간으로만 할려니까
+
 @NoArgsConstructor
 @Getter
 public class ProceedResponseDto {
@@ -33,9 +33,9 @@ public class ProceedResponseDto {
     private LocalDateTime challengeStartDate;
     private LocalDateTime challengeEndDate;
 
-    private int successPercent; //  진행율로수정하기
+    private int successPercent; //  진행율
     private List<String> participateImg;
-    private int participateSize; // 챌린지에 참여인원 챌린지레코드...
+    private int participateSize; // 챌린지에 참여인원
 
     public ProceedResponseDto(Challenge challenge, List<ChallengeRecord> participate){
         this.challengeId = challenge.getChallengeId();
