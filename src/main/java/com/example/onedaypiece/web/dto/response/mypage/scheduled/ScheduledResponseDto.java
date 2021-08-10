@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
-// 예정된건 그냥 0퍼로 하면되네
+
 @NoArgsConstructor
 @Getter
 public class ScheduledResponseDto {
@@ -25,7 +25,7 @@ public class ScheduledResponseDto {
     private Long challengeMember;
     private LocalDateTime challengeStartDate;
     private LocalDateTime challengeEndDate;
-    // 성공율...
+
     private int successPercent;  // 진행율
     private List<String> participateImg;
     private long participateSize;

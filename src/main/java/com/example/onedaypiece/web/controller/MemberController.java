@@ -85,7 +85,7 @@ public class MemberController {
         return ResponseEntity.ok().body(responseDto);
     }
     
-    // 마이페이지 히스토리 ... 순위하면 HistoryResponseDto에 순위추가하고
+    // 마이페이지 히스토리
     @GetMapping("/mypage/history")
     public ResponseEntity<MemberHistoryResponseDto> getHistory(@AuthenticationPrincipal UserDetails userDetails){
         MemberHistoryResponseDto responseDto = memberService.getHistory(userDetails.getUsername());
