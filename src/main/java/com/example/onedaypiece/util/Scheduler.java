@@ -46,7 +46,7 @@ public class Scheduler {
     }
 
     @Async
-    @Scheduled(cron = "01 00 00 * * *") // 초, 분, 시, 일, 월, 주 순서
+    @Scheduled(cron = "02 00 00 * * *") // 초, 분, 시, 일, 월, 주 순서
     @Transactional
     public void challengeStatusUpdate() {
         List<ChallengeRecord> recordList = challengeRecordRepository.findAllByChallengeStatusTrue();
@@ -98,9 +98,7 @@ public class Scheduler {
     }
 
     private boolean isChallengeTimeToEnd(Challenge c) {
-        return c.getChallengeProgress() == 2L &&
-                (setTimeToZero(c.getChallengeEndDate()).isEqual(today) ||
-                        (setTimeToZero(c.getChallengeEndDate()).isBefore(today)));
+        return c.getChallengeProgress() == 2L && setTimeToZero(c.getChallengeEndDate()).isBefore(today);
     }
 
     private boolean canGetChallengePoint(Challenge challenge, Long certificatedPostingCount) {
