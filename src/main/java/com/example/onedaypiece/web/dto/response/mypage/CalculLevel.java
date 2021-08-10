@@ -1,49 +1,9 @@
-package com.example.onedaypiece.web.dto.response.member;
+package com.example.onedaypiece.web.dto.response.mypage;
 
+public class CalculLevel {
 
-import com.example.onedaypiece.web.dto.response.mypage.histroy.MemberHistoryDto;
-import com.example.onedaypiece.web.domain.member.Member;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-
-@NoArgsConstructor
-@Getter
-public class MemberResponseDto {
-    private Long memberId;
-    private String nickname;
-    private String profileImg;
-    private Long point;
-    private Long memberLevel; // 멤버 레벨 계산해서하기
-    private int challengeCount; // 자기가 참여한 챌린지 개수
-
-    public MemberResponseDto(Member member, int challengeCount){
-        this.memberId = member.getMemberId();
-        this.nickname = member.getNickname();
-        this.profileImg = member.getProfileImg();
-        this.point = member.getPoint().getAcquiredPoint();
-        this.memberLevel = calculLevel(member.getPoint().getAcquiredPoint());
-
-        this.challengeCount = challengeCount;
-    }
-
-
-    public MemberResponseDto(MemberHistoryDto responseDto) {
-        this.nickname = responseDto.getNickname();
-        this.memberId = responseDto.getMemberId();
-        this.profileImg = responseDto.getProfileImg();
-        this.point = responseDto.getAcquiredPoint();
-    }
-    // 획득한게 없을경우
-    public MemberResponseDto(Member member){
-        this.nickname = member.getNickname();
-        this.memberId = member.getMemberId();
-        this.profileImg = member.getProfileImg();
-        this.point = 0L;
-    }
-
-    // 699면 5레벨
-    public long calculLevel(Long memberPoint){
-        long level = 1;
+    public static long calculLevel(Long memberPoint){
+        long level = 1 ;
 
         //100 1~5
         if(memberPoint < 500) {
