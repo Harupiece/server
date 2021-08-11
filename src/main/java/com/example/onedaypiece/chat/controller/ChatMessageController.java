@@ -6,8 +6,9 @@ import com.example.onedaypiece.chat.service.ChatMessageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,8 +31,9 @@ public class ChatMessageController {
 
     // 웹소켓으로 들어오는 메시지 발행 처리 -> 클라이언트에서는 /pub/chat/message로 발행 요청
     @MessageMapping("/message")
-    public ResponseEntity<Void> pubMessage(@RequestBody ChatMessageRequestDto requestDto, @Header("token") String token) {
-        chatMessageService.pubMessage(requestDto, token);
+    public ResponseEntity<Void> pubMessage(@RequestBody ChatMessageRequestDto requestDto,
+                                           @AuthenticationPrincipal UserDetails userDetails) {
+        chatMessageService.pubMessage(requestDto, userDetails.getUsername());
         return ResponseEntity.ok().build();
     }
 }

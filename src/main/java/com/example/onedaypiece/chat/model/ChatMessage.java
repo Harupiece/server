@@ -53,7 +53,6 @@ public class ChatMessage implements Serializable {
         this.createdAt = createdAt;
     }
 
-    @Builder
     public ChatMessage(ChatMessageRequestDto requestDto, String nickName){
         this.type = requestDto.getType();
         this.roomId = requestDto.getRoomId();

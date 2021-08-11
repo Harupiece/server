@@ -37,11 +37,8 @@ public class ChatMessageService {
     }
 
     // message publish - redis
-    public void pubMessage(ChatMessageRequestDto requestDto, String token) {
+    public void pubMessage(ChatMessageRequestDto requestDto, String email) {
         // 로그인 토큰 확인
-        log.info("토큰 유효성 확인 :" + token);
-        String email = tokenProvider.getMemberEmail(token);
-
         Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new ApiRequestException("일치하는 회원 정보가 없습니다.")
                 );
