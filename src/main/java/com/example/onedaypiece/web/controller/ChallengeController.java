@@ -7,6 +7,7 @@ import com.example.onedaypiece.web.dto.response.challenge.ChallengeMainResponseD
 import com.example.onedaypiece.web.dto.response.challenge.ChallengeResponseDto;
 import com.example.onedaypiece.web.dto.response.challenge.ChallengeSourceResponseDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -30,9 +31,9 @@ public class ChallengeController {
         return ResponseEntity.ok().body(challengeService.getMainPage(userDetails.getUsername()));
     }
 
-    @GetMapping("/api/guest/challenge") // 모든 챌린지
-    public ResponseEntity<List<ChallengeSourceResponseDto>> getAllChallenge() {
-        return ResponseEntity.ok().body(challengeService.getAllChallenge());
+    @GetMapping("/api/guest/challenge-all/{page}") // 모든 챌린지
+    public ResponseEntity<Page<ChallengeSourceResponseDto>> getAllChallenge(@PathVariable int page) {
+        return ResponseEntity.ok().body(challengeService.getAllChallenge(page));
     }
 
     @GetMapping("/api/guest/challenge/{challengeId}") // 챌린지 상세
