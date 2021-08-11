@@ -139,14 +139,14 @@ public class Scheduler {
 
     }
 
-    @Async
-    @Scheduled(cron = "03 00 00 * * *") // 초, 분, 시, 일, 월, 주 순서
+    @Scheduled(cron = "10 00 00 * * *") // 초, 분, 시, 일, 월, 주 순서
     @Transactional
     public void challengeStatusUpdate() {
         List<ChallengeRecord> recordList = challengeRecordRepository.findAllByChallengeStatusTrue();
         List<Challenge> updatedChallengeList = new ArrayList<>();
 
         for (ChallengeRecord record : recordList) {
+            System.out.println(record.getChallenge().getChallengeStartDate());
             Challenge challenge = record.getChallenge();
 
             if (!updatedChallengeList.contains(challenge)) {
@@ -159,12 +159,6 @@ public class Scheduler {
                 }
             }
         }
-    }
-
-    @Scheduled(cron = "0/10 * * * * *") // 초, 분, 시, 일, 월, 주 순서
-    @Transactional
-    public void schedulerTest() {
-        System.out.println(today);
     }
 
     private void whenChallengeStart(Challenge challenge) {
