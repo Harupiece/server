@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Getter
@@ -15,7 +16,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Table(indexes = {@Index(name = "idx_status_progress", columnList = "challenge_status, challenge_progress"),
         @Index(name = "idx_status", columnList = "challenge_status")})
-public class Challenge extends Timestamped {
+public class Challenge extends Timestamped implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name="challenge_id")
