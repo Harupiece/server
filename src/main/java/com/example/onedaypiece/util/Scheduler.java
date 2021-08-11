@@ -161,6 +161,12 @@ public class Scheduler {
         }
     }
 
+    @Scheduled(cron = "0/10 * * * * *") // 초, 분, 시, 일, 월, 주 순서
+    @Transactional
+    public void schedulerTest() {
+        System.out.println(today);
+    }
+
     private void whenChallengeStart(Challenge challenge) {
         challenge.updateChallengeProgress(2L);
         log.info(today + " / id: " + challenge.getChallengeId() + " Challenge Start");

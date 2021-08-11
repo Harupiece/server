@@ -42,7 +42,7 @@ public class StompHandler implements ChannelInterceptor {
             tokenProvider.validateToken(jwtToken);
             authentication = tokenProvider.getAuthentication(jwtToken);
 
-        // 채팅룸 구독요청
+            // 채팅룸 구독요청
         } else if (StompCommand.SUBSCRIBE == accessor.getCommand()) {
             // header정보에서 구독 destination정보를 얻고, roomId를 추출한다.
             // roomId를 URL로 전송해주고 있어 추출 필요
@@ -74,7 +74,7 @@ public class StompHandler implements ChannelInterceptor {
             // 클라이언트 퇴장 메시지를 채팅방에 발송한다.(redis publish)
             String email = Optional.ofNullable((Principal) message.getHeaders().get("simpUser")).map(Principal::getName).orElse("UnknownUser");
             Member member = memberRepository.findByEmail(email)
-                    .orElseThrow(()->new RuntimeException("등록되지 않은 회원입니다."));
+                    .orElseThrow(() -> new RuntimeException("등록되지 않은 회원입니다."));
             String nickname = member.getNickname();
             chatMessageService.sendChatMessage(ChatMessage.builder().type(ChatMessage.MessageType.QUIT).roomId(roomId).sender(nickname).build());
 
