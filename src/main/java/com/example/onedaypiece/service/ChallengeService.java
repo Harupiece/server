@@ -1,5 +1,7 @@
 package com.example.onedaypiece.service;
 
+import com.example.onedaypiece.chat.model.ChatRoom;
+import com.example.onedaypiece.chat.repository.ChatRoomRepository;
 import com.example.onedaypiece.exception.ApiRequestException;
 import com.example.onedaypiece.web.domain.challenge.CategoryName;
 import com.example.onedaypiece.web.domain.challenge.Challenge;
@@ -19,6 +21,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -32,6 +35,12 @@ public class ChallengeService {
     private final ChallengeRepository challengeRepository;
     private final ChallengeRecordRepository challengeRecordRepository;
     private final MemberRepository memberRepository;
+    private final ChatRoomRepository chatRoomRepository;
+
+    // 채팅룸 저장
+    @Resource(name = "redisTemplate")
+    private HashOperations<String, String, ChatRoom> hashOpsChatRoom;
+    private static final String CHAT_ROOMS = "CHAT_ROOM";
 
     private final LocalDateTime currentLocalDateTime = LocalDateTime.now();
 
@@ -58,6 +67,9 @@ public class ChallengeService {
         Challenge challenge = new Challenge(requestDto, member);
         ChallengeRecord challengeRecord = new ChallengeRecord(challenge, member);
         challengeRecordRepository.save(challengeRecord);
+        ChatRoom chatRoom = new ChatRoom(challenge);
+        chatRoomRepository.save(chatRoom);
+        hashOpsChatRoom.put(CHAT_ROOMS, chatRoom.getRoomId(),chatRoom);
         return challengeRepository.save(challenge).getChallengeId();
     }
 

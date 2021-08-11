@@ -10,13 +10,14 @@ import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Slf4j
 @NoArgsConstructor
 @Entity
 @Getter
 @Table(indexes = {@Index(name = "idx_member_status", columnList = "member_status")})
-public class Member extends Timestamped {
+public class Member extends Timestamped implements Serializable {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
