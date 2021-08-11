@@ -3,7 +3,7 @@ package com.example.onedaypiece.web.controller;
 import com.example.onedaypiece.service.PostingService;
 import com.example.onedaypiece.web.dto.request.posting.PostingCreateRequestDto;
 import com.example.onedaypiece.web.dto.request.posting.PostingUpdateRequestDto;
-import com.example.onedaypiece.web.dto.response.posting.PostingResponseDto;
+import com.example.onedaypiece.web.dto.response.posting.PostingListDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -12,7 +12,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -32,10 +31,11 @@ public class PostingController {
     }
     /**
      * 2.포스트 리스트
+     * @return
      */
     @GetMapping("/{page}/{challengeId}")
-    public ResponseEntity<List<PostingResponseDto>> getPosting (@PathVariable int page,
-                                                                @PathVariable Long challengeId){
+    public ResponseEntity<PostingListDto> getPosting (@PathVariable int page,
+                                                      @PathVariable Long challengeId){
 
         log.info("getPosting 전체 포스트 리스트 : {} ",challengeId);
         return ResponseEntity.ok().body(postingService.getPosting(page,challengeId));

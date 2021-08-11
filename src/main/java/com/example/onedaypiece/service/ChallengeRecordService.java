@@ -32,6 +32,9 @@ public class ChallengeRecordService {
     public void giveUpChallenge(Long challengeId, String email) {
         Challenge challenge = ChallengeChecker(challengeId);
         Member member = MemberChecker(email);
+
+
+
         challengeRecordRepository.deleteByChallengeAndMember(challenge, member);
     }
 

@@ -2,6 +2,7 @@ package com.example.onedaypiece.web.domain.challengeRecord;
 
 import com.example.onedaypiece.web.domain.challenge.Challenge;
 import com.example.onedaypiece.web.domain.member.Member;
+import com.example.onedaypiece.web.domain.posting.Posting;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -85,12 +86,30 @@ public interface ChallengeRecordRepository extends JpaRepository<ChallengeRecord
 
 
     // 본인이 참여한 챌린지중 진행중인첼린지
-    @Query("select c from ChallengeRecord c Where c.challengeRecordStatus = true and c.member = :member and c.challenge.challengeProgress = :progress")
+    @Query("select c from ChallengeRecord c " +
+            "Where c.challengeRecordStatus = true " +
+            "and c.member = :member " +
+            "and c.challenge.challengeProgress = :progress")
     List<ChallengeRecord> findAllByMemberAndProgress(Member member, Long progress);
 
     // 진행중과 진행예정 챌린지 in을 사용하기
     @Query("select c from ChallengeRecord c Where c.challengeRecordStatus = true and c.member = :member and c.challenge.challengeProgress in (:progress, :expected) ")
     List<ChallengeRecord> findAllByMemberAndProgressAndExpected(Member member, Long progress, Long expected);
+
+    @Query("select c from ChallengeRecord c " +
+            "where c.challengeRecordStatus= true " +
+            "and c.challenge.challengeProgress = 2 ")
+    List<ChallengeRecord> findAllByChallenge();
+
+
+    @Query("select distinct c from ChallengeRecord c " +
+            "left join fetch Posting p on c.challenge.challengeId = p.challenge.challengeId " +
+            "where c.challenge.challengeId in :challengeId " +
+            "and p.postingId  in ( select p.postingId" +
+            "                    from Posting p " +
+            "                    where p.challenge.challengeId in :challengeId " +
+            "                      and p.member.memberId not in (c.member.memberId))")
+    List<ChallengeRecord> findPostingListTest2(List<Long> challengeId);
 
 //    //자기가 참여한 챌린지에서서 챌린지상태가 현재 진행중인거 개수
 //    @Query("select count(c) from ChallengeRecord c where c.challenge.challengeProgress = 2L and c.member = :member")
