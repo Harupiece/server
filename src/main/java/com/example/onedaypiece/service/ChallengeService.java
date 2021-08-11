@@ -12,7 +12,10 @@ import com.example.onedaypiece.web.dto.request.challenge.ChallengeRequestDto;
 import com.example.onedaypiece.web.dto.request.challenge.PutChallengeRequestDto;
 import com.example.onedaypiece.web.dto.response.challenge.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -66,16 +69,17 @@ public class ChallengeService {
         challenge.putChallenge(requestDto);
     }
 
-    public List<ChallengeSourceResponseDto> getAllChallenge() {
+    public Page<ChallengeSourceResponseDto> getAllChallenge(int page) {
         List<ChallengeRecord> records = challengeRecordRepository.findAllByChallengeStatusTrueAndProgressNotStart();
         List<Challenge> challenges = records.stream().map(ChallengeRecord::getChallenge).collect(Collectors.toList());
         List<Long> challengeIdList = new ArrayList<>();
-        return challenges
+        List<ChallengeSourceResponseDto> sources = challenges
                 .stream()
                 .filter(c -> !challengeIdList.contains(c.getChallengeId()))
                 .peek(c -> challengeIdList.add(c.getChallengeId()))
                 .map(c -> new ChallengeSourceResponseDto(c, records))
                 .collect(Collectors.toList());
+        return listToPage(page, sources);
     }
 
     public ChallengeMainResponseDto getMainPage(String email) {
@@ -130,6 +134,15 @@ public class ChallengeService {
                 .stream()
                 .map(c -> new ChallengeSourceResponseDto(c, records))
                 .collect(Collectors.toList());
+    }
+
+    private Page<ChallengeSourceResponseDto> listToPage(int page, List<ChallengeSourceResponseDto> sources) {
+        final int allChallengePageSize = 8;
+        Pageable paging = PageRequest.of(page - 1, allChallengePageSize);
+        final int start = Math.min((int)paging.getOffset(), sources.size());
+        final int end = Math.min((start + paging.getPageSize()), sources.size());
+
+        return new PageImpl<>(sources.subList(start, end), paging, sources.size());
     }
 
     private Challenge ChallengeChecker(Long challengeId) {
