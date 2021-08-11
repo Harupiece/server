@@ -48,7 +48,6 @@ public class Scheduler {
         log.info("updateResult 벌크 연산 result: {} ", updateResult);
     }
 
-<<<<<<< HEAD
     @Scheduled(cron = "01 00 00 * * *") // 초, 분, 시, 일, 월, 주 순서
     @Transactional
     public void certificationKick() {
@@ -138,48 +137,10 @@ public class Scheduler {
 
         System.out.println("result = " + result);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-//        List<Long> kickMember2 = postingList2.stream().map(posting -> posting.getMember().getMemberId()).collect(Collectors.toList());
-//        for (Long aLong : kickMember2) {
-//            System.out.println("aLong1111111111 = " + aLong);
-//        }
-//
-//        List<Long> kickChallenge2 = postingList2.stream().map(posting -> posting.getChallenge().getChallengeId()).collect(Collectors.toList());
-//        for (Long aLong : kickChallenge2) {
-//            System.out.println("aLong2222222222 = " + aLong);
-//        }
-//
-//
-//
-//
-//
-//        for (Long aLong : kickMember) {
-//            System.out.println("aLongMember = " + aLong);
-//        }
-//        for (Long aLong : kickChallenge) {
-//            System.out.println("aLongkickChallenge = " + aLong);
-//        }
-
-
     }
 
     @Async
-    @Scheduled(cron = "01 00 00 * * *") // 초, 분, 시, 일, 월, 주 순서
-=======
     @Scheduled(cron = "03 00 00 * * *") // 초, 분, 시, 일, 월, 주 순서
->>>>>>> d728d806fdda52442a9dbfe4d32f41c7f3c9e8ec
     @Transactional
     public void challengeStatusUpdate() {
         List<ChallengeRecord> recordList = challengeRecordRepository.findAllByChallengeStatusTrue();
