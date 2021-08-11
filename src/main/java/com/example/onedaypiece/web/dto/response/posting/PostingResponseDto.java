@@ -29,7 +29,7 @@ public class PostingResponseDto {
     // 사진필요할 때 추가
 //    private List<CertificationResponseDto> certificationUserInfo ;
 
-    public PostingResponseDto(Posting posting,List<Certification> certificationList) {
+    public PostingResponseDto(Posting posting, List<Certification> certificationList) {
         this.postingId = posting.getPostingId();
         this.postingContent = posting.getPostingContent();
         this.nickName = posting.getMember().getNickname();
