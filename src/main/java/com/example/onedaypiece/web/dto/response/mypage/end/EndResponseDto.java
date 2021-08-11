@@ -6,7 +6,6 @@ import com.example.onedaypiece.web.domain.challengeRecord.ChallengeRecord;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;

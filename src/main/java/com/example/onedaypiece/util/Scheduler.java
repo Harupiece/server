@@ -48,6 +48,7 @@ public class Scheduler {
         log.info("updateResult 벌크 연산 result: {} ", updateResult);
     }
 
+<<<<<<< HEAD
     @Scheduled(cron = "01 00 00 * * *") // 초, 분, 시, 일, 월, 주 순서
     @Transactional
     public void certificationKick() {
@@ -176,6 +177,9 @@ public class Scheduler {
 
     @Async
     @Scheduled(cron = "01 00 00 * * *") // 초, 분, 시, 일, 월, 주 순서
+=======
+    @Scheduled(cron = "03 00 00 * * *") // 초, 분, 시, 일, 월, 주 순서
+>>>>>>> d728d806fdda52442a9dbfe4d32f41c7f3c9e8ec
     @Transactional
     public void challengeStatusUpdate() {
         List<ChallengeRecord> recordList = challengeRecordRepository.findAllByChallengeStatusTrue();
@@ -198,13 +202,13 @@ public class Scheduler {
 
     private void whenChallengeStart(Challenge challenge) {
         challenge.updateChallengeProgress(2L);
-        log.info("id: " + challenge.getChallengeId() + " Challenge Start");
+        log.info(today + " / id: " + challenge.getChallengeId() + " Challenge Start");
     }
 
     private void whenChallengeEnd(ChallengeRecord record, Challenge challenge) {
         challenge.updateChallengeProgress(3L);
         record.setStatusFalse();
-        log.info("id: " + challenge.getChallengeId() + " Challenge End");
+        log.info(today + " / id: " + challenge.getChallengeId() + " Challenge End");
 
         Member member = record.getMember();
         List<Posting> postingList = postingRepository.findAllByChallengeAndPostingApprovalTrue(challenge);
@@ -221,11 +225,13 @@ public class Scheduler {
     }
 
     private boolean isChallengeTimeToStart(Challenge c) {
-        return c.getChallengeProgress() == 1L && setTimeToZero(c.getChallengeStartDate()).isEqual(today);
+        return c.getChallengeProgress() == 1L &&
+                (setTimeToZero(c.getChallengeStartDate()).isEqual(today) ||
+                        (setTimeToZero(c.getChallengeStartDate()).isBefore(today)));
     }
 
     private boolean isChallengeTimeToEnd(Challenge c) {
-        return c.getChallengeProgress() == 2L && setTimeToZero(c.getChallengeEndDate()).isEqual(today);
+        return c.getChallengeProgress() == 2L && setTimeToZero(c.getChallengeEndDate()).isBefore(today);
     }
 
     private boolean canGetChallengePoint(Challenge challenge, Long certificatedPostingCount) {

@@ -14,7 +14,6 @@ import javax.annotation.PostConstruct;
 import java.time.LocalDateTime;
 import java.util.TimeZone;
 
-@EnableAsync
 @EnableSwagger2
 @EnableScheduling
 @EnableJpaAuditing
