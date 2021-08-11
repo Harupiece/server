@@ -45,8 +45,7 @@ public class Scheduler {
         log.info("updateResult 벌크 연산 result: {} ", updateResult);
     }
 
-    @Async
-    @Scheduled(cron = "02 00 00 * * *") // 초, 분, 시, 일, 월, 주 순서
+    @Scheduled(cron = "03 00 00 * * *") // 초, 분, 시, 일, 월, 주 순서
     @Transactional
     public void challengeStatusUpdate() {
         List<ChallengeRecord> recordList = challengeRecordRepository.findAllByChallengeStatusTrue();
@@ -69,13 +68,13 @@ public class Scheduler {
 
     private void whenChallengeStart(Challenge challenge) {
         challenge.updateChallengeProgress(2L);
-        log.info("id: " + challenge.getChallengeId() + " Challenge Start");
+        log.info(today + " / id: " + challenge.getChallengeId() + " Challenge Start");
     }
 
     private void whenChallengeEnd(ChallengeRecord record, Challenge challenge) {
         challenge.updateChallengeProgress(3L);
         record.setStatusFalse();
-        log.info("id: " + challenge.getChallengeId() + " Challenge End");
+        log.info(today + " / id: " + challenge.getChallengeId() + " Challenge End");
 
         Member member = record.getMember();
         List<Posting> postingList = postingRepository.findAllByChallengeAndPostingApprovalTrue(challenge);
