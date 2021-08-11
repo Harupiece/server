@@ -92,6 +92,12 @@ public interface ChallengeRecordRepository extends JpaRepository<ChallengeRecord
     @Query("select c from ChallengeRecord c Where c.challengeRecordStatus = true and c.member = :member and c.challenge.challengeProgress in (:progress, :expected) ")
     List<ChallengeRecord> findAllByMemberAndProgressAndExpected(Member member, Long progress, Long expected);
 
+    @Query("select c " +
+            "from ChallengeRecord c " +
+            "join fetch c.challenge " +
+            "where c.challenge.challengeId = :challengeId and c.member =:member")
+    ChallengeRecord findtest(Long challengeId, Member member);
+
 //    //자기가 참여한 챌린지에서서 챌린지상태가 현재 진행중인거 개수
 //    @Query("select count(c) from ChallengeRecord c where c.challenge.challengeProgress = 2L and c.member = :member")
 //    int countProgressChallengeRecord(Member member);
