@@ -12,18 +12,18 @@ import com.example.onedaypiece.web.domain.posting.PostingQueryRepository;
 import com.example.onedaypiece.web.domain.posting.PostingRepository;
 import com.example.onedaypiece.web.dto.request.posting.PostingCreateRequestDto;
 import com.example.onedaypiece.web.dto.request.posting.PostingUpdateRequestDto;
-import com.example.onedaypiece.web.dto.response.posting.PostingResponseDto;
+import com.example.onedaypiece.web.dto.response.posting.PostingListDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -62,23 +62,21 @@ public class PostingService {
     /**
      * 2.포스트 리스트
      *
+     * @return
      */
     @Transactional(readOnly = true)
-    public List<PostingResponseDto> getPosting(int page, Long challengeId) {
+    public PostingListDto getPosting(int page, Long challengeId) {
 
         Pageable pageable = PageRequest.of(page-1,6);
 
-        List<Posting> postingList =postingRepository.findPostingList(challengeId,pageable);
-
+        Slice<Posting> postingList =postingRepository.findPostingList(challengeId,pageable);
         // QueryRepository 적용
 //        List<Posting> postingList =postingQueryRepository.findPostingList(challengeId,pageable);
+        List<Certification> certificationList = certificationRepository.findAllByPosting(challengeId);
 
-        List<Certification> certifications = certificationRepository.findAllByPosting(challengeId);
 
-        return postingList
-                .stream()
-                .map(posting -> new PostingResponseDto(posting, certifications))
-                .collect(Collectors.toList());
+
+        return PostingListDto.createPostingListDto(postingList,certificationList);
     }
 
     /**
@@ -95,8 +93,6 @@ public class PostingService {
 
         // 포스팅 검사
         validateUpdatePosting(posting);
-
-
 
         posting.updatePosting(postingUpdateRequestDto);
         return posting.getPostingId();
@@ -121,9 +117,7 @@ public class PostingService {
         posting.deletePosting();
         return posting.getPostingId();
 
-
     }
-
 
     private Posting getPosting(Long postingId) {
         return postingRepository.findById(postingId)

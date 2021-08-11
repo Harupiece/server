@@ -17,6 +17,7 @@ public class PostingQueryRepository {
 
     private final EntityManager em;
 
+
     public List<Posting> findPostingList(Long challengeId, Pageable pageable){
         return em.createQuery("select p " +
                 "from Posting p " +

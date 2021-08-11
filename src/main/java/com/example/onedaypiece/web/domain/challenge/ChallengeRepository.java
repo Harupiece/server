@@ -4,6 +4,7 @@ import com.example.onedaypiece.web.domain.member.Member;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.querydsl.QPageRequest;
 
@@ -31,4 +32,14 @@ public interface ChallengeRepository extends JpaRepository<Challenge, Long> {
     Optional<Challenge> findChallengeStatusTrue(Long challengeId);
 
     List<Challenge> findAllByChallengeStatusTrueAndChallengeProgressLessThan(Long challengeProgress);
+
+
+    @Modifying(clearAutomatically = true)
+    @Query("update ChallengeRecord c " +
+            "set c.challengeRecordStatus = false " +
+            "where c.member.memberId in :kickMember " +
+            "and c.challenge.challengeId in :kickChallenge")
+    int kickMemberOnChallenge(List<Long> kickMember, List<Long> kickChallenge);
+
+
 }

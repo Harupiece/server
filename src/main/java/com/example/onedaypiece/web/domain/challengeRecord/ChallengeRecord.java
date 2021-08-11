@@ -12,7 +12,7 @@ import javax.persistence.*;
 @Getter
 @Entity
 @NoArgsConstructor
-@ToString
+@ToString(exclude = {"member","challenge"})
 @Table(indexes = {@Index(name = "idx_record_status", columnList = "challenge_record_status")})
 public class ChallengeRecord extends Timestamped {
 
