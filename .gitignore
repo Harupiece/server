@@ -35,3 +35,6 @@ out/
 
 ### VS Code ###
 .vscode/
+
+# properties를위한거
+/src/main/resources/**
