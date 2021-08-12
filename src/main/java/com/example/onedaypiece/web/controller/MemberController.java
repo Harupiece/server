@@ -92,6 +92,11 @@ public class MemberController {
          return ResponseEntity.ok().body(responseDto);
     }
 
+    @GetMapping("/hello-world")
+    public String get123(){
+        return "hello world";
+    }
+
 
 
 }
