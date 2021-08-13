@@ -50,7 +50,7 @@ public class ChallengeRequestDto {
         this.challengeContent = challengeContent;
         this.challengePassword = challengePassword;
         this.categoryName = categoryName;
-        this.challengeStartDate = challengeStartDate.withHour(0).withMinute(0).withSecond(3);
+        this.challengeStartDate = challengeStartDate.withHour(0).withMinute(0).withSecond(0);
         this.challengeEndDate = challengeEndDate.withHour(23).withMinute(59).withSecond(57);
         this.challengeImgUrl = challengeImgUrl;
         this.challengeGood = challengeGood;
