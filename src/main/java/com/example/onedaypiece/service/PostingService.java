@@ -140,7 +140,7 @@ public class PostingService {
 
         LocalDateTime now = LocalDate.now().atStartOfDay();
 
-        boolean posting = postingQueryRepository.existsTodayPosting(now,member,challenge);
+        boolean posting = postingQueryRepository.existsTodayPosting(now,member.getMemberId(),challenge.getChallengeId());
 
         if(posting){
             throw new ApiRequestException("동일한 챌린지에는 한번의 인증글만 작성할 수 있습니다.");
