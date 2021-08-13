@@ -2,6 +2,7 @@ package com.example.onedaypiece.chat.service;
 
 import com.example.onedaypiece.chat.model.ChatMessage;
 import com.example.onedaypiece.exception.ApiRequestException;
+import com.example.onedaypiece.web.domain.challengeRecord.ChallengeRecordRepository;
 import com.example.onedaypiece.web.domain.member.Member;
 import com.example.onedaypiece.web.domain.member.MemberRepository;
 import lombok.RequiredArgsConstructor;
