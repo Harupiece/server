@@ -22,7 +22,7 @@ public interface MemberRepository extends JpaRepository<Member,Long> {
     boolean existsByNickname(String nickname);
 
     @Modifying(clearAutomatically = true)
-    @Query("update Member m set m.point = :getPoint where m in :memberList")
+    @Query("update Member m set m.point.acquiredPoint = m.point.acquiredPoint + :getPoint where m in :memberList")
     void updatePointAll(List<Member> memberList, Long getPoint);
 }
 

@@ -10,6 +10,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 public interface ChallengeRecordRepository extends JpaRepository<ChallengeRecord, Long> {
 
@@ -44,10 +45,15 @@ public interface ChallengeRecordRepository extends JpaRepository<ChallengeRecord
 
     void deleteByChallengeAndMember(Challenge challenge, Member member);
 
-    @Query("select c from ChallengeRecord c " +
-            "inner join fetch c.challenge " +
-            "Where c.challengeRecordStatus = true and c.challenge = :challenge")
+    @Query("select r from ChallengeRecord r " +
+            "inner join fetch r.member " +
+            "Where r.challengeRecordStatus = true and r.challenge = :challenge")
     List<ChallengeRecord> findAllByChallenge(Challenge challenge);
+
+    @Query("select r from ChallengeRecord r " +
+            "inner join fetch r.member " +
+            "Where r.challengeRecordStatus = true and r.challenge = :challenge")
+    Optional<List<ChallengeRecord>> optionalFindAllByChallenge(Challenge challenge);
 
     @Query("select c from ChallengeRecord c " +
             "inner join fetch c.challenge " +

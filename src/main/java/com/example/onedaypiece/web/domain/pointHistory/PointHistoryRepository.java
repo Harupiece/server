@@ -3,6 +3,7 @@ package com.example.onedaypiece.web.domain.pointHistory;
 import com.example.onedaypiece.web.dto.response.mypage.histroy.MemberHistoryDto;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
