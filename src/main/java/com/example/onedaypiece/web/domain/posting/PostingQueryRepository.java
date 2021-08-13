@@ -6,7 +6,6 @@ import com.example.onedaypiece.web.dto.query.posting.QPostingListQueryDto;
 import com.example.onedaypiece.web.dto.query.posting.QSchedulerIdListDto;
 import com.example.onedaypiece.web.dto.query.posting.SchedulerIdListDto;
 import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.core.types.dsl.BooleanPath;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -81,16 +80,16 @@ public class PostingQueryRepository  {
                 .select(posting.postingId)
                 .from(posting)
                 .where(postingStatusIsTrue(),
-                        (statusIsTrue(posting.postingModifyOk)),
-                        (posting.createdAt.lt(today)))
+                        posting.postingModifyOk.isTrue(),
+                        posting.createdAt.lt(today))
                 .fetch();
     }
 
     public List<SchedulerIdListDto> findPostingListTest(List<Long> challengeId, List<Long> memberId, LocalDateTime today){
 
         return queryFactory.select(new QSchedulerIdListDto(
-                        posting.challenge.challengeId,
-                        posting.member.memberId))
+                posting.challenge.challengeId,
+                posting.member.memberId))
                 .from(posting)
                 .where(postingStatusIsTrue(),
                         posting.challenge.challengeId.in(challengeId),
@@ -115,9 +114,6 @@ public class PostingQueryRepository  {
 
     private BooleanExpression postingStatusIsTrue() {
         return posting.postingStatus.isTrue();
-    }
-    private BooleanExpression statusIsTrue(BooleanPath status) {
-        return status.isTrue();
     }
 
 
