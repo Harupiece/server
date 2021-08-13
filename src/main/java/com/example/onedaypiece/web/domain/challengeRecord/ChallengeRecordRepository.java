@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface ChallengeRecordRepository extends JpaRepository<ChallengeRecord, Long> {
@@ -107,16 +108,15 @@ public interface ChallengeRecordRepository extends JpaRepository<ChallengeRecord
             "and c.challenge.challengeProgress = 2 ")
     List<ChallengeRecord> findAllByChallenge();
 
-
     @Query("select distinct c from ChallengeRecord c " +
             "left join fetch Posting p on c.challenge.challengeId = p.challenge.challengeId " +
             "where c.challenge.challengeId in :challengeId " +
             "and p.postingId  in ( select p.postingId" +
             "                    from Posting p " +
             "                    where p.challenge.challengeId in :challengeId " +
+            "                      and p.createdAt < :today " +
             "                      and p.member.memberId not in (c.member.memberId))")
-    List<ChallengeRecord> findPostingListTest2(List<Long> challengeId);
-
+    List<ChallengeRecord> findPostingListTest2(List<Long> challengeId, LocalDateTime today);
 
     @Modifying(clearAutomatically = true)
     @Query("update ChallengeRecord c " +
