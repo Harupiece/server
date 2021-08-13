@@ -1,6 +1,6 @@
 package com.example.onedaypiece.util;
 
-import com.example.onedaypiece.web.domain.challenge.CategoryName;
+import com.example.onedaypiece.exception.ApiRequestException;
 import com.example.onedaypiece.web.domain.challenge.Challenge;
 import com.example.onedaypiece.web.domain.challenge.ChallengeRepository;
 import com.example.onedaypiece.web.domain.challengeRecord.ChallengeRecord;
@@ -23,6 +23,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.example.onedaypiece.web.domain.challenge.CategoryName.OFFICIAL;
+
 
 @Slf4j
 @RequiredArgsConstructor
@@ -39,7 +41,7 @@ public class Scheduler {
     private final LocalDateTime today = LocalDate.now().atStartOfDay();
 
     //    01 00 00
-    @Scheduled(cron = "01 0/10 * * * *") // 초, 분, 시, 일, 월, 주 순서
+    @Scheduled(cron = "01 00 * * * *") // 초, 분, 시, 일, 월, 주 순서
     @Transactional
     public void certificationKick() {
         List<ChallengeRecord> challengeMember = challengeRecordRepository.findAllByChallenge();
@@ -87,7 +89,7 @@ public class Scheduler {
         log.info("updateResult 벌크 연산 result: {} ", updateResult);
     }
 
-    @Scheduled(cron = "02 0/10 * * * *") // 초, 분, 시, 일, 월, 주 순서
+    @Scheduled(cron = "02 00 * * * *") // 초, 분, 시, 일, 월, 주 순서
     @Transactional
     public void postingStatusUpdate() {
         List<Long> postingIdList = postingQueryRepository.findSchedulerUpdatePosting(today);
@@ -96,23 +98,32 @@ public class Scheduler {
         log.info("updateResult 벌크 연산 result: {} ", updateResult);
     }
 
-    @Scheduled(cron = "03 0/10 * * * *") // 초, 분, 시, 일, 월, 주 순서
+    @Scheduled(cron = "03 00 * * * *") // 초, 분, 시, 일, 월, 주 순서
     @Transactional
     public void challengeStatusUpdate() {
         List<Challenge> challengeList = challengeRepository.findAllByChallengeStatusTrueAndChallengeProgressLessThan(3L);
 
+        // 챌린지 시작
         List<Challenge> startList = challengeList
                 .stream()
                 .filter(this::isChallengeTimeToStart)
                 .collect(Collectors.toList());
         whenChallengeStart(startList);
 
+        // 챌린지 종료
         List<Challenge> endList = challengeList
                 .stream()
                 .filter(this::isChallengeTimeToEnd)
-                .peek(this::getPointWhenChallengeEnd)
                 .collect(Collectors.toList());
         whenChallengeEnd(endList);
+
+        // 챌린지 완주 포인트 지급
+        long result = endList
+                .stream()
+                .peek(c -> System.out.println("filteredChallenge : " + c.getChallengeId()))
+                .peek(this::getPointWhenChallengeEnd)
+                .count();
+        log.info(today + " / " + result + " members get points");
     }
 
     private void whenChallengeStart(List<Challenge> challengeList) {
@@ -127,22 +138,26 @@ public class Scheduler {
     }
 
     private void getPointWhenChallengeEnd(Challenge challenge) {
-        List<ChallengeRecord> recordList = challengeRecordRepository.findAllByChallenge(challenge);
+        List<ChallengeRecord> recordList = challengeRecordRepository.optionalFindAllByChallenge(challenge)
+                .orElseThrow(() -> new ApiRequestException("인원이 없는 챌린지"));
+
         List<Member> memberList = recordList
                 .stream()
                 .map(ChallengeRecord::getMember)
                 .collect(Collectors.toList());
-        int certificatedPostingCount = postingRepository.findAllByChallengeAndMember(challenge, memberList.get(0)).size();
-        final Long getPoint = certificatedPostingCount *
-                500L * (challenge.getCategoryName().equals(CategoryName.OFFICIAL) ? 2L : 1L);
+
+        long postingCount = postingRepository.findAllByChallengeAndMember(challenge, memberList.get(0)).size();
+        Long resultPoint = postingCount * 500L * (challenge.getCategoryName().equals(OFFICIAL) ? 2L : 1L);
 
         List<PointHistory> pointHistoryList = recordList
                 .stream()
-                .map(r -> new PointHistory(getPoint, r))
+                .map(r -> new PointHistory(resultPoint, r))
                 .collect(Collectors.toList());
 
         pointHistoryRepository.saveAll(pointHistoryList);
-        memberRepository.updatePointAll(memberList, getPoint);
+//        memberRepository.updatePointAll(memberList, resultPoint);
+        memberList.forEach(member -> member.getPoint()
+                .setAcquiredPoint(member.getPoint().getAcquiredPoint() + resultPoint));
     }
 
     private boolean isChallengeTimeToStart(Challenge c) {
