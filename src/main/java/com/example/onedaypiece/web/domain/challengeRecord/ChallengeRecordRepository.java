@@ -33,14 +33,20 @@ public interface ChallengeRecordRepository extends JpaRepository<ChallengeRecord
             "order by c.modifiedAt desc")
     List<ChallengeRecord> findAllByChallengeStatusTrueByPaged(Pageable pageable);
 
+
+//    @Modifying
+//    @Query("delete from ChallengeRecord c " +
+//            "Where c.challenge.challengeStatus = true " +
+//            "and c.challenge.challengeId = :challengeId " +
+//            "and c.member = :member")
+//    void deleteByChallengeIdAndMember(Long challengeId, Member member);
+
+    void deleteByChallengeAndMember(Challenge challenge, Member member);
+
     @Query("select c from ChallengeRecord c " +
             "inner join fetch c.challenge " +
             "Where c.challengeRecordStatus = true and c.challenge = :challenge")
     List<ChallengeRecord> findAllByChallenge(Challenge challenge);
-
-    @Query("select distinct r.member from ChallengeRecord r " +
-            "Where r.challengeRecordStatus = true and r.challenge = :challenge")
-    List<ChallengeRecord> findAllMemberByChallenge(Challenge challenge);
 
     @Query("select c from ChallengeRecord c " +
             "inner join fetch c.challenge " +
@@ -91,11 +97,9 @@ public interface ChallengeRecordRepository extends JpaRepository<ChallengeRecord
     @Query("select c from ChallengeRecord c Where c.challengeRecordStatus = true and c.member = :member and c.challenge.challengeProgress in (:progress, :expected) ")
     List<ChallengeRecord> findAllByMemberAndProgressAndExpected(@Param("member") Member member,@Param("progress") Long progress, @Param("expected") Long expected);
 
-    @Query("select c " +
-            "from ChallengeRecord c " +
-            "join fetch c.challenge " +
-            "where c.challenge.challengeId = :challengeId and c.member =:member")
-    ChallengeRecord findtest(Long challengeId, Member member);
+    // 채팅방 입장할 때 사용
+    @Query("select CASE WHEN count(c)>0 then true else false end from ChallengeRecord c Where c.challengeRecordStatus = true and c.challenge.challengeId = :challengeId and c.member = :member and c.challenge.challengeProgress in (:progress, :expected) ")
+    boolean existsByChallengeIdAndAndMember (Long challengeId, Member member, Long progress, Long expected);
 
     @Query("select c from ChallengeRecord c " +
             "inner join c.challenge " +
@@ -113,6 +117,7 @@ public interface ChallengeRecordRepository extends JpaRepository<ChallengeRecord
             "                      and p.member.memberId not in (c.member.memberId))")
     List<ChallengeRecord> findPostingListTest2(List<Long> challengeId);
 
+
     @Modifying(clearAutomatically = true)
     @Query("update ChallengeRecord c " +
             "set c.challengeRecordStatus = false " +
@@ -120,12 +125,7 @@ public interface ChallengeRecordRepository extends JpaRepository<ChallengeRecord
             "and c.challenge.challengeId in :kickChallenge")
     int kickMemberOnChallenge(List<Long> kickMember, List<Long> kickChallenge);
 
-    @Modifying(clearAutomatically = true)
-    @Query("update ChallengeRecord r set r.challengePoint = true where r.challenge in :challengeList")
-    void updateChallengePoint(List<Challenge> challengeList);
-
-    @Query("select c from ChallengeRecord c " +
-            "Where c.challengeRecordStatus = true " +
-            "and c.member = :member")
-    ChallengeRecord findByChallengeAndMember(Challenge challenge, Member member);
+//    //자기가 참여한 챌린지에서서 챌린지상태가 현재 진행중인거 개수
+//    @Query("select count(c) from ChallengeRecord c where c.challenge.challengeProgress = 2L and c.member = :member")
+//    int countProgressChallengeRecord(Member member);
 }

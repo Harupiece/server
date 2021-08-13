@@ -3,7 +3,6 @@ package com.example.onedaypiece.service;
 import com.example.onedaypiece.web.domain.challenge.CategoryName;
 import com.example.onedaypiece.web.domain.challenge.Challenge;
 import com.example.onedaypiece.web.domain.challenge.ChallengeRepository;
-import com.example.onedaypiece.web.domain.challengeRecord.ChallengeRecordRepository;
 import com.example.onedaypiece.web.dto.response.challenge.ChallengeListResponseDto;
 import com.example.onedaypiece.web.dto.response.challenge.ChallengeResponseDto;
 import com.example.onedaypiece.web.dto.response.search.ChallengeTitleSearchResponseDto;

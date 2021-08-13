@@ -39,8 +39,8 @@ public class StompHandler implements ChannelInterceptor {
         // websocket 연결요청
         if (StompCommand.CONNECT == accessor.getCommand()) {
             String jwtToken = accessor.getFirstNativeHeader("token");
+            log.info("CONNECT {}", jwtToken);
             tokenProvider.validateToken(jwtToken);
-            authentication = tokenProvider.getAuthentication(jwtToken);
 
             // 채팅룸 구독요청
         } else if (StompCommand.SUBSCRIBE == accessor.getCommand()) {
@@ -52,14 +52,19 @@ public class StompHandler implements ChannelInterceptor {
             String sessionId = (String) message.getHeaders().get("simpSessionId");
             redisRepository.setMemberEnterInfo(sessionId, roomId);
 
-            // 채팅방의 인원수를 +1한다.
-            redisRepository.plusMemberCount(roomId);
+            // subscribe 의 token 확인
+            String jwtToken = accessor.getFirstNativeHeader("token");
+            log.info("SUBSCRIBE {}", jwtToken);
 
             // 클라이언트 입장 메시지를 채팅방에 발송한다.(redis publish)
-            Member member = memberRepository.findByEmail(authentication.getName())
+            Member member = memberRepository.findByEmail(tokenProvider.getMemberEmail(jwtToken))
                     .orElseThrow(() -> new RuntimeException("등록되지 않은 회원입니다."));
             String nickname = member.getNickname();
-            chatMessageService.sendChatMessage(ChatMessage.builder().type(ChatMessage.MessageType.ENTER).roomId(roomId).sender(nickname).build());
+            chatMessageService.sendChatMessage(ChatMessage.builder()
+                    .type(ChatMessage.MessageType.ENTER)
+                    .roomId(roomId)
+                    .sender(nickname)
+                    .build());
             log.info("SUBSCRIBED {}, {}", nickname, roomId);
 
             // Websocket 연결 종료
@@ -67,9 +72,6 @@ public class StompHandler implements ChannelInterceptor {
             // 연결이 종료된 클라이언트 sesssionId로 채팅방 id를 얻는다.
             String sessionId = (String) message.getHeaders().get("simpSessionId");
             String roomId = redisRepository.getMemberEnterRoomId(sessionId);
-
-            // 채팅방의 인원수를 -1한다.
-            redisRepository.minusMemberCount(roomId);
 
             // 클라이언트 퇴장 메시지를 채팅방에 발송한다.(redis publish)
             String email = Optional.ofNullable((Principal) message.getHeaders().get("simpUser")).map(Principal::getName).orElse("UnknownUser");
