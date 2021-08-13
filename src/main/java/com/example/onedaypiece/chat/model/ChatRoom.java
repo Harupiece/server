@@ -17,14 +17,11 @@ public class ChatRoom extends Timestamped implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "room_id")
-    private Long id; //roomId
+    private Long id;
 
     @Column
     private String roomId;
 
-    @OneToOne(mappedBy = "chatRoom")
-    private Challenge challenge;
 
     public ChatRoom(Long challengeId){
         this.roomId = String.valueOf(challengeId);
