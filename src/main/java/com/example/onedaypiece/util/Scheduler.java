@@ -1,6 +1,5 @@
 //package com.example.onedaypiece.util;
 //
-//import com.example.onedaypiece.exception.ApiRequestException;
 //import com.example.onedaypiece.web.domain.challenge.CategoryName;
 //import com.example.onedaypiece.web.domain.challenge.Challenge;
 //import com.example.onedaypiece.web.domain.challenge.ChallengeRepository;
@@ -10,21 +9,17 @@
 //import com.example.onedaypiece.web.domain.member.MemberRepository;
 //import com.example.onedaypiece.web.domain.pointHistory.PointHistory;
 //import com.example.onedaypiece.web.domain.pointHistory.PointHistoryRepository;
-//import com.example.onedaypiece.web.domain.posting.Posting;
 //import com.example.onedaypiece.web.domain.posting.PostingQueryRepository;
 //import com.example.onedaypiece.web.domain.posting.PostingRepository;
 //import com.example.onedaypiece.web.dto.query.posting.SchedulerPostingDto;
 //import lombok.RequiredArgsConstructor;
 //import lombok.extern.slf4j.Slf4j;
-//import org.springframework.scheduling.annotation.Async;
 //import org.springframework.scheduling.annotation.Scheduled;
 //import org.springframework.stereotype.Component;
 //import org.springframework.transaction.annotation.Transactional;
 //
 //import java.time.LocalDate;
 //import java.time.LocalDateTime;
-//import java.time.temporal.ChronoUnit;
-//import java.util.ArrayList;
 //import java.util.List;
 //import java.util.stream.Collectors;
 //
@@ -32,7 +27,7 @@
 //@Slf4j
 //@RequiredArgsConstructor
 //@Component
-//public class Scheduler {
+//public class SchedulerForTest {
 //
 //    private final PostingQueryRepository postingQueryRepository;
 //    private final PostingRepository postingRepository;
@@ -44,7 +39,7 @@
 //    private final LocalDateTime today = LocalDate.now().atStartOfDay();
 //
 //    //    01 00 00
-//    @Scheduled(cron = "01 00 00 * * *") // 초, 분, 시, 일, 월, 주 순서
+//    @Scheduled(cron = "01 0/20 * * * *") // 초, 분, 시, 일, 월, 주 순서
 //    @Transactional
 //    public void certificationKick() {
 //        List<ChallengeRecord> challengeMember = challengeRecordRepository.findAllByChallenge();
@@ -135,7 +130,7 @@
 //
 //    }
 //
-//    @Scheduled(cron = "02 00 00 * * *") // 초, 분, 시, 일, 월, 주 순서
+//    @Scheduled(cron = "02 0/20 * * * *") // 초, 분, 시, 일, 월, 주 순서
 //    @Transactional
 //    public void postingStatusUpdate() {
 //        List<Long> postingIdList = postingQueryRepository.findSchedulerUpdatePosting(today);
@@ -144,7 +139,7 @@
 //        log.info("updateResult 벌크 연산 result: {} ", updateResult);
 //    }
 //
-//    @Scheduled(cron = "03 00 00 * * *") // 초, 분, 시, 일, 월, 주 순서
+//    @Scheduled(cron = "03 0/20 * * * *") // 초, 분, 시, 일, 월, 주 순서
 //    @Transactional
 //    public void challengeStatusUpdate() {
 //        List<Challenge> challengeList = challengeRepository.findAllByChallengeStatusTrueAndChallengeProgressLessThan(3L);
@@ -200,4 +195,5 @@
 //    private boolean isChallengeTimeToEnd(Challenge c) {
 //        return c.getChallengeProgress() == 2L && c.getChallengeEndDate().isBefore(today);
 //    }
+//
 //}
