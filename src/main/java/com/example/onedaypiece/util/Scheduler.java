@@ -39,7 +39,7 @@ public class Scheduler {
     private final LocalDateTime today = LocalDate.now().atStartOfDay();
 
     //    01 00 00
-    @Scheduled(cron = "01 0/05 * * * *") // 초, 분, 시, 일, 월, 주 순서
+    @Scheduled(cron = "01 0/01 * * * *") // 초, 분, 시, 일, 월, 주 순서
     @Transactional
     public void certificationKick() {
         List<ChallengeRecord> challengeMember = challengeRecordRepository.findAllByChallenge();
@@ -96,7 +96,7 @@ public class Scheduler {
         log.info("updateResult 벌크 연산 result: {} ", updateResult);
     }
 
-    @Scheduled(cron = "03 0/20 * * * *") // 초, 분, 시, 일, 월, 주 순서
+    @Scheduled(cron = "03 0/10 * * * *") // 초, 분, 시, 일, 월, 주 순서
     @Transactional
     public void challengeStatusUpdate() {
         List<Challenge> challengeList = challengeRepository.findAllByChallengeStatusTrueAndChallengeProgressLessThan(3L);
