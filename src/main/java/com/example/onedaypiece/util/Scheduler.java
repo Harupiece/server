@@ -150,5 +150,4 @@ public class Scheduler {
     private boolean isChallengeTimeToEnd(Challenge c) {
         return c.getChallengeProgress() == 2L && c.getChallengeEndDate().isBefore(today);
     }
-
 }
