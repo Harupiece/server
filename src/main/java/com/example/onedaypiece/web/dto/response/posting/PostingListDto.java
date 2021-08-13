@@ -13,12 +13,12 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @Getter
 public class PostingListDto {
-    private List<PostingResponseDto> postingList;
+    private List<PostingResponseDto> postList;
     private boolean hasNext;
 
     @Builder
-    public PostingListDto(List<PostingResponseDto> postingList, boolean hasNext) {
-        this.postingList = postingList;
+    public PostingListDto(List<PostingResponseDto> postList, boolean hasNext) {
+        this.postList = postList;
         this.hasNext = hasNext;
     }
 
@@ -30,7 +30,7 @@ public class PostingListDto {
                 .collect(Collectors.toList());
 
         return PostingListDto.builder()
-                .postingList(postingResponseDtoList)
+                .postList(postingResponseDtoList)
                 .hasNext(postingList.hasNext())
                 .build();
 

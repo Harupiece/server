@@ -5,7 +5,6 @@ import com.example.onedaypiece.web.dto.query.posting.PostingListQueryDto;
 import com.example.onedaypiece.web.dto.query.posting.QPostingListQueryDto;
 import com.example.onedaypiece.web.dto.query.posting.QSchedulerIdListDto;
 import com.example.onedaypiece.web.dto.query.posting.SchedulerIdListDto;
-import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.BooleanPath;
 import com.querydsl.jpa.impl.JPAQueryFactory;
