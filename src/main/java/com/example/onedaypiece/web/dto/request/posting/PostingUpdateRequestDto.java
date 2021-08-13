@@ -18,7 +18,7 @@ public class PostingUpdateRequestDto {
 
     //테스트 코드용 생성자
     public PostingUpdateRequestDto(String postingImg, String postingContent) {
-        this.postingImg =postingImg;
+        this.postingImg = postingImg;
         this.postingContent = postingContent;
     }
 }

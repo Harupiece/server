@@ -64,6 +64,8 @@ public class Challenge extends Timestamped implements Serializable {
     @JoinColumn(name="member_id")
     private Member member;
 
+
+
     public void setChallengeStatus(boolean challengeStatus) {
         this.challengeStatus = challengeStatus;
     }
