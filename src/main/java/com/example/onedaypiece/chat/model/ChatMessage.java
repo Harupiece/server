@@ -1,6 +1,8 @@
 package com.example.onedaypiece.chat.model;
 
 import com.example.onedaypiece.chat.dto.request.ChatMessageRequestDto;
+import com.example.onedaypiece.service.MemberService;
+import com.example.onedaypiece.web.domain.common.Timestamped;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,7 +16,7 @@ import java.time.LocalDateTime;
 @Getter
 @Entity
 @NoArgsConstructor
-public class ChatMessage implements Serializable {
+public class ChatMessage extends Timestamped implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,37 +31,31 @@ public class ChatMessage implements Serializable {
     private MessageType type; // 메시지 타입
 
     @Column
-    private String roomId; // 방번호 room
+    private String roomId; // 방번호 chatroom id
 
     @Column
-    private String sender; // 메시지 보낸사람 nickname
+    private String sender; // 메시지 보낸사람 nickname, [알림]
 
     @Column
     private String message; // 메시지
 
-    @Transient
-    private Long memberCount; // 채팅방 인원수, 채팅방 내에서 메시지가 전달될때 인원수 갱신시 사용
-
     @Column
-    private LocalDateTime createdAt;
+    private String profileImg; // 프로필 이미지
 
     @Builder
-    public ChatMessage(MessageType type, String roomId, String sender, String message, Long memberCount, LocalDateTime createdAt){
+    public ChatMessage(MessageType type, String roomId, String sender, String message){
         this.type = type;
         this.roomId = roomId;
-        this.sender = sender; // nickname
+        this.sender = sender;
         this.message = message;
-        this.memberCount = memberCount;
-        this.createdAt = createdAt;
     }
 
-    public ChatMessage(ChatMessageRequestDto requestDto, String nickName){
+    public ChatMessage(ChatMessageRequestDto requestDto){
         this.type = requestDto.getType();
         this.roomId = requestDto.getRoomId();
-        this.sender = nickName;
+        this.sender = requestDto.getNickname();
         this.message = requestDto.getMessage();
-        this.memberCount = requestDto.getMemberCount();
-        this.createdAt = requestDto.getCreatedAt();
+        this.profileImg = requestDto.getProfileImg();
     }
 }
 

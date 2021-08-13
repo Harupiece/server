@@ -10,10 +10,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 
 @RequiredArgsConstructor
 @RestController
-//@RequestMapping("/api/chatroom")
 public class ChatRoomController {
 
     private final ChatRoomService chatRoomService;
@@ -22,11 +23,14 @@ public class ChatRoomController {
     // 챌린지와 함께 생성 redis 캐시에 저장
 
     // 채팅방 입장
-    @GetMapping("/api/chatroom/{challengeId}")
-    public ResponseEntity<ChatRoomResponseDto> getEachChatRoom(@PathVariable Long challengeId,
-                                                               @AuthenticationPrincipal UserDetails userDetails) {
+    // 채팅방 대화 불러오기
+    @GetMapping("/chat/messages/{roomId}")
+    public ResponseEntity<ChatRoomResponseDto> getEachChatRoom(@PathVariable Long roomId,
+                                                                    @AuthenticationPrincipal UserDetails userDetails) {
         String email = userDetails.getUsername();
-        return ResponseEntity.ok().body(chatRoomService.getEachChatRoom(challengeId, email));
+        return ResponseEntity.ok().body(chatRoomService.getEachChatRoom(roomId, email));
     }
+
+    // 채팅방 삭제
 }
 

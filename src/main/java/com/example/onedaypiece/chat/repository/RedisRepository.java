@@ -13,16 +13,12 @@ import java.util.Optional;
 public class RedisRepository {
 
     // Redis CacheKeys
-
-    public static final String USER_COUNT = "USER_COUNT"; // 채팅룸에 입장한 클라이언트수 저장
     public static final String ENTER_INFO = "ENTER_INFO"; // 채팅룸에 입장한 클라이언트의 sessionId와 채팅룸 id를 맵핑한 정보 저장
     private static final String CHAT_ROOMS = "CHAT_ROOM";
 
 
     @Resource(name = "redisTemplate")
     private HashOperations<String, String, String> hashOpsEnterInfo;
-    @Resource(name = "redisTemplate")
-    private ValueOperations<String, String> valueOps;
     @Resource(name = "redisTemplate")
     private HashOperations<String, String, ChatRoom> hashOpsChatRoom;
 
@@ -50,20 +46,5 @@ public class RedisRepository {
     // 유저 세션정보와 맵핑된 채팅방ID 삭제
     public void removeMemberEnterInfo(String sessionId) {
         hashOpsEnterInfo.delete(ENTER_INFO, sessionId);
-    }
-
-    // 채팅방 유저수 조회
-    public long getMemberCount(String roomId) {
-        return Long.valueOf(Optional.ofNullable(valueOps.get(USER_COUNT + "_" + roomId)).orElse("0"));
-    }
-
-    // 채팅방에 입장한 유저수 +1
-    public long plusMemberCount(String roomId) {
-        return Optional.ofNullable(valueOps.increment(USER_COUNT + "_" + roomId)).orElse(0L);
-    }
-
-    // 채팅방에 입장한 유저수 -1
-    public long minusMemberCount(String roomId) {
-        return Optional.ofNullable(valueOps.decrement(USER_COUNT + "_" + roomId)).filter(count -> count > 0).orElse(0L);
     }
 }

@@ -1,6 +1,7 @@
 package com.example.onedaypiece.chat.model;
 
 import com.example.onedaypiece.web.domain.challenge.Challenge;
+import com.example.onedaypiece.web.domain.common.Timestamped;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,27 +13,20 @@ import java.io.Serializable;
 @Entity
 @NoArgsConstructor
 //@RedisHash("chatRoom")
-public class ChatRoom implements Serializable {
-
-    private static final long serialVersionUID = 6494678977089006639L;
+public class ChatRoom extends Timestamped implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @Transient
-    private Long memberCount; // 현재 대화 참여 중인 인원
+    @Column(name = "room_id")
+    private Long id; //roomId
 
     @Column
-    private String roomId; // challengeId
+    private String roomId;
 
-    @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "challenge_id")
-    private Challenge challenge; // roomId
+    @OneToOne(mappedBy = "chatRoom")
+    private Challenge challenge;
 
-    @Builder
-    public ChatRoom(Challenge challenge) {
-        this.challenge = challenge;
-        this.roomId = String.valueOf(challenge.getChallengeId());
+    public ChatRoom(Long challengeId){
+        this.roomId = String.valueOf(challengeId);
     }
 }
