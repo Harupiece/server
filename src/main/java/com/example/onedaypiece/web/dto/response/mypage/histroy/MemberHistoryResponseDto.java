@@ -16,7 +16,7 @@ public class MemberHistoryResponseDto {
     private String nickname;
     private String profileImage;
     private Long point;
-    private Long memberLevel; // 멤버 레벨 계산해서하기
+    private Long level; // 멤버 레벨 계산해서하기
 
     private List<PointHistoryDto> pointHistoryList;
 
@@ -25,7 +25,7 @@ public class MemberHistoryResponseDto {
         this.nickname = member.getNickname();
         this.profileImage = member.getProfileImg();
         this.point = member.getPoint();
-        this.memberLevel = CalculLevel.calculLevel(member.getPoint());
+        this.level = CalculLevel.calculLevel(member.getPoint());
         // 포인트히스토리
         this.pointHistoryList = pointHistoryList;
     }

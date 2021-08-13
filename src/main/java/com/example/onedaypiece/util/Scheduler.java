@@ -39,7 +39,7 @@ public class Scheduler {
     private final LocalDateTime today = LocalDate.now().atStartOfDay();
 
     //    01 00 00
-    @Scheduled(cron = "01 0/01 * * * *") // 초, 분, 시, 일, 월, 주 순서
+    @Scheduled(cron = "01 0/10 * * * *") // 초, 분, 시, 일, 월, 주 순서
     @Transactional
     public void certificationKick() {
         List<ChallengeRecord> challengeMember = challengeRecordRepository.findAllByChallenge();
@@ -87,7 +87,7 @@ public class Scheduler {
         log.info("updateResult 벌크 연산 result: {} ", updateResult);
     }
 
-    @Scheduled(cron = "02 0/01 * * * *") // 초, 분, 시, 일, 월, 주 순서
+    @Scheduled(cron = "02 0/10 * * * *") // 초, 분, 시, 일, 월, 주 순서
     @Transactional
     public void postingStatusUpdate() {
         List<Long> postingIdList = postingQueryRepository.findSchedulerUpdatePosting(today);
@@ -134,7 +134,7 @@ public class Scheduler {
                 .collect(Collectors.toList());
         int certificatedPostingCount = postingRepository.findAllByChallengeAndMember(challenge, memberList.get(0)).size();
         final Long getPoint = certificatedPostingCount *
-                50L * (challenge.getCategoryName().equals(CategoryName.OFFICIAL) ? 2L : 1L);
+                500L * (challenge.getCategoryName().equals(CategoryName.OFFICIAL) ? 2L : 1L);
 
         List<PointHistory> pointHistoryList = recordList
                 .stream()
