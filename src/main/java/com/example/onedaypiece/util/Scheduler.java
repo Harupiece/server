@@ -83,8 +83,8 @@ public class Scheduler {
         kickMember.addAll(kickMember2);
         kickChallenge.addAll(kickChallenge2);
 
-        int result = challengeRecordRepository.kickMemberOnChallenge(kickMember,kickChallenge);
-        log.info("updateResult 벌크 연산 result: {} ", result);
+        int updateResult = challengeRecordRepository.kickMemberOnChallenge(kickMember,kickChallenge);
+        log.info("updateResult 벌크 연산 result: {} ", updateResult);
     }
 
     @Scheduled(cron = "02 0/01 * * * *") // 초, 분, 시, 일, 월, 주 순서
