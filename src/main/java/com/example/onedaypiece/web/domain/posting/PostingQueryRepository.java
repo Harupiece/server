@@ -95,7 +95,7 @@ public class PostingQueryRepository  {
                 .where(postingStatusIsTrue(),
                         posting.challenge.challengeId.in(challengeId),
                         posting.member.memberId.in(memberId),
-                        posting.createdAt.gt(today))
+                        posting.createdAt.lt(today))
                 .fetch();
     }
 
