@@ -54,7 +54,7 @@ public class PostingResponseDto {
                 .profileImg(posting.getProfileImg())
                 .postingImg(posting.getPostingImg())
                 .postingContent(posting.getPostingContent())
-                .postingCount(builder().postingCount)
+                .postingCount(posting.getPostingCount())
                 .postingApproval(posting.isPostingApproval())
                 .postingModifyOk(posting.isPostingModifyOk())
                 .createdAt(posting.getCreatedAt())
