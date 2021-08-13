@@ -61,7 +61,7 @@ public class Scheduler {
 
 
         // 인증글 작성하지 않은 사람.
-        List<ChallengeRecord> postingList2 = challengeRecordRepository.findPostingListTest2(challengeId);
+        List<ChallengeRecord> postingList2 = challengeRecordRepository.findPostingListTest2(challengeId, today);
 
 
         List<Long> kickMember = postingList.stream()
