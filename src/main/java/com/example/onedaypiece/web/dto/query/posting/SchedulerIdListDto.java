@@ -6,12 +6,12 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class SchedulerPostingDto {
+public class SchedulerIdListDto {
     private Long challengeId;
     private Long memberId;
 
     @QueryProjection
-    public SchedulerPostingDto(Long challengeId, Long memberId) {
+    public SchedulerIdListDto(Long challengeId, Long memberId) {
         this.challengeId = challengeId;
         this.memberId = memberId;
     }
