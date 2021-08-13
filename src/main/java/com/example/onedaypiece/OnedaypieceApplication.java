@@ -16,7 +16,6 @@ import java.util.TimeZone;
 
 @EnableSwagger2
 @EnableScheduling
-@EnableJpaAuditing
 @SpringBootApplication
 public class OnedaypieceApplication {
 

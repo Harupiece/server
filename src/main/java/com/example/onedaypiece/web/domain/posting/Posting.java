@@ -1,6 +1,5 @@
 package com.example.onedaypiece.web.domain.posting;
 
-
 import com.example.onedaypiece.web.domain.challenge.Challenge;
 import com.example.onedaypiece.web.domain.common.Timestamped;
 import com.example.onedaypiece.web.domain.member.Member;
@@ -15,7 +14,8 @@ import javax.persistence.*;
 @Entity
 @NoArgsConstructor
 @Table(indexes = {@Index(name = "idx_modify_status", columnList = "postingModifyOk"),
-        @Index(name = "idx_status", columnList = "postingApproval")})
+        @Index(name = "idx_approval_status", columnList = "postingApproval"),
+        @Index(name = "idx_posting_status", columnList = "postingStatus")})
 public class Posting extends Timestamped {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
@@ -85,9 +85,6 @@ public class Posting extends Timestamped {
     }
 
     // 수정 가능 여부 로직
-    public void updateStatus() {
-        this.postingModifyOk = false;
-    }
 
     // 인증 상태 로직
     public void updateApproval() {

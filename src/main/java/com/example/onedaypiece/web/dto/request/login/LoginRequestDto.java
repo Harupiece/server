@@ -1,14 +1,12 @@
 package com.example.onedaypiece.web.dto.request.login;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 
 
-@AllArgsConstructor
 @Setter
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class LoginRequestDto {
     private String email;
     private String password;

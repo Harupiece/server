@@ -9,6 +9,7 @@ import com.example.onedaypiece.web.dto.response.challenge.ChallengeSourceRespons
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +21,7 @@ import java.util.List;
 public class ChallengeController {
 
     private final ChallengeService challengeService;
+
 
     @GetMapping("/api/guest/main") // 비로그인 메인 페이지
     public ResponseEntity<ChallengeMainResponseDto> getGuestMainChallengeDetail() {

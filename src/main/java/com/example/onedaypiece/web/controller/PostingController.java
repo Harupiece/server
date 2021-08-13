@@ -47,9 +47,9 @@ public class PostingController {
     public ResponseEntity<Long> updatePosting(@PathVariable Long postingId,
                                               @AuthenticationPrincipal UserDetails userDetails,
                                               @RequestBody PostingUpdateRequestDto postingUpdateRequestDto){
-        log.info("updatePosting  포스팅 업데이트 : {} ",postingUpdateRequestDto);
+        log.info("updatePosting  포스팅 업데이트 : {} ", postingUpdateRequestDto);
         String email = userDetails.getUsername();
-        return ResponseEntity.ok().body(postingService.updatePosting(postingId,email,postingUpdateRequestDto));
+        return ResponseEntity.ok().body(postingService.updatePosting(postingId,email, postingUpdateRequestDto));
     }
     /**
      * 4.포스트 삭제
