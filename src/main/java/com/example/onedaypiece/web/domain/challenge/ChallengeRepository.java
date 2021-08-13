@@ -33,8 +33,7 @@ public interface ChallengeRepository extends JpaRepository<Challenge, Long> {
 
     List<Challenge> findAllByChallengeStatusTrueAndChallengeProgressLessThan(Long challengeProgress);
 
-
-
-
-
+    @Modifying(clearAutomatically = true)
+    @Query("update Challenge c set c.challengeProgress = :progress where c in :challengeList")
+    int updateChallengeProgress(Long progress, List<Challenge> challengeList);
 }

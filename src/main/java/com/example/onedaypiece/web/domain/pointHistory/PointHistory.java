@@ -26,7 +26,7 @@ public class PointHistory extends Timestamped {
     private Certification certification;
 
     @OneToOne
-    @JoinColumn(name="challenge_id")
+    @JoinColumn(name="challenge_record_id")
     private ChallengeRecord challengeRecord;
 
     // 상태 아직안쓴거면 true / 사용했으면 false

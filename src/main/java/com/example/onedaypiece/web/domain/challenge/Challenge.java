@@ -48,13 +48,13 @@ public class Challenge extends Timestamped implements Serializable {
     @Column(name = "challenge_progress", nullable = false)
     private Long challengeProgress;
 
-    @Column
+    @Column(length = 3000)
     private String challengeImgUrl;
 
-    @Column
+    @Column(length = 3000)
     private String challengeGood;
 
-    @Column
+    @Column(length = 3000)
     private String challengeBad;
 
     @Column
@@ -63,8 +63,6 @@ public class Challenge extends Timestamped implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="member_id")
     private Member member;
-
-
 
     public void setChallengeStatus(boolean challengeStatus) {
         this.challengeStatus = challengeStatus;

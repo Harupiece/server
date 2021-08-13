@@ -2,17 +2,14 @@ package com.example.onedaypiece.chat.service;
 
 import com.example.onedaypiece.chat.dto.response.ChatRoomResponseDto;
 import com.example.onedaypiece.chat.model.ChatMessage;
-import com.example.onedaypiece.chat.model.ChatRoom;
 import com.example.onedaypiece.chat.repository.ChatMessageRepository;
 import com.example.onedaypiece.chat.repository.ChatRoomRepository;
 import com.example.onedaypiece.exception.ApiRequestException;
-import com.example.onedaypiece.web.domain.challengeRecord.ChallengeRecord;
 import com.example.onedaypiece.web.domain.challengeRecord.ChallengeRecordRepository;
 import com.example.onedaypiece.web.domain.member.Member;
 import com.example.onedaypiece.web.domain.member.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 

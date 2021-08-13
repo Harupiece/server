@@ -32,7 +32,6 @@ import com.example.onedaypiece.web.dto.response.mypage.scheduled.ScheduledRespon
 import com.example.onedaypiece.web.dto.response.token.TokenDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;

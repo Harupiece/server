@@ -1,14 +1,7 @@
 package com.example.onedaypiece.chat.service;
 
-import com.example.onedaypiece.chat.dto.request.ChatMessageRequestDto;
 import com.example.onedaypiece.chat.model.ChatMessage;
-import com.example.onedaypiece.chat.model.ChatRoom;
-import com.example.onedaypiece.chat.repository.ChatMessageRepository;
-import com.example.onedaypiece.chat.repository.ChatRoomRepository;
-import com.example.onedaypiece.chat.repository.RedisRepository;
 import com.example.onedaypiece.exception.ApiRequestException;
-import com.example.onedaypiece.security.TokenProvider;
-import com.example.onedaypiece.web.domain.challengeRecord.ChallengeRecord;
 import com.example.onedaypiece.web.domain.challengeRecord.ChallengeRecordRepository;
 import com.example.onedaypiece.web.domain.member.Member;
 import com.example.onedaypiece.web.domain.member.MemberRepository;
@@ -17,9 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.stereotype.Service;
-
-import java.time.LocalDateTime;
-import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
