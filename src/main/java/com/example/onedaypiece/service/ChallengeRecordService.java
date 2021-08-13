@@ -1,6 +1,7 @@
 package com.example.onedaypiece.service;
 
 import com.example.onedaypiece.exception.ApiRequestException;
+import com.example.onedaypiece.web.domain.challenge.CategoryName;
 import com.example.onedaypiece.web.domain.challenge.Challenge;
 import com.example.onedaypiece.web.domain.challenge.ChallengeRepository;
 import com.example.onedaypiece.web.domain.challengeRecord.ChallengeRecord;
@@ -33,9 +34,7 @@ public class ChallengeRecordService {
         Challenge challenge = ChallengeChecker(challengeId);
         Member member = MemberChecker(email);
 
-
-
-        challengeRecordRepository.deleteByChallengeAndMember(challenge, member);
+        challengeRecordRepository.findByChallengeAndMember(challenge, member).setStatusFalse();
     }
 
     private Challenge ChallengeChecker(Long challengeId) {
@@ -52,7 +51,8 @@ public class ChallengeRecordService {
         if (challengeRecordRepository.existsByChallengeAndMember(challenge, member)) {
             throw new ApiRequestException("이미 해당 챌린지에 신청한 유저입니다.");
         }
-        if (challengeRecordRepository.countByChallenge(challenge) >= 10) {
+        if (!challenge.getCategoryName().equals(CategoryName.OFFICIAL) &&
+                challengeRecordRepository.countByChallenge(challenge) >= 10) {
             throw new ApiRequestException("챌린지는 10명까지만 참여 가능합니다.");
         }
     }
