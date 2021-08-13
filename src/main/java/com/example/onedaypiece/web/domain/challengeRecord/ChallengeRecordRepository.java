@@ -96,12 +96,9 @@ public interface ChallengeRecordRepository extends JpaRepository<ChallengeRecord
     @Query("select c from ChallengeRecord c Where c.challengeRecordStatus = true and c.member = :member and c.challenge.challengeProgress in (:progress, :expected) ")
     List<ChallengeRecord> findAllByMemberAndProgressAndExpected(Member member, Long progress, Long expected);
 
-
-    @Query("select c " +
-            "from ChallengeRecord c " +
-            "join fetch c.challenge " +
-            "where c.challenge.challengeId = :challengeId and c.member =:member")
-    ChallengeRecord findtest(Long challengeId, Member member);
+    // 채팅방 입장할 때 사용
+    @Query("select CASE WHEN count(c)>0 then true else false end from ChallengeRecord c Where c.challengeRecordStatus = true and c.challenge.challengeId = :challengeId and c.member = :member and c.challenge.challengeProgress in (:progress, :expected) ")
+    boolean existsByChallengeIdAndAndMember (Long challengeId, Member member, Long progress, Long expected);
 
     @Query("select c from ChallengeRecord c " +
             "where c.challengeRecordStatus= true " +

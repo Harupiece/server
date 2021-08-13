@@ -12,8 +12,7 @@ public class ChatMessageRequestDto {
 
     private ChatMessage.MessageType type;
     private String roomId;
-    private String sender;
+    private String nickname; // sender
+    private String profileImg; // 유저의 프로필 이미지
     private String message;
-    private LocalDateTime createdAt;
-    private Long memberCount;
 }
