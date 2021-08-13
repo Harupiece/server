@@ -1,6 +1,7 @@
 package com.example.onedaypiece.web.domain.pointHistory;
 
 import com.example.onedaypiece.web.domain.certification.Certification;
+import com.example.onedaypiece.web.domain.challenge.Challenge;
 import com.example.onedaypiece.web.domain.challengeRecord.ChallengeRecord;
 import com.example.onedaypiece.web.domain.common.Timestamped;
 import lombok.Getter;
@@ -44,6 +45,4 @@ public class PointHistory extends Timestamped {
         this.challengeRecord = challengeRecord;
         this.status = true;
     }
-
-
 }

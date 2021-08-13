@@ -66,7 +66,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/guest/**").permitAll()
                 .antMatchers("/api/category-image/**").permitAll()
                 .antMatchers(HttpMethod.GET,"/api/posting/**").permitAll()
-                .antMatchers("/**").permitAll()
 
                 // 스웨거 접속 풀어주기
                 .antMatchers("/swagger-ui/**").permitAll()
