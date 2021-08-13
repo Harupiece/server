@@ -1,6 +1,7 @@
 package com.example.onedaypiece.web.domain.pointHistory;
 
 import com.example.onedaypiece.web.dto.response.mypage.histroy.MemberHistoryDto;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -35,4 +36,20 @@ public interface PointHistoryRepository extends JpaRepository<PointHistory, Long
             "where p.certification.member.email =:email")
 
     List<MemberHistoryDto> findHistory(String email);
+
+
+    @Query("select new com.example.onedaypiece.web.dto.response.mypage.histroy.MemberHistoryDto( " +
+            "p.pointHistoryId," +
+            "p.createdAt, " +
+            "p.certification.posting.challenge.challengeTitle, " +
+            "p.getPoint," +
+            "p.certification.member.memberId," +
+            "p.certification.member.nickname," +
+            "p.certification.member.profileImg, " +
+            "p.certification.member.point.acquiredPoint," +
+            "p.certification.member.point) " +
+            "from PointHistory p " +
+            "where p.certification.member.email =:email")
+
+    List<MemberHistoryDto> findHistory2(String email, Pageable pageable);
 }
