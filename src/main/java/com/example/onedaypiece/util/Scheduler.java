@@ -39,7 +39,7 @@ public class Scheduler {
     private final LocalDateTime today = LocalDate.now().atStartOfDay();
 
     //    01 00 00
-    @Scheduled(cron = "01 0/20 * * * *") // 초, 분, 시, 일, 월, 주 순서
+    @Scheduled(cron = "01 0/05 * * * *") // 초, 분, 시, 일, 월, 주 순서
     @Transactional
     public void certificationKick() {
         List<ChallengeRecord> challengeMember = challengeRecordRepository.findAllByChallenge();
@@ -59,33 +59,35 @@ public class Scheduler {
         // 인증 글 올렸지만 인증 받지 못한 친구
         List<SchedulerIdListDto> postingList = postingQueryRepository.findPostingListTest(challengeId, memberId, today);
 
+
         // 인증글 작성하지 않은 사람.
         List<ChallengeRecord> postingList2 = challengeRecordRepository.findPostingListTest2(challengeId);
 
+
         List<Long> kickMember = postingList.stream()
-                .map(SchedulerIdListDto::getChallengeId)
+                .map(SchedulerIdListDto::getMemberId).distinct()
                 .collect(Collectors.toList());
 
         List<Long> kickMember2 = postingList2.stream()
-                .map(posting -> posting.getMember().getMemberId())
+                .map(posting -> posting.getMember().getMemberId()).distinct()
                 .collect(Collectors.toList());
 
         List<Long> kickChallenge = postingList.stream()
-                .map(SchedulerIdListDto::getChallengeId)
+                .map(SchedulerIdListDto::getChallengeId).distinct()
                 .collect(Collectors.toList());
 
         List<Long> kickChallenge2 = postingList2.stream()
-                .map(posting -> posting.getChallenge().getChallengeId())
+                .map(posting -> posting.getChallenge().getChallengeId()).distinct()
                 .collect(Collectors.toList());
 
         kickMember.addAll(kickMember2);
         kickChallenge.addAll(kickChallenge2);
 
         int result = challengeRecordRepository.kickMemberOnChallenge(kickMember,kickChallenge);
-
+        log.info("updateResult 벌크 연산 result: {} ", result);
     }
 
-    @Scheduled(cron = "02 0/20 * * * *") // 초, 분, 시, 일, 월, 주 순서
+    @Scheduled(cron = "02 0/01 * * * *") // 초, 분, 시, 일, 월, 주 순서
     @Transactional
     public void postingStatusUpdate() {
         List<Long> postingIdList = postingQueryRepository.findSchedulerUpdatePosting(today);
@@ -112,6 +114,7 @@ public class Scheduler {
                 .collect(Collectors.toList());
         whenChallengeEnd(endList);
     }
+
 
     private void whenChallengeStart(List<Challenge> challengeList) {
         int result = challengeRepository.updateChallengeProgress(2L, challengeList);
