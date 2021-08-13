@@ -1,5 +1,6 @@
 package com.example.onedaypiece.util;
 
+import com.example.onedaypiece.exception.ApiRequestException;
 import com.example.onedaypiece.web.domain.challenge.CategoryName;
 import com.example.onedaypiece.web.domain.challenge.Challenge;
 import com.example.onedaypiece.web.domain.challenge.ChallengeRepository;
@@ -8,8 +9,9 @@ import com.example.onedaypiece.web.domain.challengeRecord.ChallengeRecordReposit
 import com.example.onedaypiece.web.domain.member.Member;
 import com.example.onedaypiece.web.domain.pointHistory.PointHistory;
 import com.example.onedaypiece.web.domain.pointHistory.PointHistoryRepository;
-import com.example.onedaypiece.web.domain.posting.Posting;
+import com.example.onedaypiece.web.domain.posting.PostingQueryRepository;
 import com.example.onedaypiece.web.domain.posting.PostingRepository;
+import com.example.onedaypiece.web.dto.query.posting.SchedulerPostingDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
@@ -17,7 +19,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.PostConstruct;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -25,11 +26,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+
 @Slf4j
 @RequiredArgsConstructor
 @Component
 public class Scheduler {
 
+    private final PostingQueryRepository postingQueryRepository;
     private final PostingRepository postingRepository;
     private final ChallengeRecordRepository challengeRecordRepository;
     private final PointHistoryRepository pointHistoryRepository;
@@ -41,17 +44,19 @@ public class Scheduler {
     @Scheduled(cron = "01 00 00 * * *") // 초, 분, 시, 일, 월, 주 순서
     @Transactional
     public void postingStatusUpdate() {
-        List<Posting> postingList = postingRepository.findSchedulerUpdatePosting(today);
+        List<Long> postingIdList = postingQueryRepository.findSchedulerUpdatePosting(today);
         // 벌크성 쿼리 업데이트
-        int updateResult = postingRepository.updatePostingStatus(postingList);
-
+        long updateResult = postingRepository.updatePostingStatus(postingIdList);
         log.info("updateResult 벌크 연산 result: {} ", updateResult);
     }
 
-    @Scheduled(cron = "01 00 00 * * *") // 초, 분, 시, 일, 월, 주 순서
+
+    @Scheduled(cron = "01 45 01 * * *") // 초, 분, 시, 일, 월, 주 순서
     @Transactional
     public void certificationKick() {
         List<ChallengeRecord> challengeMember = challengeRecordRepository.findAllByChallenge();
+
+
 
         //진행중인 챌린지 리스트
         List<Long> challengeId = challengeMember.stream()
@@ -66,13 +71,15 @@ public class Scheduler {
                 .collect(Collectors.toList());
 
         // 인증 글 올렸지만 인증 받지 못한 친구
-        List<Posting> postingList = postingRepository.findPostingListTest(challengeId, memberId, today);
-        for (Posting challengeRecord : postingList) {
+        List<SchedulerPostingDto> postingList = postingQueryRepository.findPostingListTest(challengeId, memberId, today);
+        for (SchedulerPostingDto posting : postingList) {
             System.out.println("인증 글 올렸지만 인증 받지 못한 친구");
-            System.out.println("challengeRecord = " + challengeRecord.toString());
-            System.out.println("challengeRecord.getMember().getMemberId() = " + challengeRecord.getMember().getMemberId());
-            System.out.println("challengeRecord.getChallenge().getChallengeId() = " + challengeRecord.getChallenge().getChallengeId());
+            System.out.println("challengeRecord = " + posting.toString());
+            System.out.println("challengeRecord.getMember().getMemberId() = " + posting.getMemberId());
+            System.out.println("challengeRecord.getChallenge().getChallengeId() = " + posting.getChallengeId());
         }
+
+
 
 
         // 인증글 작성하지 않은 사람.
@@ -86,11 +93,15 @@ public class Scheduler {
         System.out.println(postingList2.size());
 
         List<Long> kickMember = postingList.stream()
-                .map(posting -> posting.getMember().getMemberId())
+                .map(SchedulerPostingDto::getMemberId)
                 .collect(Collectors.toList());
         for (Long aLong : kickMember) {
             System.out.println("인증 글 올렸지만 인증 받지 못한 친구");
             System.out.println("aLong = " + aLong);
+        }
+
+        if(postingList.isEmpty()&&postingList2.isEmpty()){
+            throw new ApiRequestException("강퇴할 인원이 없서요!");
         }
 
 
@@ -104,7 +115,7 @@ public class Scheduler {
 
 
         List<Long> kickChallenge = postingList.stream()
-                .map(posting -> posting.getChallenge().getChallengeId())
+                .map(SchedulerPostingDto::getMemberId)
                 .collect(Collectors.toList());
 
         for (Long aLong : kickChallenge) {
@@ -133,7 +144,7 @@ public class Scheduler {
         }
 
 
-        int result = challengeRepository.kickMemberOnChallenge(kickMember,kickChallenge);
+        int result = challengeRecordRepository.kickMemberOnChallenge(kickMember,kickChallenge);
 
         System.out.println("result = " + result);
 
@@ -171,8 +182,8 @@ public class Scheduler {
         log.info(today + " / id: " + challenge.getChallengeId() + " Challenge End");
 
         Member member = record.getMember();
-        List<Posting> postingList = postingRepository.findAllByChallengeAndPostingApprovalTrue(challenge);
-        long certificatedPostingCount = postingList.stream().filter(p -> p.getMember().equals(member)).count();
+        List<Long> memberList = postingQueryRepository.findAllByChallengeAndPostingApprovalTrue(challenge);
+        long certificatedPostingCount = memberList.stream().filter(memberId -> memberId.equals(member.getMemberId())).count();
 
         if (canGetChallengePoint(challenge, certificatedPostingCount)) { // 80% 이상 인증샷을 올렸는가?
             final Long getPoint = certificatedPostingCount *

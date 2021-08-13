@@ -24,8 +24,7 @@ public class PostingCreateRequestDto {
 
         this.postingImg = postingImg;
         this.postingContent = postingContent;
-        this. memberId = memberId;
+        this.memberId = memberId;
         this.challengeId =challengeId;
     }
-
 }

@@ -34,12 +34,7 @@ public interface ChallengeRepository extends JpaRepository<Challenge, Long> {
     List<Challenge> findAllByChallengeStatusTrueAndChallengeProgressLessThan(Long challengeProgress);
 
 
-    @Modifying(clearAutomatically = true)
-    @Query("update ChallengeRecord c " +
-            "set c.challengeRecordStatus = false " +
-            "where c.member.memberId in :kickMember " +
-            "and c.challenge.challengeId in :kickChallenge")
-    int kickMemberOnChallenge(List<Long> kickMember, List<Long> kickChallenge);
+
 
 
 }

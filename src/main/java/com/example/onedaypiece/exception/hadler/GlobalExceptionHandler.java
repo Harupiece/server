@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.util.Objects;
+
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -19,6 +21,6 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ApiException handleMethodArgumentNotValidException ( MethodArgumentNotValidException  ex) {
 
-        return new ApiException(ex.getFieldError().getDefaultMessage(),HttpStatus.BAD_REQUEST );
+        return new ApiException(Objects.requireNonNull(ex.getFieldError()).getDefaultMessage(),HttpStatus.BAD_REQUEST );
     }
 }

@@ -1,7 +1,8 @@
 package com.example.onedaypiece.web.dto.response.posting;
 
 import com.example.onedaypiece.web.domain.certification.Certification;
-import com.example.onedaypiece.web.domain.posting.Posting;
+import com.example.onedaypiece.web.dto.query.posting.PostingListQueryDto;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -19,36 +20,52 @@ public class PostingResponseDto {
     private String profileImg;
     private String postingImg;
     private String postingContent;
-    private boolean PostingApproval;
+    private boolean postingApproval;
     private boolean postingModifyOk;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
     private Long postingCount;
     private List<Long> memberResponseDto;
 
-    // 사진필요할 때 추가
-//    private List<CertificationResponseDto> certificationUserInfo ;
+    @Builder
+    public PostingResponseDto(Long postingId, String nickName, Long memberId, String profileImg,
+                              String postingImg, String postingContent, boolean postingApproval,
+                              boolean postingModifyOk, LocalDateTime createdAt, LocalDateTime modifiedAt,
+                              Long postingCount, List<Long> memberResponseDto) {
+        this.postingId = postingId;
+        this.nickName = nickName;
+        this.memberId = memberId;
+        this.profileImg = profileImg;
+        this.postingImg = postingImg;
+        this.postingContent = postingContent;
+        this.postingApproval = postingApproval;
+        this.postingModifyOk = postingModifyOk;
+        this.createdAt = createdAt;
+        this.modifiedAt = modifiedAt;
+        this.postingCount = postingCount;
+        this.memberResponseDto = memberResponseDto;
+    }
 
-    public PostingResponseDto(Posting posting, List<Certification> certificationList) {
-        this.postingId = posting.getPostingId();
-        this.postingContent = posting.getPostingContent();
-        this.nickName = posting.getMember().getNickname();
-        this.memberId = posting.getMember().getMemberId();
-        this.profileImg = posting.getMember().getProfileImg();
-        this.postingImg = posting.getPostingImg();
-        this.postingCount = posting.getPostingCount();
-        this.PostingApproval = posting.isPostingApproval();
-        this.postingModifyOk = posting.isPostingModifyOk();
-        this.createdAt = posting.getCreatedAt();
-        this.modifiedAt = posting.getModifiedAt();
-        this.memberResponseDto = certificationList.stream()
-                .filter(certification -> certification.getPosting().getPostingId().equals(posting.getPostingId()))
-                .map(certification -> certification.getMember().getMemberId())
-                .collect(Collectors.toList());
-
-//        this.certificationUserInfo = certificationList.stream()
-//                .filter(certification -> certification.getPosting().getPostingId().equals(posting.getPostingId()))
-//                .map(CertificationResponseDto::new)
-//                .collect(Collectors.toList());
+    public static PostingResponseDto of (PostingListQueryDto posting, List<Certification> certificationList) {
+        return PostingResponseDto.builder()
+                .postingId(posting.getPostingId())
+                .nickName(posting.getNickName())
+                .memberId(posting.getMemberId())
+                .profileImg(posting.getProfileImg())
+                .postingImg(posting.getPostingImg())
+                .postingContent(posting.getPostingContent())
+                .postingApproval(posting.isPostingApproval())
+                .postingModifyOk(posting.isPostingModifyOk())
+                .createdAt(posting.getCreatedAt())
+                .modifiedAt(posting.getModifiedAt())
+                .memberResponseDto(
+                        certificationList.stream()
+                        .filter(certification ->
+                                certification.getPosting().getPostingId().equals(posting.getPostingId()))
+                        .map(certification ->
+                                certification.getMember().getMemberId())
+                        .collect(Collectors.toList())
+                )
+                .build();
     }
 }

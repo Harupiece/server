@@ -10,6 +10,7 @@ import com.example.onedaypiece.web.domain.member.MemberRepository;
 import com.example.onedaypiece.web.domain.posting.Posting;
 import com.example.onedaypiece.web.domain.posting.PostingQueryRepository;
 import com.example.onedaypiece.web.domain.posting.PostingRepository;
+import com.example.onedaypiece.web.dto.query.posting.PostingListQueryDto;
 import com.example.onedaypiece.web.dto.request.posting.PostingCreateRequestDto;
 import com.example.onedaypiece.web.dto.request.posting.PostingUpdateRequestDto;
 import com.example.onedaypiece.web.dto.response.posting.PostingListDto;
@@ -35,7 +36,6 @@ public class PostingService {
     private final MemberRepository memberRepository;
     private final ChallengeRepository challengeRepository;
     private final CertificationRepository certificationRepository;
-
     private final PostingQueryRepository postingQueryRepository;
 
     /**
@@ -47,9 +47,7 @@ public class PostingService {
         Challenge challenge = getChallenge(postingCreateRequestDto.getChallengeId());
         Posting posting = Posting.createPosting(postingCreateRequestDto,member,challenge);
 
-
         // 포스팅 검사
-        validatePosting(challenge);
         duplicatePosting(member,challenge);
 
         postingRepository.save(posting);
@@ -57,31 +55,25 @@ public class PostingService {
         return posting.getPostingId();
     }
 
-
-
     /**
      * 2.포스트 리스트
-     *
-     * @return
      */
     @Transactional(readOnly = true)
     public PostingListDto getPosting(int page, Long challengeId) {
 
         Pageable pageable = PageRequest.of(page-1,6);
 
-        Slice<Posting> postingList =postingRepository.findPostingList(challengeId,pageable);
         // QueryRepository 적용
-//        List<Posting> postingList =postingQueryRepository.findPostingList(challengeId,pageable);
+//        Slice<Posting> postingList =postingRepository.findPostingList(challengeId,pageable);
+        Slice<PostingListQueryDto> postingList =postingQueryRepository.findPostingList(challengeId,pageable);
+
         List<Certification> certificationList = certificationRepository.findAllByPosting(challengeId);
-
-
 
         return PostingListDto.createPostingListDto(postingList,certificationList);
     }
 
     /**
      * 3.포스트 업데이트
-     *
      */
     public Long updatePosting(Long postingId, String email, PostingUpdateRequestDto postingUpdateRequestDto) {
 
@@ -89,7 +81,7 @@ public class PostingService {
         Posting posting = getPosting(postingId);
 
         // 작성자 검사
-        validateMember(member,posting.getMember().getMemberId());
+        validateMember(member, posting.getMember().getMemberId());
 
         // 포스팅 검사
         validateUpdatePosting(posting);
@@ -98,18 +90,15 @@ public class PostingService {
         return posting.getPostingId();
     }
 
-
-
     /**
      * 4.포스트 삭제
-     *
      */
     public Long deletePosting(Long postingId, String email) {
         Member member = getMemberByEmail(email);
         Posting posting =getPosting(postingId);
 
         // 작성자 검사
-        validateMember(member,posting.getMember().getMemberId());
+        validateMember(member, posting.getMember().getMemberId());
 
         // 인증 검사.
         isApprovalIsTrue(posting);
@@ -147,24 +136,18 @@ public class PostingService {
         }
     }
 
-    private void validatePosting(Challenge challenge){
-        LocalDateTime now = LocalDateTime.now();
-        if(challenge.getChallengeStartDate().isAfter(now)){
-            throw new ApiRequestException("챌린지 시작 후에 게시글 등록 가능합니다.");
-        }
-    }
-
     private void duplicatePosting(Member member, Challenge challenge) {
 
         LocalDateTime now = LocalDate.now().atStartOfDay();
 
-        Posting posting = postingRepository.existsTodayPosting(now,member,challenge);
+        boolean posting = postingQueryRepository.existsTodayPosting(now,member,challenge);
 
-        if(posting != null){
+        if(posting){
             throw new ApiRequestException("동일한 챌린지에는 한번의 인증글만 작성할 수 있습니다.");
         }
 
     }
+
     private void validateUpdatePosting(Posting posting) {
         LocalDateTime now = LocalDate.now().atStartOfDay();
 

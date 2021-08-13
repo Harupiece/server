@@ -36,7 +36,7 @@ public class CertificationService {
         // 인증 했는지 여부 확인
         duplicateCertification(posting,member);
 
-        Certification certification = Certification.createCertification(member,posting);
+        Certification certification = Certification.createCertification(member, posting);
 
         certificationRepository.save(certification);
 
@@ -59,7 +59,7 @@ public class CertificationService {
             posting.updatePoint();
         }
     }
-    private void duplicateCertification(Posting posting,Member member){
+    private void duplicateCertification(Posting posting, Member member){
         if(certificationRepository.existsByPostingAndMember(posting,member)){
             throw new ApiRequestException("이미 인증한 게시물입니다!");
         }

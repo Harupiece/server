@@ -29,12 +29,12 @@ public class Certification extends Timestamped {
 
     public Certification(Member member, Posting posting) {
         this.member=member;
-        this.posting=posting;
+        this.posting = posting;
     }
 
 
     public static Certification createCertification(Member member, Posting posting) {
-        Certification certification =new Certification(member,posting);
+        Certification certification =new Certification(member, posting);
         posting.addCount();
         return certification;
     }
