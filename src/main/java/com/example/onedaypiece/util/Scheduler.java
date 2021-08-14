@@ -126,6 +126,7 @@ public class Scheduler {
         log.info(today + " / " + result + " members get points");
     }
 
+
     private void whenChallengeStart(List<Challenge> challengeList) {
         int result = challengeRepository.updateChallengeProgress(2L, challengeList);
         log.info(today + " / " + result + " Challenge Start");

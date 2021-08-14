@@ -74,6 +74,7 @@ public class ChallengeService {
         challengeRecordRepository.save(challengeRecord);
         Long challengeId = challengeRepository.save(challenge).getChallengeId();
         ChatRoom chatRoom = new ChatRoom(challengeId);
+        chatRoomRepository.save(chatRoom);
         hashOpsChatRoom.put(CHAT_ROOMS, chatRoom.getRoomId(), chatRoom);
         return challengeId;
     }
