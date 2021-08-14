@@ -35,14 +35,6 @@ public interface ChallengeRecordRepository extends JpaRepository<ChallengeRecord
             "order by c.modifiedAt desc")
     List<ChallengeRecord> findAllByChallengeStatusTrueByPaged(Pageable pageable);
 
-
-//    @Modifying
-//    @Query("delete from ChallengeRecord c " +
-//            "Where c.challenge.challengeStatus = true " +
-//            "and c.challenge.challengeId = :challengeId " +
-//            "and c.member = :member")
-//    void deleteByChallengeIdAndMember(Long challengeId, Member member);
-
     void deleteByChallengeAndMember(Challenge challenge, Member member);
 
     @Query("select r from ChallengeRecord r " +
@@ -87,11 +79,9 @@ public interface ChallengeRecordRepository extends JpaRepository<ChallengeRecord
     @Query("select count(c) from ChallengeRecord c Where c.challengeRecordStatus = true and c.challenge = :challenge")
     int countByChallenge(Challenge challenge);
 
-
     // 챌린지에 참여한인원원
     @Query("select count(c) from ChallengeRecord c Where c.challenge = :challenge")
     int challengecount(Challenge challenge);
-
 
     // 본인이 참여한 챌린지중 진행중인첼린지
     @Query("select c from ChallengeRecord c " +
