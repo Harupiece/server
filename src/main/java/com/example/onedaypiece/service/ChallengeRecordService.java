@@ -29,8 +29,11 @@ public class ChallengeRecordService {
     public void requestChallenge(ChallengeRecordRequestDto requestDto, String email) {
         Challenge challenge = ChallengeChecker(requestDto.getChallengeId());
         Member member = MemberChecker(email);
+
         requestChallengeException(challenge, member);
-        challengeRecordRepository.save(new ChallengeRecord(challenge, member));
+
+        ChallengeRecord record = new ChallengeRecord(challenge, member);
+        challengeRecordRepository.save(record);
     }
 
     @Transactional
@@ -38,12 +41,13 @@ public class ChallengeRecordService {
         Challenge challenge = ChallengeChecker(challengeId);
         Member member = MemberChecker(email);
 
-        challengeRecordRepository.findByChallengeAndMember(challenge, member).setStatusFalse();
+        ChallengeRecord record = challengeRecordRepository.findByChallengeAndMember(challenge, member);
+        record.setStatusFalse();
     }
 
     private Challenge ChallengeChecker(Long challengeId) {
         return challengeRepository.findById(challengeId)
-                    .orElseThrow(() -> new ApiRequestException("존재하지 않은 챌린지입니다."));
+                .orElseThrow(() -> new ApiRequestException("존재하지 않은 챌린지입니다."));
     }
 
     private Member MemberChecker(String email) {
