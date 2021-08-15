@@ -30,6 +30,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.example.onedaypiece.web.domain.challenge.CategoryName.*;
+import static java.lang.Math.min;
 
 @Service
 @RequiredArgsConstructor
@@ -69,13 +70,16 @@ public class ChallengeService {
     public Long createChallenge(ChallengeRequestDto requestDto, String email) {
         Member member = memberChecker(email);
         createChallengeException(requestDto, member);
+
         Challenge challenge = new Challenge(requestDto, member);
         ChallengeRecord challengeRecord = new ChallengeRecord(challenge, member);
         challengeRecordRepository.save(challengeRecord);
         Long challengeId = challengeRepository.save(challenge).getChallengeId();
+
         ChatRoom chatRoom = new ChatRoom(challengeId);
         chatRoomRepository.save(chatRoom);
         hashOpsChatRoom.put(CHAT_ROOMS, chatRoom.getRoomId(), chatRoom);
+
         return challengeId;
     }
 
@@ -157,8 +161,8 @@ public class ChallengeService {
     private Page<ChallengeSourceResponseDto> listToPage(int page, List<ChallengeSourceResponseDto> sources) {
         final int allChallengePageSize = 8;
         Pageable paging = PageRequest.of(page - 1, allChallengePageSize);
-        final int start = Math.min((int)paging.getOffset(), sources.size());
-        final int end = Math.min((start + paging.getPageSize()), sources.size());
+        final int start = min((int)paging.getOffset(), sources.size());
+        final int end = min((start + paging.getPageSize()), sources.size());
 
         return new PageImpl<>(sources.subList(start, end), paging, sources.size());
     }

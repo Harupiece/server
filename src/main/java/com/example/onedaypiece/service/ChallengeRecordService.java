@@ -32,9 +32,11 @@ public class ChallengeRecordService {
     @Transactional
     public void giveUpChallenge(Long challengeId, String email) {
         Challenge challenge = ChallengeChecker(challengeId);
+        System.out.println(challenge.getChallengeId());
         Member member = MemberChecker(email);
+        System.out.println(member.getMemberId());
 
-        challengeRecordRepository.findByChallengeAndMember(challenge, member).setStatusFalse();
+        System.out.println(challengeRecordRepository.findByChallengeAndMember(challenge, member).getChallengeRecordId());
     }
 
     private Challenge ChallengeChecker(Long challengeId) {
