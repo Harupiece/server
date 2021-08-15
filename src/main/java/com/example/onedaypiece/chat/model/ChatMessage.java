@@ -43,11 +43,13 @@ public class ChatMessage extends Timestamped implements Serializable {
     private String profileImg; // 프로필 이미지
 
     @Builder
-    public ChatMessage(MessageType type, String roomId, String sender, String message){
+    public ChatMessage(MessageType type, String roomId, String sender, String message, String profileImg){
         this.type = type;
         this.roomId = roomId;
         this.sender = sender;
         this.message = message;
+        this.profileImg = profileImg;
+
     }
 
     public ChatMessage(ChatMessageRequestDto requestDto){
