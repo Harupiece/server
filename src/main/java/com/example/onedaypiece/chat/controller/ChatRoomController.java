@@ -25,7 +25,7 @@ public class ChatRoomController {
     // 채팅방 입장
     // 채팅방 대화 불러오기
     @GetMapping("/chat/messages/{roomId}")
-    public ResponseEntity<ChatRoomResponseDto> getEachChatRoom(@PathVariable Long roomId,
+    public ResponseEntity<ChatRoomResponseDto> getEachChatRoom(@PathVariable String roomId,
                                                                     @AuthenticationPrincipal UserDetails userDetails) {
         String email = userDetails.getUsername();
         return ResponseEntity.ok().body(chatRoomService.getEachChatRoom(roomId, email));
