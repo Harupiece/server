@@ -1,7 +1,6 @@
 package com.example.onedaypiece.service;
 
 import com.example.onedaypiece.exception.ApiRequestException;
-import com.example.onedaypiece.web.domain.challenge.CategoryName;
 import com.example.onedaypiece.web.domain.challenge.Challenge;
 import com.example.onedaypiece.web.domain.challenge.ChallengeRepository;
 import com.example.onedaypiece.web.domain.challengeRecord.ChallengeRecord;
@@ -12,6 +11,11 @@ import com.example.onedaypiece.web.dto.request.challengeRecord.ChallengeRecordRe
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static com.example.onedaypiece.web.domain.challenge.CategoryName.OFFICIAL;
 
 @Service
 @RequiredArgsConstructor
@@ -32,11 +36,9 @@ public class ChallengeRecordService {
     @Transactional
     public void giveUpChallenge(Long challengeId, String email) {
         Challenge challenge = ChallengeChecker(challengeId);
-        System.out.println(challenge.getChallengeId());
         Member member = MemberChecker(email);
-        System.out.println(member.getMemberId());
 
-        System.out.println(challengeRecordRepository.findByChallengeAndMember(challenge, member).getChallengeRecordId());
+        challengeRecordRepository.findByChallengeAndMember(challenge, member).setStatusFalse();
     }
 
     private Challenge ChallengeChecker(Long challengeId) {
@@ -50,10 +52,15 @@ public class ChallengeRecordService {
     }
 
     private void requestChallengeException(Challenge challenge, Member member) {
-        if (challengeRecordRepository.existsByChallengeAndMember(challenge, member)) {
+        List<ChallengeRecord> recordList = challengeRecordRepository.findAllByMember(member);
+        if (recordList.stream().map(r -> r.getChallenge().getCategoryName()).collect(Collectors.toList())
+                .contains(challenge.getCategoryName())) {
+            throw new ApiRequestException("이미 해당 카테고리에 챌린지를 진행중입니다.");
+        }
+        if (recordList.stream().anyMatch(r -> r.getChallenge().equals(challenge))) {
             throw new ApiRequestException("이미 해당 챌린지에 신청한 유저입니다.");
         }
-        if (!challenge.getCategoryName().equals(CategoryName.OFFICIAL) &&
+        if (!challenge.getCategoryName().equals(OFFICIAL) &&
                 challengeRecordRepository.countByChallenge(challenge) >= 10) {
             throw new ApiRequestException("챌린지는 10명까지만 참여 가능합니다.");
         }

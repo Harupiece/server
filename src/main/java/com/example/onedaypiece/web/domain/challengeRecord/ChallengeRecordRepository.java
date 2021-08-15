@@ -71,12 +71,7 @@ public interface ChallengeRecordRepository extends JpaRepository<ChallengeRecord
             "order by c.modifiedAt desc")
     List<ChallengeRecord> findAllByStatusTrueOrderByModifiedAtDesc();
 
-    @Query("select CASE WHEN count(c)>0 then true else false end " +
-            "from ChallengeRecord c " +
-            "Where c.challengeRecordStatus = true and c.member = :member and c.challenge = :challenge")
-    boolean existsByChallengeAndMember(Challenge challenge, Member member);
-
-    @Query("select count(c) from ChallengeRecord c Where c.challengeRecordStatus = true and c.challenge = :challenge")
+    @Query("select count(c.challengeRecordId) from ChallengeRecord c Where c.challengeRecordStatus = true and c.challenge = :challenge")
     int countByChallenge(Challenge challenge);
 
     // 본인이 참여한 챌린지중 진행중인첼린지
@@ -128,4 +123,9 @@ public interface ChallengeRecordRepository extends JpaRepository<ChallengeRecord
             "where r.challenge = :challenge " +
             "and r.member = :member")
     ChallengeRecord findByChallengeAndMember(Challenge challenge, Member member);
+
+    @Query("select r " +
+            "from ChallengeRecord r " +
+            "where r.member = :member")
+    List<ChallengeRecord> findAllByMember(Member member);
 }
