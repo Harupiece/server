@@ -63,7 +63,9 @@ public class ChallengeService {
     public void deleteChallenge(Long challengeId, String username) {
         Challenge challenge = ChallengeChecker(challengeId);
         deleteChallengeException(username, challenge);
-        challengeRecordRepository.deleteAllByChallenge(challenge);
+
+        ChallengeRecord record = challengeRecordRepository.findByChallengeAndChallengeRecordStatusTrue(challenge);
+        record.setStatusFalse();
     }
 
     @Transactional
@@ -161,7 +163,7 @@ public class ChallengeService {
     private Page<ChallengeSourceResponseDto> listToPage(int page, List<ChallengeSourceResponseDto> sources) {
         final int allChallengePageSize = 8;
         Pageable paging = PageRequest.of(page - 1, allChallengePageSize);
-        final int start = min((int)paging.getOffset(), sources.size());
+        final int start = min((int) paging.getOffset(), sources.size());
         final int end = min((start + paging.getPageSize()), sources.size());
 
         return new PageImpl<>(sources.subList(start, end), paging, sources.size());
@@ -194,7 +196,7 @@ public class ChallengeService {
             throw new IllegalArgumentException("작성자가 아닙니다.");
         }
         if (currentLocalDateTime.isBefore(challenge.getChallengeStartDate())) {
-            challenge.setChallengeStatus(false);
+            challenge.setChallengeStatusFalse();
             challenge.updateChallengeProgress(3L);
         } else {
             throw new ApiRequestException("이미 시작된 챌린지는 삭제할 수 없습니다.");
