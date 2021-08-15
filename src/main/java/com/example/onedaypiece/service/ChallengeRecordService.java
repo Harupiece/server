@@ -53,12 +53,12 @@ public class ChallengeRecordService {
 
     private void requestChallengeException(Challenge challenge, Member member) {
         List<ChallengeRecord> recordList = challengeRecordRepository.findAllByMember(member);
+        if (recordList.stream().anyMatch(r -> r.getChallenge().equals(challenge))) {
+            throw new ApiRequestException("이미 해당 챌린지에 신청한 유저입니다.");
+        }
         if (recordList.stream().map(r -> r.getChallenge().getCategoryName()).collect(Collectors.toList())
                 .contains(challenge.getCategoryName())) {
             throw new ApiRequestException("이미 해당 카테고리에 챌린지를 진행중입니다.");
-        }
-        if (recordList.stream().anyMatch(r -> r.getChallenge().equals(challenge))) {
-            throw new ApiRequestException("이미 해당 챌린지에 신청한 유저입니다.");
         }
         if (!challenge.getCategoryName().equals(OFFICIAL) &&
                 challengeRecordRepository.countByChallenge(challenge) >= 10) {
