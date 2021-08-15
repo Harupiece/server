@@ -79,10 +79,6 @@ public interface ChallengeRecordRepository extends JpaRepository<ChallengeRecord
     @Query("select count(c) from ChallengeRecord c Where c.challengeRecordStatus = true and c.challenge = :challenge")
     int countByChallenge(Challenge challenge);
 
-    // 챌린지에 참여한인원원
-    @Query("select count(c) from ChallengeRecord c Where c.challenge = :challenge")
-    int challengecount(Challenge challenge);
-
     // 본인이 참여한 챌린지중 진행중인첼린지
     @Query("select c from ChallengeRecord c " +
             "Where c.challengeRecordStatus = true " +
@@ -129,7 +125,7 @@ public interface ChallengeRecordRepository extends JpaRepository<ChallengeRecord
 
     @Query("select r " +
             "from ChallengeRecord r " +
-            "where r.challenge = :challengeList " +
+            "where r.challenge = :challenge " +
             "and r.challenge.member = :member")
     ChallengeRecord findByChallengeAndMember(Challenge challenge, Member member);
 
