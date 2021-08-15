@@ -125,7 +125,7 @@ public interface ChallengeRecordRepository extends JpaRepository<ChallengeRecord
 
     @Query("select r " +
             "from ChallengeRecord r " +
-            "where r.challenge = :challengeList " +
+            "where r.challenge = :challenge " +
             "and r.challenge.member = :member")
     ChallengeRecord findByChallengeAndMember(Challenge challenge, Member member);
 
