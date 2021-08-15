@@ -204,12 +204,10 @@ public class ChallengeService {
     }
 
     private void createChallengeException(ChallengeRequestDto requestDto, Member member) {
-        challengeRepository.findAllByMember(member)
-                .stream()
-                .filter(value -> value.getCategoryName() == requestDto.getCategoryName())
-                .forEach(value -> {
-                    throw new ApiRequestException("이미 해당 카테고리에 챌린지를 생성한 유저입니다.");
-                });
+        List<ChallengeRecord> recordList = challengeRecordRepository.findAllByMember(member);
+        if (recordList.stream().anyMatch(r -> r.getChallenge().getCategoryName().equals(requestDto.getCategoryName()))) {
+            throw new ApiRequestException("이미 해당 카테고리에 챌린지를 생성한 유저입니다.");
+        }
         if (requestDto.getChallengePassword().length() < 4) {
             if (!requestDto.getChallengePassword().equals("")) {
                 throw new ApiRequestException("비밀번호는 4자리 이상으로 설정해야합니다.");
