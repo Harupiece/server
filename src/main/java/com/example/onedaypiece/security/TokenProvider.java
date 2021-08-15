@@ -114,6 +114,6 @@ public class TokenProvider {
 
     // 토큰 복호화해서 email 정보 가져옴
     public String getMemberEmail(String token){
-        return parseClaims(token).getId();
+        return parseClaims(token).getSubject();
     }
 }

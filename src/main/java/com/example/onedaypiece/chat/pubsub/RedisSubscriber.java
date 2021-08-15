@@ -30,6 +30,7 @@ public class RedisSubscriber {
                     .roomId(chatMessage.getRoomId())
                     .sender(chatMessage.getSender())
                     .message(chatMessage.getMessage())
+                    .profileImg(chatMessage.getProfileImg())
                     .build();
             chatMessageRepository.save(message);
             log.info("sub confirm {}, {}", chatMessage.getRoomId(), chatMessage);

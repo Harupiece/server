@@ -30,7 +30,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         // endpoint : client 연결
         // URL//chatting  <-웹소켓 연결 주소
-        registry.addEndpoint("/chatting").setAllowedOriginPatterns("*")
+        registry.addEndpoint("/chatting").setAllowedOriginPatterns("*://*")
                 .withSockJS();
         log.info("websocket 연결 성공");
     }

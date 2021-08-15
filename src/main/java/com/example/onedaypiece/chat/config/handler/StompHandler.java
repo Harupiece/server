@@ -29,8 +29,6 @@ public class StompHandler implements ChannelInterceptor {
     private final RedisRepository redisRepository;
     private final MemberRepository memberRepository;
 
-    private Authentication authentication;
-
     // websocket을 통해 들어온 요청이 처리 되기전 실행된다.
     @Override
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
@@ -54,6 +52,9 @@ public class StompHandler implements ChannelInterceptor {
 
             // subscribe 의 token 확인
             String jwtToken = accessor.getFirstNativeHeader("token");
+
+            System.out.println("sessionId = " + sessionId); String memberEmail = tokenProvider.getMemberEmail(jwtToken); log.info("SUBSCRIBE22222222222 {}", sessionId); log.info("SUBSCRIBE33333333333333 {}", memberEmail);
+
             log.info("SUBSCRIBE {}", jwtToken);
 
             // 클라이언트 입장 메시지를 채팅방에 발송한다.(redis publish)
