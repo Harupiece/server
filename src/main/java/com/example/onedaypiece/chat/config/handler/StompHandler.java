@@ -70,19 +70,30 @@ public class StompHandler implements ChannelInterceptor {
 
             // Websocket 연결 종료
         } else if (StompCommand.DISCONNECT == accessor.getCommand()) {
+
             // 연결이 종료된 클라이언트 sesssionId로 채팅방 id를 얻는다.
             String sessionId = (String) message.getHeaders().get("simpSessionId");
             String roomId = redisRepository.getMemberEnterRoomId(sessionId);
             log.info("SUBSCRIBE22222222222 {}", sessionId);
             log.info("accessor! {}", accessor.getCommand());
 
+            Object simpUser = message.getHeaders().get("simpUser");
+            log.info("simpUser! {}", simpUser);
+
             // 클라이언트 퇴장 메시지를 채팅방에 발송한다.(redis publish)
             String email = Optional.ofNullable((Principal)
-                    message.getHeaders().get("username")).map(Principal::getName).orElse("UnknownUser");
+                    message.getHeaders().get("simpUser")).map(Principal::getName).orElse("UnknownUser");
             Member member = memberRepository.findByEmail(email)
                     .orElseThrow(() -> new RuntimeException("등록되지 않은 회원입니다."));
             String nickname = member.getNickname();
-            chatMessageService.sendChatMessage(ChatMessage.builder().type(ChatMessage.MessageType.QUIT).roomId(roomId).sender(nickname).build());
+
+
+            chatMessageService.sendChatMessage(
+                    ChatMessage.builder()
+                            .type(ChatMessage.MessageType.QUIT)
+                            .roomId(roomId)
+                            .sender(nickname)
+                            .build());
 
             // 퇴장한 클라이언트의 roomId 맵핑 정보를 삭제한다.
             redisRepository.removeMemberEnterInfo(sessionId);
