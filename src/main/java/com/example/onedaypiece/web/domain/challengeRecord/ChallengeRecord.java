@@ -46,8 +46,4 @@ public class ChallengeRecord extends Timestamped {
     public void setStatusFalse() {
         this.challengeRecordStatus = false;
     }
-
-    public void updateChallengePointTrue() {
-        this.challengePoint = true;
-    }
 }
