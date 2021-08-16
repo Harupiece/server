@@ -1,6 +1,8 @@
 package com.example.onedaypiece.chat.service;
 
+import com.example.onedaypiece.chat.dto.request.ChatMessageRequestDto;
 import com.example.onedaypiece.chat.model.ChatMessage;
+import com.example.onedaypiece.chat.repository.ChatMessageRepository;
 import com.example.onedaypiece.exception.ApiRequestException;
 import com.example.onedaypiece.web.domain.challengeRecord.ChallengeRecordRepository;
 import com.example.onedaypiece.web.domain.member.Member;
@@ -20,6 +22,7 @@ public class ChatMessageService {
     private final RedisTemplate redisTemplate;
     private final MemberRepository memberRepository;
     private final ChallengeRecordRepository challengeRecordRepository;
+    private final ChatMessageRepository chatMessageRepository;
 
     // tcp
     //destination정보에서 roomId 추출
@@ -32,17 +35,27 @@ public class ChatMessageService {
     }
 
     // 채팅방에 알림 메세지 발송
-    public void sendChatMessage( ChatMessage chatMessage) {
-        Member member = getmember(chatMessage);
+    public void sendChatMessage(ChatMessageRequestDto requestDto) {
 
+        ChatMessage chatMessage = new ChatMessage(requestDto);
+        Member member = getmember(chatMessage);
         validateChatRoom(chatMessage, member);
 
         if (ChatMessage.MessageType.ENTER.equals(chatMessage.getType())) {
-                chatMessage.setMessage(chatMessage.getSender() + "님이 방에 입장했습니다.");
-                chatMessage.setSender("[알림]");
+
+            chatMessage.setMessage(chatMessage.getSender() + "님이 방에 입장했습니다.");
+            chatMessage.setSender("[알림]");
+
+            chatMessageRepository.save(chatMessage);
+
         } else if (ChatMessage.MessageType.QUIT.equals(chatMessage.getType())) {
-                chatMessage.setMessage(chatMessage.getSender() + "님이 방에서 나갔습니다.");
-                chatMessage.setSender("[알림]");
+
+            chatMessage.setMessage(chatMessage.getSender() + "님이 방에서 나갔습니다.");
+            chatMessage.setSender("[알림]");
+            chatMessageRepository.save(chatMessage);
+
+        }else if(ChatMessage.MessageType.TALK.equals(chatMessage.getType())){
+            chatMessageRepository.save(chatMessage);
         }
 
         redisTemplate.convertAndSend(channelTopic.getTopic(), chatMessage);

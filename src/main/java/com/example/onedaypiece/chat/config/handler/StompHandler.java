@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
+import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
@@ -45,55 +46,17 @@ public class StompHandler implements ChannelInterceptor {
             // header정보에서 구독 destination정보를 얻고, roomId를 추출한다.
             // roomId를 URL로 전송해주고 있어 추출 필요
             String roomId = chatMessageService.getRoomId(Optional.ofNullable((String) message.getHeaders().get("simpDestination")).orElse("Invalid RoomId"));
-
+            SimpMessageHeaderAccessor simpMessageHeaderAccessor;
             // 채팅방에 들어온 클라이언트 sessionId를 roomId와 맵핑해 놓는다.(나중에 특정 세션이 어떤 채팅방에 들어가 있는지 알기 위함)
             String sessionId = (String) message.getHeaders().get("simpSessionId");
             redisRepository.setMemberEnterInfo(sessionId, roomId);
-
-            // subscribe 의 token 확인
-            String jwtToken = accessor.getFirstNativeHeader("token");
-            String memberEmail = tokenProvider.getMemberEmail(jwtToken);
-            log.info("SUBSCRIBE22222222222 {}", sessionId);
-            log.info("SUBSCRIBE33333333333333 {}", memberEmail);
-            log.info("SUBSCRIBE {}", jwtToken);
-
-            // 클라이언트 입장 메시지를 채팅방에 발송한다.(redis publish)
-            Member member = memberRepository.findByEmail(memberEmail)
-                    .orElseThrow(() -> new RuntimeException("등록되지 않은 회원입니다."));
-            String nickname = member.getNickname();
-            chatMessageService.sendChatMessage(ChatMessage.builder()
-                    .type(ChatMessage.MessageType.ENTER)
-                    .roomId(roomId)
-                    .sender(nickname)
-                    .build());
-            log.info("SUBSCRIBED {}, {}", nickname, roomId);
-
+            log.info("DISCONNECTED {}, {}", sessionId, roomId);
             // Websocket 연결 종료
         } else if (StompCommand.DISCONNECT == accessor.getCommand()) {
 
             // 연결이 종료된 클라이언트 sesssionId로 채팅방 id를 얻는다.
             String sessionId = (String) message.getHeaders().get("simpSessionId");
             String roomId = redisRepository.getMemberEnterRoomId(sessionId);
-            log.info("SUBSCRIBE22222222222 {}", sessionId);
-            log.info("accessor! {}", accessor.getCommand());
-
-            Object simpUser = message.getHeaders().get("simpUser");
-            log.info("simpUser! {}", simpUser);
-
-            // 클라이언트 퇴장 메시지를 채팅방에 발송한다.(redis publish)
-            String email = Optional.ofNullable((Principal)
-                    message.getHeaders().get("simpUser")).map(Principal::getName).orElse("UnknownUser");
-            Member member = memberRepository.findByEmail(email)
-                    .orElseThrow(() -> new RuntimeException("등록되지 않은 회원입니다."));
-            String nickname = member.getNickname();
-
-
-            chatMessageService.sendChatMessage(
-                    ChatMessage.builder()
-                            .type(ChatMessage.MessageType.QUIT)
-                            .roomId(roomId)
-                            .sender(nickname)
-                            .build());
 
             // 퇴장한 클라이언트의 roomId 맵핑 정보를 삭제한다.
             redisRepository.removeMemberEnterInfo(sessionId);
