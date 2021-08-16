@@ -1,10 +1,12 @@
 package com.example.onedaypiece.web.domain.posting;
 
+import com.example.onedaypiece.web.domain.certification.Certification;
 import com.example.onedaypiece.web.domain.challenge.Challenge;
 import com.example.onedaypiece.web.domain.common.Timestamped;
 import com.example.onedaypiece.web.domain.member.Member;
 import com.example.onedaypiece.web.dto.request.posting.PostingCreateRequestDto;
 import com.example.onedaypiece.web.dto.request.posting.PostingUpdateRequestDto;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -44,6 +46,7 @@ public class Posting extends Timestamped {
     @JoinColumn(name = "challenge_id")
     private Challenge challenge;
 
+    @Builder
     public Posting(String postingImg, String postingContent, Member member, Challenge challenge) {
         this.postingImg = postingImg;
         this.postingContent = postingContent;
@@ -54,16 +57,18 @@ public class Posting extends Timestamped {
         this.postingCount = 0L;
         this.member = member;
         this.challenge = challenge;
+
+
     }
 
     //==생성 메서드==//
     public static Posting createPosting(PostingCreateRequestDto postingRequestDto, Member member, Challenge challenge) {
-        return new Posting(
-                postingRequestDto.getPostingImg(),
-                postingRequestDto.getPostingContent(),
-                member,
-                challenge
-        );
+        return Posting.builder()
+                .postingImg(postingRequestDto.getPostingImg())
+                .postingContent(postingRequestDto.getPostingContent())
+                .member(member)
+                .challenge(challenge)
+                .build();
     }
 
     //== 비지니스 로직 ==//
