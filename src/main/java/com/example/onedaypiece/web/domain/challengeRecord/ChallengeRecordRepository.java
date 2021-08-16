@@ -88,6 +88,8 @@ public interface ChallengeRecordRepository extends JpaRepository<ChallengeRecord
     // 채팅방 입장할 때 사용
     @Query("select CASE WHEN count(c.challengeRecordId)>0 then true else false end " +
             "from ChallengeRecord c " +
+            "join  c.challenge " +
+            "join  c.member " +
             "Where c.challengeRecordStatus = true " +
             "and c.challenge.challengeId = :challengeId " +
             "and c.member = :member " +

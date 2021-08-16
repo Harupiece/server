@@ -9,6 +9,8 @@ import com.example.onedaypiece.web.domain.challengeRecord.ChallengeRecordReposit
 import com.example.onedaypiece.web.domain.member.Member;
 import com.example.onedaypiece.web.domain.member.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,22 +22,35 @@ public class ChatRoomService {
 
     private final ChallengeRecordRepository challengeRecordRepository;
     private final MemberRepository memberRepository;
-    private final ChatRoomRepository chatRoomRepository;
     private final ChatMessageRepository chatMessageRepository;
 
     // 채팅방 생성
 
     // 채팅방 입장(member가 현재 참여 중인)
-    public ChatRoomResponseDto getEachChatRoom(String roomId, String email) {
-        // 멤버인지 확인
-        Member member = memberRepository.findByEmail(email)
-                .orElseThrow(()->new ApiRequestException("이메일 정보가 확인되지 않습니다."));
-        // 진행예정이거나 진행중인 챌린지인지 확인, 참여중인 멤버가 맞는지 확인
+    public ChatRoomResponseDto getEachChatRoom(String roomId, String email,int page) {
+        page =1;
+
+        Member member = getMember(email);
         Long challengeId = Long.parseLong(roomId);
-        if (challengeRecordRepository.existsByChallengeIdAndAndMember(challengeId, member, 2L, 1L)){
-            List<ChatMessage> chatMessages = chatMessageRepository.findAllByRoomId(roomId);
-            return new ChatRoomResponseDto(roomId, chatMessages);
-        } else {
+        existsByChallengeProgress(member, challengeId);
+
+        Pageable pageable = PageRequest.of(page-1,20);
+
+        List<ChatMessage> chatMessages = chatMessageRepository.findAllByRoomIdOrderByCreatedAtDesc(roomId,pageable);
+
+        return ChatRoomResponseDto.builder()
+                .roomId(roomId)
+                .chatMessages(chatMessages)
+                .build();
+    }
+
+    private Member getMember(String email) {
+        return memberRepository.findByEmail(email)
+                .orElseThrow(() -> new ApiRequestException("이메일 정보가 확인되지 않습니다."));
+    }
+
+    private void existsByChallengeProgress(Member member, Long challengeId) {
+        if (!challengeRecordRepository.existsByChallengeIdAndAndMember(challengeId, member, 2L, 1L)){
             throw new ApiRequestException("종료된 챌린지에서의 채팅 서비스를 사용할 수 없습니다.");
         }
     }

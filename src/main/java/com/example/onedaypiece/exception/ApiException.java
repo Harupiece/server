@@ -10,6 +10,7 @@ public class ApiException {
     private  String message;
     private  HttpStatus httpStatus;
 
+
     public ApiException(String message, HttpStatus badRequest) {
         this.message =message;
         this.httpStatus = badRequest;

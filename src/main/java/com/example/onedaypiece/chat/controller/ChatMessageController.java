@@ -29,4 +29,5 @@ public class ChatMessageController {
         chatMessageService.sendChatMessage(requestDto);
         return ResponseEntity.ok().build();
     }
+
 }

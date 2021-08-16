@@ -9,6 +9,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -28,11 +29,10 @@ public class ChatRoomController {
     // 채팅방 대화 불러오기
     @GetMapping("/chat/messages/{roomId}")
     public ResponseEntity<ChatRoomResponseDto> getEachChatRoom(@PathVariable String roomId,
-                                                                    @AuthenticationPrincipal UserDetails userDetails) {
-        System.out.println("채팅룸에 들어갈때 인스턴스 하나만되는지 알기위한거");
-        log.info("채팅룸에 들어갈때 인스턴스 하나만되는지 알기위한거");
+                                                               @RequestParam("page") int page,
+                                                               @AuthenticationPrincipal UserDetails userDetails) {
         String email = userDetails.getUsername();
-        return ResponseEntity.ok().body(chatRoomService.getEachChatRoom(roomId, email));
+        return ResponseEntity.ok().body(chatRoomService.getEachChatRoom(roomId, email,page));
     }
 
     // 채팅방 삭제

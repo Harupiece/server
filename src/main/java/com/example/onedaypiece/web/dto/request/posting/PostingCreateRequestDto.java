@@ -1,10 +1,7 @@
 package com.example.onedaypiece.web.dto.request.posting;
 
 
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 
 import javax.validation.constraints.NotBlank;
 
@@ -19,7 +16,7 @@ public class PostingCreateRequestDto {
     private Long memberId;
     private Long challengeId;
 
-    // 테스트 코드용 생성자
+    @Builder
     public PostingCreateRequestDto(String postingImg, String postingContent, long memberId, long challengeId) {
 
         this.postingImg = postingImg;
