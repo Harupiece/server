@@ -14,6 +14,7 @@ public interface ChallengeRecordRepository extends JpaRepository<ChallengeRecord
     ChallengeRecord findByChallengeAndChallengeRecordStatusTrue(Challenge challenge);
 
     // 채팅방 입장할 때 사용
+
     @Query("select distinct c from ChallengeRecord c " +
             "left join fetch Posting p on c.challenge.challengeId = p.challenge.challengeId " +
             "where c.challenge.challengeId in :challengeId " +

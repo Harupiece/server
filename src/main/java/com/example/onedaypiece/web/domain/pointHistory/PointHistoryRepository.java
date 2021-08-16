@@ -26,15 +26,15 @@ public interface PointHistoryRepository extends JpaRepository<PointHistory, Long
     @Query("select new com.example.onedaypiece.web.dto.response.mypage.histroy.MemberHistoryDto( " +
             "p.pointHistoryId," +
             "p.createdAt, " +
-            "p.certification.posting.challenge.challengeTitle, " +
+            "p.posting.challenge.challengeTitle, " +
             "p.getPoint," +
-            "p.certification.member.memberId," +
-            "p.certification.member.nickname," +
-            "p.certification.member.profileImg, " +
-            "p.certification.member.point.acquiredPoint," +
-            "p.certification.member.point) " +
+            "p.posting.member.memberId," +
+            "p.posting.member.nickname," +
+            "p.posting.member.profileImg, " +
+            "p.posting.member.point.acquiredPoint," +
+            "p.posting.member.point) " +
             "from PointHistory p " +
-            "where p.certification.member.email =:email")
+            "where p.posting.member.email =:email")
 
     List<MemberHistoryDto> findHistory(String email);
 

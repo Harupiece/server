@@ -46,11 +46,14 @@ public class PostingService {
         Member member = getMemberByEmail(email);
         Challenge challenge = getChallenge(postingCreateRequestDto.getChallengeId());
         Posting posting = Posting.createPosting(postingCreateRequestDto,member,challenge);
+        Certification certification = Certification.createCertification(member, posting);
+
 
         // 포스팅 검사
         duplicatePosting(member,challenge);
 
         postingRepository.save(posting);
+        certificationRepository.save(certification);
 
         return posting.getPostingId();
     }

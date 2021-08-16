@@ -41,7 +41,7 @@ public class CertificationService {
         certificationRepository.save(certification);
 
         //50% 이상
-        checkMemberCountAndAddPoint(posting, member, memberCount, certification);
+        checkMemberCountAndAddPoint(posting, memberCount);
 
 
         return posting.isPostingApproval();
@@ -49,10 +49,10 @@ public class CertificationService {
 
 
     // 인증 인원 50% 넘으면 승인
-    private void checkMemberCountAndAddPoint (Posting posting, Member member, Long memberCount, Certification certification) {
+    private void checkMemberCountAndAddPoint (Posting posting, Long memberCount) {
 
         if(memberCount /2 <= posting.getPostingCount()){
-            PointHistory pointHistory = new PointHistory(1L, certification);
+            PointHistory pointHistory = new PointHistory(1L, posting); // 몇점받는지 첫번쨰 파라미터로 들어가야함
             pointHistoryRepository.save(pointHistory);
             posting.getMember().updatePoint(1L);
             posting.updateApproval();

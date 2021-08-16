@@ -1,8 +1,6 @@
 package com.example.onedaypiece.chat.model;
 
-import com.example.onedaypiece.web.domain.challenge.Challenge;
 import com.example.onedaypiece.web.domain.common.Timestamped;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 

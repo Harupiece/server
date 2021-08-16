@@ -21,9 +21,5 @@ public interface MemberRepository extends JpaRepository<Member,Long> {
     boolean existsByEmail(String email);
     // Nickname으로 멤버 존재 여부 확인
     boolean existsByNickname(String nickname);
-
-//    @Modifying(clearAutomatically = true)
-//    @Query("update Point p set p.acquiredPoint = p.acquiredPoint + :getPoint where p in :pointList")
-//    void updatePointAll(List<Point> pointList, Long getPoint);
 }
 

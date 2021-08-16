@@ -28,7 +28,6 @@ import java.util.stream.Collectors;
 
 import static com.example.onedaypiece.web.domain.challenge.CategoryName.OFFICIAL;
 
-
 @Slf4j
 @RequiredArgsConstructor
 @Component

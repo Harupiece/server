@@ -99,15 +99,6 @@ public class PostingQueryRepository  {
     }
 
 
-
-    public List<Long> findAllByChallengeAndPostingApprovalTrue(Long challengeId){
-        return queryFactory.select(posting.member.memberId)
-                .from(posting)
-                .where(posting.postingApproval.isTrue()
-                        .and(eqChallengeId(challengeId)))
-                .fetch();
-    }
-
     private BooleanExpression eqChallengeId(Long challengeId) {
         return challengeId != null ? posting.challenge.challengeId.eq(challengeId) : null;
     }
