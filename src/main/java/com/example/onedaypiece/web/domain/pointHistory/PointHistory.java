@@ -4,6 +4,7 @@ import com.example.onedaypiece.web.domain.certification.Certification;
 import com.example.onedaypiece.web.domain.challenge.Challenge;
 import com.example.onedaypiece.web.domain.challengeRecord.ChallengeRecord;
 import com.example.onedaypiece.web.domain.common.Timestamped;
+import com.example.onedaypiece.web.domain.posting.Posting;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -23,8 +24,8 @@ public class PointHistory extends Timestamped {
     private Long getPoint;
 
     @OneToOne
-    @JoinColumn(name="certification_id")
-    private Certification certification;
+    @JoinColumn(name="posting_id")
+    private Posting posting;
 
     @OneToOne
     @JoinColumn(name="challenge_record_id")
@@ -34,9 +35,9 @@ public class PointHistory extends Timestamped {
     @Column
     private boolean status;
 
-    public PointHistory(Long getPoint, Certification certification){
+    public PointHistory(Long getPoint, Posting posting){
         this.getPoint = getPoint;
-        this.certification = certification;
+        this.posting = posting;
         this.status = true;
     }
 
