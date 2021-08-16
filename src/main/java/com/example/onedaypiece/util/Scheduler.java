@@ -8,6 +8,7 @@ import com.example.onedaypiece.web.domain.challengeRecord.ChallengeRecordQueryRe
 import com.example.onedaypiece.web.domain.challengeRecord.ChallengeRecordRepository;
 import com.example.onedaypiece.web.domain.member.Member;
 import com.example.onedaypiece.web.domain.member.MemberQueryRepository;
+import com.example.onedaypiece.web.domain.member.MemberRepository;
 import com.example.onedaypiece.web.domain.point.Point;
 import com.example.onedaypiece.web.domain.pointHistory.PointHistory;
 import com.example.onedaypiece.web.domain.pointHistory.PointHistoryRepository;
@@ -44,7 +45,7 @@ public class Scheduler {
     private final LocalDateTime today = LocalDate.now().atStartOfDay();
 
     //    01 00 00
-    @Scheduled(cron = "01 00 * * * *") // 초, 분, 시, 일, 월, 주 순서
+    @Scheduled(cron = "01 * * * * *") // 초, 분, 시, 일, 월, 주 순서
     @Transactional
     public void certificationKick() {
         List<ChallengeRecord> challengeMember = challengeRecordQueryRepository.findAllByChallenge();
@@ -92,7 +93,7 @@ public class Scheduler {
         log.info("updateResult 벌크 연산 result: {} ", updateResult);
     }
 
-    @Scheduled(cron = "02 00 * * * *") // 초, 분, 시, 일, 월, 주 순서
+    @Scheduled(cron = "02 * * * * *") // 초, 분, 시, 일, 월, 주 순서
     @Transactional
     public void postingStatusUpdate() {
         List<Long> postingIdList = postingQueryRepository.findSchedulerUpdatePosting(today);
@@ -101,7 +102,7 @@ public class Scheduler {
         log.info("updateResult 벌크 연산 result: {} ", updateResult);
     }
 
-    @Scheduled(cron = "03 00 * * * *") // 초, 분, 시, 일, 월, 주 순서
+    @Scheduled(cron = "03 * * * * *") // 초, 분, 시, 일, 월, 주 순서
     @Transactional
     public void challengeStatusUpdate() {
         List<Challenge> challengeList = challengeRepository.findAllByChallengeStatusTrueAndChallengeProgressLessThan(3L);
