@@ -3,6 +3,7 @@ package com.example.onedaypiece.chat.controller;
 import com.example.onedaypiece.chat.dto.response.ChatRoomResponseDto;
 import com.example.onedaypiece.chat.service.ChatRoomService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 
+@Slf4j
 @RequiredArgsConstructor
 @RestController
 public class ChatRoomController {
@@ -27,6 +29,8 @@ public class ChatRoomController {
     @GetMapping("/chat/messages/{roomId}")
     public ResponseEntity<ChatRoomResponseDto> getEachChatRoom(@PathVariable String roomId,
                                                                     @AuthenticationPrincipal UserDetails userDetails) {
+        System.out.println("채팅룸에 들어갈때 인스턴스 하나만되는지 알기위한거");
+        log.info("채팅룸에 들어갈때 인스턴스 하나만되는지 알기위한거");
         String email = userDetails.getUsername();
         return ResponseEntity.ok().body(chatRoomService.getEachChatRoom(roomId, email));
     }
