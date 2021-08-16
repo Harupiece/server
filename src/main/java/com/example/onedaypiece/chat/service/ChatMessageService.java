@@ -54,7 +54,7 @@ public class ChatMessageService {
     }
 
     private void validateChatRoom(ChatMessage chatMessage, Member member) {
-        if (challengeRecordRepository.existsByChallengeIdAndAndMember(
+        if (!challengeRecordRepository.existsByChallengeIdAndAndMember(
                 Long.parseLong(chatMessage.getRoomId()), member, 2L, 1L)) {
             throw new ApiRequestException("입장하실 챌린지가 없습니다.");
         }
