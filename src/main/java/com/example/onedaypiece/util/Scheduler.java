@@ -2,8 +2,10 @@ package com.example.onedaypiece.util;
 
 import com.example.onedaypiece.exception.ApiRequestException;
 import com.example.onedaypiece.web.domain.challenge.Challenge;
+import com.example.onedaypiece.web.domain.challenge.ChallengeQueryRepository;
 import com.example.onedaypiece.web.domain.challenge.ChallengeRepository;
 import com.example.onedaypiece.web.domain.challengeRecord.ChallengeRecord;
+import com.example.onedaypiece.web.domain.challengeRecord.ChallengeRecordQueryRepository;
 import com.example.onedaypiece.web.domain.challengeRecord.ChallengeRecordRepository;
 import com.example.onedaypiece.web.domain.member.Member;
 import com.example.onedaypiece.web.domain.pointHistory.PointHistory;
@@ -33,7 +35,9 @@ public class Scheduler {
     private final PostingQueryRepository postingQueryRepository;
     private final PostingRepository postingRepository;
     private final ChallengeRecordRepository challengeRecordRepository;
+    private final ChallengeRecordQueryRepository challengeRecordQueryRepository;
     private final ChallengeRepository challengeRepository;
+    private final ChallengeQueryRepository challengeQueryRepository;
     private final PointHistoryRepository pointHistoryRepository;
 
     private final LocalDateTime today = LocalDate.now().atStartOfDay();
@@ -42,7 +46,7 @@ public class Scheduler {
     @Scheduled(cron = "01 00 * * * *") // 초, 분, 시, 일, 월, 주 순서
     @Transactional
     public void certificationKick() {
-        List<ChallengeRecord> challengeMember = challengeRecordRepository.findAllByChallenge();
+        List<ChallengeRecord> challengeMember = challengeRecordQueryRepository.findAllByChallenge();
 
         //진행중인 챌린지 리스트
         List<Long> challengeId = challengeMember.stream()
@@ -126,18 +130,18 @@ public class Scheduler {
 
 
     private void whenChallengeStart(List<Challenge> challengeList) {
-        int result = challengeRepository.updateChallengeProgress(2L, challengeList);
+        Long result = challengeQueryRepository.updateChallengeProgress(2L, challengeList);
         log.info(today + " / " + result + " Challenge Start");
     }
 
     private void whenChallengeEnd(List<Challenge> challengeList) {
-        int result = challengeRepository.updateChallengeProgress(3L, challengeList);
+        Long result = challengeQueryRepository.updateChallengeProgress(3L, challengeList);
         challengeRecordRepository.updateChallengePoint(challengeList);
         log.info(today + " / " + result + " Challenge End");
     }
 
     private void getPointWhenChallengeEnd(Challenge challenge) {
-        List<ChallengeRecord> recordList = challengeRecordRepository.optionalFindAllByChallenge(challenge)
+        List<ChallengeRecord> recordList = challengeRecordQueryRepository.optionalFindAllByChallenge(challenge)
                 .orElseThrow(() -> new ApiRequestException("인원이 없는 챌린지"));
 
         List<Member> memberList = recordList

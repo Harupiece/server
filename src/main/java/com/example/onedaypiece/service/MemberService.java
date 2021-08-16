@@ -4,6 +4,7 @@ import com.example.onedaypiece.exception.ApiRequestException;
 import com.example.onedaypiece.security.TokenProvider;
 import com.example.onedaypiece.web.domain.challenge.Challenge;
 import com.example.onedaypiece.web.domain.challengeRecord.ChallengeRecord;
+import com.example.onedaypiece.web.domain.challengeRecord.ChallengeRecordQueryRepository;
 import com.example.onedaypiece.web.domain.challengeRecord.ChallengeRecordRepository;
 import com.example.onedaypiece.web.domain.member.Member;
 import com.example.onedaypiece.web.domain.member.MemberRepository;
@@ -55,6 +56,7 @@ public class MemberService {
     private final RefreshTokenRepository refreshTokenRepository;
     private final PointRepository pointRepository;
     private final ChallengeRecordRepository challengeRecordRepository;
+    private final ChallengeRecordQueryRepository challengeRecordQueryRepository;
     private final PointHistoryRepository pointHistoryRepository;
 
     // 회원가입
@@ -110,9 +112,9 @@ public class MemberService {
         Member member = getMemberByEmail(requestDto.getEmail());
 
         // 자기가 참여한 챌린지에서 현재 진행중인리스트
-        List<ChallengeRecord> targetList = challengeRecordRepository.findAllByMemberAndProgressAndExpected(member,2L, 1L);
+        List<ChallengeRecord> targetList = challengeRecordQueryRepository.findAllByMemberAndProgressAndExpected(member,2L, 1L);
         // 완료된 챌린지 리스트
-        List<ChallengeRecord> completeList = challengeRecordRepository.findAllByMemberAndProgress(member,3L);
+        List<ChallengeRecord> completeList = challengeRecordQueryRepository.findAllByMemberAndProgress(member,3L);
 
         return new MemberTokenResponseDto(tokenDto, member, targetList.size(), completeList.size());
     }
@@ -123,9 +125,9 @@ public class MemberService {
         Member member = getMemberByEmail(email);
 
         // 자기가 참여한 챌린지에서 현재 진행중인리스트
-        List<ChallengeRecord> targetList = challengeRecordRepository.findAllByMemberAndProgressAndExpected(member,2L, 1L);
+        List<ChallengeRecord> targetList = challengeRecordQueryRepository.findAllByMemberAndProgressAndExpected(member,2L, 1L);
         // 완료된 챌린지 리스트
-        List<ChallengeRecord> completeList = challengeRecordRepository.findAllByMemberAndProgress(member,3L);
+        List<ChallengeRecord> completeList = challengeRecordQueryRepository.findAllByMemberAndProgress(member,3L);
 
         return new ReloadResponseDto(member, targetList.size(), completeList.size());
     }
@@ -136,7 +138,7 @@ public class MemberService {
     public MemberTokenResponseDto reissue(TokenRequestDto tokenRequestDto) {
         // 1. Refresh Token 검증
         if (!tokenProvider.validateToken(tokenRequestDto.getRefreshToken())) {
-            throw new RuntimeException("Refresh Token 이 유효하지 않습니다.");
+            throw new ApiRequestException("리프레시 토큰 오류");
         }
 
         // 2. Access Token 에서 Member ID 가져오기
@@ -146,11 +148,11 @@ public class MemberService {
 
         // 3. 저장소에서 Member ID 를 기반으로 Refresh Token 값 가져옴
         RefreshToken refreshToken = refreshTokenRepository.findByKey(authentication.getName())
-                .orElseThrow(() -> new RuntimeException("로그아웃 된 사용자입니다."));
+                .orElseThrow(() -> new ApiRequestException("리프레시 토큰 오류"));
 
         // 4. Refresh Token 일치하는지 검사
         if (!refreshToken.getValue().equals(tokenRequestDto.getRefreshToken())) {
-            throw new RuntimeException("리프레시 토큰의 유저 정보가 일치하지 않습니다.");
+            throw new ApiRequestException("리프레시 토큰 오류");
         }
 
         // 5. 새로운 토큰 생성
@@ -161,9 +163,9 @@ public class MemberService {
         refreshTokenRepository.save(newRefreshToken);
 
         // 자기가 참여한 챌린지에서 현재 진행중인리스트
-        List<ChallengeRecord> targetList = challengeRecordRepository.findAllByMemberAndProgressAndExpected(member,2L, 1L);
+        List<ChallengeRecord> targetList = challengeRecordQueryRepository.findAllByMemberAndProgressAndExpected(member,2L, 1L);
         // 완료된 챌린지 리스트
-        List<ChallengeRecord> completeList = challengeRecordRepository.findAllByMemberAndProgress(member,3L);
+        List<ChallengeRecord> completeList = challengeRecordQueryRepository.findAllByMemberAndProgress(member,3L);
 
         // 토큰 발급
         return new MemberTokenResponseDto(tokenDto, member, targetList.size(), completeList.size());
@@ -204,7 +206,7 @@ public class MemberService {
         Member member = getMemberByEmail(email);
 
         //본인이 참여한 챌린지 기록리스트  1: 진행 예정, 2: 진행 중, 3 : 진행 완료
-        List<ChallengeRecord> targetList = challengeRecordRepository.findAllByMemberAndProgress(member,2L);
+        List<ChallengeRecord> targetList = challengeRecordQueryRepository.findAllByMemberAndProgress(member,2L);
 
         // 본인이 참여한 챌린지 기록리스트 -> 챌린지 가져옴
         List<Challenge> proceeding = targetList.stream()
@@ -212,7 +214,7 @@ public class MemberService {
 
         // 본인이 참여한 챌린지 리스트 -> 가공
         List<ProceedResponseDto> proceedingResult = proceeding.stream()
-                .map(challenge -> new ProceedResponseDto(challenge, challengeRecordRepository.findAllByChallenge(challenge)))
+                .map(challenge -> new ProceedResponseDto(challenge, challengeRecordQueryRepository.findAllByChallenge(challenge)))
                 .collect(Collectors.toList());
 
         return new MypageProceedResponseDto(member, member.getPoint().getAcquiredPoint(), proceedingResult);
@@ -224,13 +226,13 @@ public class MemberService {
         Member member = getMemberByEmail(email);
 
         //본인이 참여한 챌린지 리스트  1: 진행 예정, 2: 진행 중, 3 : 진행 완료
-        List<ChallengeRecord> targetList = challengeRecordRepository.findAllByMemberAndProgress(member,1L);
+        List<ChallengeRecord> targetList = challengeRecordQueryRepository.findAllByMemberAndProgress(member,1L);
 //        List<Challenge> scheduled = challengeRepository.findAllByChallengeProgressAndMember(1L, member);
         List<Challenge> scheduled = targetList.stream()
                 .map(challengeRecord -> challengeRecord.getChallenge()).collect(Collectors.toList());
 
         List<ScheduledResponseDto> scheduledList = scheduled.stream()
-                .map(challenge -> new ScheduledResponseDto(challenge, challengeRecordRepository.findAllByChallenge(challenge)))
+                .map(challenge -> new ScheduledResponseDto(challenge, challengeRecordQueryRepository.findAllByChallenge(challenge)))
                 .collect(Collectors.toList());
 
         return new MyPageScheduledResponseDto(member,  scheduledList);
@@ -242,13 +244,13 @@ public class MemberService {
         Member member = getMemberByEmail(email);
 
         //본인이 참여한 챌린지 리스트  1: 진행 예정, 2: 진행 중, 3 : 진행 완료
-        List<ChallengeRecord> targetList = challengeRecordRepository.findAllByMemberAndProgress(member,3L);
+        List<ChallengeRecord> targetList = challengeRecordQueryRepository.findAllByMemberAndProgress(member,3L);
 
         List<Challenge> end = targetList.stream()
                 .map(challengeRecord -> challengeRecord.getChallenge()).collect(Collectors.toList());
 
         List<EndResponseDto> endList = end.stream()
-                .map(challenge -> new EndResponseDto(challenge, challengeRecordRepository.findAllByChallenge(challenge)))
+                .map(challenge -> new EndResponseDto(challenge, challengeRecordQueryRepository.findAllByChallenge(challenge)))
                 .collect(Collectors.toList());
 
         return new MyPageEndResponseDto(member, endList);

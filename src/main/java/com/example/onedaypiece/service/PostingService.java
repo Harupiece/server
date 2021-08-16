@@ -115,7 +115,7 @@ public class PostingService {
 
     private Challenge getChallenge(Long challengeId) {
         log.info("getChallenge : {} ",challengeId);
-        return challengeRepository.findChallengeStatusTrue(challengeId)
+        return challengeRepository.findByChallengeStatusTrueAndChallengeId(challengeId)
                 .orElseThrow(() -> new ApiRequestException("등록된 챌린지가 없습니다."));
     }
 

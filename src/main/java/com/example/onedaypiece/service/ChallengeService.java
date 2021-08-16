@@ -9,6 +9,7 @@ import com.example.onedaypiece.web.domain.challenge.CategoryName;
 import com.example.onedaypiece.web.domain.challenge.Challenge;
 import com.example.onedaypiece.web.domain.challenge.ChallengeRepository;
 import com.example.onedaypiece.web.domain.challengeRecord.ChallengeRecord;
+import com.example.onedaypiece.web.domain.challengeRecord.ChallengeRecordQueryRepository;
 import com.example.onedaypiece.web.domain.challengeRecord.ChallengeRecordRepository;
 import com.example.onedaypiece.web.domain.member.Member;
 import com.example.onedaypiece.web.domain.member.MemberRepository;
@@ -38,6 +39,7 @@ public class ChallengeService {
 
     private final ChallengeRepository challengeRepository;
     private final ChallengeRecordRepository challengeRecordRepository;
+    private final ChallengeRecordQueryRepository challengeRecordQueryRepository;
     private final MemberRepository memberRepository;
     private final ChatRoomRepository chatRoomRepository;
     private final ChatRoomService chatRoomService;
@@ -52,7 +54,7 @@ public class ChallengeService {
 
     public ChallengeResponseDto getChallengeDetail(Long challengeId) {
         Challenge challenge = ChallengeChecker(challengeId);
-        List<Long> memberList = challengeRecordRepository.findAllByChallengeId(challengeId)
+        List<Long> memberList = challengeRecordQueryRepository.findAllByChallengeId(challengeId)
                 .stream()
                 .map(c -> c.getMember().getMemberId())
                 .collect(Collectors.toList());
@@ -93,22 +95,28 @@ public class ChallengeService {
         challenge.putChallenge(requestDto);
     }
 
-    public Page<ChallengeSourceResponseDto> getAllChallenge(int page) {
-        List<ChallengeRecord> records = challengeRecordRepository.findAllByChallengeStatusTrueAndProgressNotStart();
+    public List<ChallengeSourceResponseDto> getAllChallenge(int page) {
+        List<ChallengeRecord> records = challengeRecordQueryRepository.findAllByChallengeStatusTrueAndProgressNotStart();
         List<Challenge> challenges = records.stream().map(ChallengeRecord::getChallenge).collect(Collectors.toList());
-        List<Long> challengeIdList = new ArrayList<>();
-        List<ChallengeSourceResponseDto> sources = challenges
+//        List<Long> challengeIdList = new ArrayList<>();
+//        List<ChallengeSourceResponseDto> sources = challenges
+//                .stream()
+//                .filter(c -> !challengeIdList.contains(c.getChallengeId()))
+//                .peek(c -> challengeIdList.add(c.getChallengeId()))
+//                .map(c -> new ChallengeSourceResponseDto(c, records))
+//                .collect(Collectors.toList());
+
+       return challenges
                 .stream()
-                .filter(c -> !challengeIdList.contains(c.getChallengeId()))
-                .peek(c -> challengeIdList.add(c.getChallengeId()))
+                .distinct()
                 .map(c -> new ChallengeSourceResponseDto(c, records))
                 .collect(Collectors.toList());
-        return listToPage(page, sources);
+//        return listToPage(page, sources);
     }
 
     public ChallengeMainResponseDto getMainPage(String email) {
         ChallengeMainResponseDto responseDto = new ChallengeMainResponseDto();
-        List<ChallengeRecord> records = challengeRecordRepository.findAllByStatusTrueOrderByModifiedAtDesc();
+        List<ChallengeRecord> records = challengeRecordQueryRepository.findAllByStatusTrue();
 
         userSliderUpdate(responseDto, email, records);
         popularUpdate(responseDto, email, records);
@@ -136,7 +144,7 @@ public class ChallengeService {
 
     private void popularUpdate(ChallengeMainResponseDto responseDto, String email, List<ChallengeRecord> records) {
         final int popularSize = 4;
-        List<ChallengeRecord> popularRecords = challengeRecordRepository.findPopularOrderByDesc(email, PageRequest.of(0, popularSize));
+        List<ChallengeRecord> popularRecords = challengeRecordQueryRepository.findPopular(email, PageRequest.of(0, popularSize));
         responseDto.addPopular(popularRecords, records);
     }
 
@@ -146,9 +154,11 @@ public class ChallengeService {
         Set<Long> recordIdList = new HashSet<>();
         List<ChallengeRecord> recordList = new ArrayList<>();
 
-        records.stream().filter(r -> !recordIdList.contains(r.getChallenge().getChallengeId()) &&
-                r.getChallenge().getCategoryName().equals(category) &&
-                recordIdList.size() < categorySize).forEach(r -> {
+        records
+                .stream()
+                .filter(r -> !recordIdList.contains(r.getChallenge().getChallengeId()) &&
+                        r.getChallenge().getCategoryName().equals(category) &&
+                        recordIdList.size() < categorySize).forEach(r -> {
             recordIdList.add(r.getChallenge().getChallengeId());
             recordList.add(r);
         });
