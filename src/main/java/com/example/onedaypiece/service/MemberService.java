@@ -112,7 +112,7 @@ public class MemberService {
         Member member = getMemberByEmail(requestDto.getEmail());
 
         // 자기가 참여한 챌린지에서 현재 진행중인리스트
-        List<ChallengeRecord> targetList = challengeRecordRepository.findAllByMemberAndProgressAndExpected(member,2L, 1L);
+        List<ChallengeRecord> targetList = challengeRecordQueryRepository.findAllByMemberAndProgressAndExpected(member,2L, 1L);
         // 완료된 챌린지 리스트
         List<ChallengeRecord> completeList = challengeRecordQueryRepository.findAllByMemberAndProgress(member,3L);
 
@@ -125,7 +125,7 @@ public class MemberService {
         Member member = getMemberByEmail(email);
 
         // 자기가 참여한 챌린지에서 현재 진행중인리스트
-        List<ChallengeRecord> targetList = challengeRecordRepository.findAllByMemberAndProgressAndExpected(member,2L, 1L);
+        List<ChallengeRecord> targetList = challengeRecordQueryRepository.findAllByMemberAndProgressAndExpected(member,2L, 1L);
         // 완료된 챌린지 리스트
         List<ChallengeRecord> completeList = challengeRecordQueryRepository.findAllByMemberAndProgress(member,3L);
 
@@ -163,7 +163,7 @@ public class MemberService {
         refreshTokenRepository.save(newRefreshToken);
 
         // 자기가 참여한 챌린지에서 현재 진행중인리스트
-        List<ChallengeRecord> targetList = challengeRecordRepository.findAllByMemberAndProgressAndExpected(member,2L, 1L);
+        List<ChallengeRecord> targetList = challengeRecordQueryRepository.findAllByMemberAndProgressAndExpected(member,2L, 1L);
         // 완료된 챌린지 리스트
         List<ChallengeRecord> completeList = challengeRecordQueryRepository.findAllByMemberAndProgress(member,3L);
 

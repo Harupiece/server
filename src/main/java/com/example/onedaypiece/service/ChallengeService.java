@@ -116,7 +116,7 @@ public class ChallengeService {
 
     public ChallengeMainResponseDto getMainPage(String email) {
         ChallengeMainResponseDto responseDto = new ChallengeMainResponseDto();
-        List<ChallengeRecord> records = challengeRecordQueryRepository.findAllByStatusTrueOrderByModifiedAtDesc();
+        List<ChallengeRecord> records = challengeRecordQueryRepository.findAllByStatusTrue();
 
         userSliderUpdate(responseDto, email, records);
         popularUpdate(responseDto, email, records);

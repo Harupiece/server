@@ -2,17 +2,55 @@ package com.example.onedaypiece.web.domain.challengeRecord;
 
 import com.example.onedaypiece.web.domain.challenge.Challenge;
 import com.example.onedaypiece.web.domain.member.Member;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 public interface ChallengeRecordRepository extends JpaRepository<ChallengeRecord, Long> {
+
+    ChallengeRecord findByChallengeAndChallengeRecordStatusTrue(Challenge challenge);
+
+    // 채팅방 입장할 때 사용
+    @Query("select distinct c from ChallengeRecord c " +
+            "left join fetch Posting p on c.challenge.challengeId = p.challenge.challengeId " +
+            "where c.challenge.challengeId in :challengeId " +
+            "and p.postingId  in ( select p.postingId" +
+            "                    from Posting p " +
+            "                    where p.challenge.challengeId in :challengeId " +
+            "                      and p.createdAt < :today " +
+            "                      and p.member.memberId not in (c.member.memberId))")
+    List<ChallengeRecord> findPostingListTest2(List<Long> challengeId, LocalDateTime today);
+
+    @Modifying(clearAutomatically = true)
+    @Query("update ChallengeRecord c " +
+            "set c.challengeRecordStatus = false " +
+            "where c.member.memberId in :kickMember " +
+            "and c.challenge.challengeId in :kickChallenge")
+    int kickMemberOnChallenge(List<Long> kickMember, List<Long> kickChallenge);
+
+    @Modifying(clearAutomatically = true)
+    @Query("update ChallengeRecord c " +
+            "set c.challengePoint = true " +
+            "where c.challenge in :challengeList")
+    void updateChallengePoint(List<Challenge> challengeList);
+
+    @Query("select r " +
+            "from ChallengeRecord r " +
+            "where r.challenge = :challenge " +
+            "and r.member = :member")
+    ChallengeRecord findByChallengeAndMember(Challenge challenge, Member member);
+
+    @Query("select r " +
+            "from ChallengeRecord r " +
+            "where r.challengeRecordStatus = true " +
+            "and r.challenge.challengeProgress < 3 " +
+            "and r.member = :member")
+    List<ChallengeRecord> findAllByMember(Member member);
+
+    @Query("select CASE WHEN count(c.challengeRecordId)>0 then true else false end " +
 
 //    @Query("select c from ChallengeRecord c inner join fetch c.challenge " +
 //            "where c.challengeRecordStatus = true " +
@@ -66,71 +104,31 @@ public interface ChallengeRecordRepository extends JpaRepository<ChallengeRecord
 //            "and c.challenge = :challenge")
 //    int countByChallenge(Challenge challenge);
 
-    // 본인이 참여한 챌린지중 진행중인첼린지
+            // 본인이 참여한 챌린지중 진행중인첼린지
 //    @Query("select c from ChallengeRecord c " +
 //            "Where c.challengeRecordStatus = true " +
 //            "and c.member = :member " +
 //            "and c.challenge.challengeProgress = :progress")
 //    List<ChallengeRecord> findAllByMemberAndProgress(Member member, Long progress);
 
-    // 진행중과 진행예정 챌린지 in을 사용하기
-    @Query("select c " +
-            "from ChallengeRecord c " +
-            "Where c.challengeRecordStatus = true " +
-            "and c.member = :member " +
-            "and c.challenge.challengeProgress in (:progress, :expected) ")
-    List<ChallengeRecord> findAllByMemberAndProgressAndExpected(@Param("member") Member member,@Param("progress") Long progress, @Param("expected") Long expected);
+            // 진행중과 진행예정 챌린지 in을 사용하기
+//    @Query("select c " +
+//            "from ChallengeRecord c " +
+//            "Where c.challengeRecordStatus = true " +
+//            "and c.member = :member " +
+//            "and c.challenge.challengeProgress in (:progress, :expected) ")
+//    List<ChallengeRecord> findAllByMemberAndProgressAndExpected(@Param("member") Member member,@Param("progress") Long progress, @Param("expected") Long expected);
 
-    // 채팅방 입장할 때 사용
-    @Query("select CASE WHEN count(c.challengeRecordId)>0 then true else false end " +
+
+            //    List<ChallengeRecord> findAllByChallenge();
+//            "and c.challenge.challengeProgress = 2 ")
+//            "where c.challengeRecordStatus= true " +
+//            "inner join c.challenge " +
+//    @Query("select c from ChallengeRecord c " +
             "from ChallengeRecord c " +
             "Where c.challengeRecordStatus = true " +
             "and c.challenge.challengeId = :challengeId " +
             "and c.member = :member " +
             "and c.challenge.challengeProgress in (:progress, :expected) ")
     boolean existsByChallengeIdAndAndMember (Long challengeId, Member member, Long progress, Long expected);
-
-    @Query("select c from ChallengeRecord c " +
-            "inner join c.challenge " +
-            "where c.challengeRecordStatus= true " +
-            "and c.challenge.challengeProgress = 2 ")
-    List<ChallengeRecord> findAllByChallenge();
-
-    @Query("select distinct c from ChallengeRecord c " +
-            "left join fetch Posting p on c.challenge.challengeId = p.challenge.challengeId " +
-            "where c.challenge.challengeId in :challengeId " +
-            "and p.postingId  in ( select p.postingId" +
-            "                    from Posting p " +
-            "                    where p.challenge.challengeId in :challengeId " +
-            "                      and p.createdAt < :today " +
-            "                      and p.member.memberId not in (c.member.memberId))")
-    List<ChallengeRecord> findPostingListTest2(List<Long> challengeId, LocalDateTime today);
-
-    @Modifying(clearAutomatically = true)
-    @Query("update ChallengeRecord c " +
-            "set c.challengeRecordStatus = false " +
-            "where c.member.memberId in :kickMember " +
-            "and c.challenge.challengeId in :kickChallenge")
-    int kickMemberOnChallenge(List<Long> kickMember, List<Long> kickChallenge);
-
-    @Modifying(clearAutomatically = true)
-    @Query("update ChallengeRecord c " +
-            "set c.challengePoint = true " +
-            "where c.challenge in :challengeList")
-    void updateChallengePoint(List<Challenge> challengeList);
-
-    @Query("select r " +
-            "from ChallengeRecord r " +
-            "where r.challenge = :challenge " +
-            "and r.member = :member")
-    ChallengeRecord findByChallengeAndMember(Challenge challenge, Member member);
-
-    @Query("select r " +
-            "from ChallengeRecord r " +
-            "where r.challengeRecordStatus = true " +
-            "and r.challenge.challengeProgress < 3 " +
-            "and r.member = :member")
-    List<ChallengeRecord> findAllByMember(Member member);
-
-    ChallengeRecord findByChallengeAndChallengeRecordStatusTrue(Challenge challenge);
 }

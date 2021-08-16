@@ -48,7 +48,7 @@ public class Scheduler {
     @Scheduled(cron = "01 00 * * * *") // 초, 분, 시, 일, 월, 주 순서
     @Transactional
     public void certificationKick() {
-        List<ChallengeRecord> challengeMember = challengeRecordRepository.findAllByChallenge();
+        List<ChallengeRecord> challengeMember = challengeRecordQueryRepository.findAllByChallenge();
 
         //진행중인 챌린지 리스트
         List<Long> challengeId = challengeMember.stream()
