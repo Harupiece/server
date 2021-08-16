@@ -5,6 +5,7 @@ import com.example.onedaypiece.web.domain.challenge.Challenge;
 import com.example.onedaypiece.web.domain.challenge.ChallengeQueryRepository;
 import com.example.onedaypiece.web.domain.challenge.ChallengeRepository;
 import com.example.onedaypiece.web.domain.challengeRecord.ChallengeRecord;
+import com.example.onedaypiece.web.domain.challengeRecord.ChallengeRecordQueryRepository;
 import com.example.onedaypiece.web.domain.challengeRecord.ChallengeRecordRepository;
 import com.example.onedaypiece.web.domain.member.Member;
 import com.example.onedaypiece.web.domain.member.MemberRepository;
@@ -35,6 +36,7 @@ public class Scheduler {
     private final PostingQueryRepository postingQueryRepository;
     private final PostingRepository postingRepository;
     private final ChallengeRecordRepository challengeRecordRepository;
+    private final ChallengeRecordQueryRepository challengeRecordQueryRepository;
     private final ChallengeRepository challengeRepository;
     private final ChallengeQueryRepository challengeQueryRepository;
     private final PointHistoryRepository pointHistoryRepository;
@@ -141,7 +143,7 @@ public class Scheduler {
     }
 
     private void getPointWhenChallengeEnd(Challenge challenge) {
-        List<ChallengeRecord> recordList = challengeRecordRepository.optionalFindAllByChallenge(challenge)
+        List<ChallengeRecord> recordList = challengeRecordQueryRepository.optionalFindAllByChallenge(challenge)
                 .orElseThrow(() -> new ApiRequestException("인원이 없는 챌린지"));
 
         List<Member> memberList = recordList

@@ -4,6 +4,7 @@ import com.example.onedaypiece.exception.ApiRequestException;
 import com.example.onedaypiece.security.TokenProvider;
 import com.example.onedaypiece.web.domain.challenge.Challenge;
 import com.example.onedaypiece.web.domain.challengeRecord.ChallengeRecord;
+import com.example.onedaypiece.web.domain.challengeRecord.ChallengeRecordQueryRepository;
 import com.example.onedaypiece.web.domain.challengeRecord.ChallengeRecordRepository;
 import com.example.onedaypiece.web.domain.member.Member;
 import com.example.onedaypiece.web.domain.member.MemberRepository;
@@ -55,6 +56,7 @@ public class MemberService {
     private final RefreshTokenRepository refreshTokenRepository;
     private final PointRepository pointRepository;
     private final ChallengeRecordRepository challengeRecordRepository;
+    private final ChallengeRecordQueryRepository challengeRecordQueryRepository;
     private final PointHistoryRepository pointHistoryRepository;
 
     // 회원가입
@@ -212,7 +214,7 @@ public class MemberService {
 
         // 본인이 참여한 챌린지 리스트 -> 가공
         List<ProceedResponseDto> proceedingResult = proceeding.stream()
-                .map(challenge -> new ProceedResponseDto(challenge, challengeRecordRepository.findAllByChallenge(challenge)))
+                .map(challenge -> new ProceedResponseDto(challenge, challengeRecordQueryRepository.findAllByChallenge(challenge)))
                 .collect(Collectors.toList());
 
         return new MypageProceedResponseDto(member, member.getPoint().getAcquiredPoint(), proceedingResult);
@@ -230,7 +232,7 @@ public class MemberService {
                 .map(challengeRecord -> challengeRecord.getChallenge()).collect(Collectors.toList());
 
         List<ScheduledResponseDto> scheduledList = scheduled.stream()
-                .map(challenge -> new ScheduledResponseDto(challenge, challengeRecordRepository.findAllByChallenge(challenge)))
+                .map(challenge -> new ScheduledResponseDto(challenge, challengeRecordQueryRepository.findAllByChallenge(challenge)))
                 .collect(Collectors.toList());
 
         return new MyPageScheduledResponseDto(member,  scheduledList);
@@ -248,7 +250,7 @@ public class MemberService {
                 .map(challengeRecord -> challengeRecord.getChallenge()).collect(Collectors.toList());
 
         List<EndResponseDto> endList = end.stream()
-                .map(challenge -> new EndResponseDto(challenge, challengeRecordRepository.findAllByChallenge(challenge)))
+                .map(challenge -> new EndResponseDto(challenge, challengeRecordQueryRepository.findAllByChallenge(challenge)))
                 .collect(Collectors.toList());
 
         return new MyPageEndResponseDto(member, endList);

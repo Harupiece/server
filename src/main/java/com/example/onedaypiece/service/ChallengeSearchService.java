@@ -5,6 +5,7 @@ import com.example.onedaypiece.web.domain.challenge.Challenge;
 import com.example.onedaypiece.web.domain.challenge.ChallengeQueryRepository;
 import com.example.onedaypiece.web.domain.challenge.ChallengeRepository;
 import com.example.onedaypiece.web.domain.challengeRecord.ChallengeRecord;
+import com.example.onedaypiece.web.domain.challengeRecord.ChallengeRecordQueryRepository;
 import com.example.onedaypiece.web.domain.challengeRecord.ChallengeRecordRepository;
 import com.example.onedaypiece.web.dto.response.challenge.ChallengeListResponseDto;
 import com.example.onedaypiece.web.dto.response.challenge.ChallengeResponseDto;
@@ -24,9 +25,10 @@ public class ChallengeSearchService {
 
     private final ChallengeRepository challengeRepository;
     private final ChallengeRecordRepository challengeRecordRepository;
+    private final ChallengeRecordQueryRepository challengeRecordQueryRepository;
     private final ChallengeQueryRepository challengeQueryRepository;
 
-    final static int pageSize = 8;
+    final int pageSize = 8;
 
     public ChallengeListResponseDto getChallengeByCategoryName(CategoryName categoryName, int page) {
         Slice<Challenge> challengeList = challengeQueryRepository.
@@ -44,7 +46,7 @@ public class ChallengeSearchService {
     private ChallengeListResponseDto listResponseDtoSource(Slice<Challenge> challengeList) {
         ChallengeListResponseDto listResponseDto = new ChallengeListResponseDto();
 
-        List<ChallengeRecord> recordList = challengeRecordRepository.findAllByChallengeId(challengeList
+        List<ChallengeRecord> recordList = challengeRecordQueryRepository.findAllByChallengeIdList(challengeList
                 .stream()
                 .map(Challenge::getChallengeId)
                 .collect(Collectors.toList()));
@@ -58,6 +60,7 @@ public class ChallengeSearchService {
             ChallengeResponseDto responseDto = new ChallengeResponseDto(challenge, memberIdList);
             listResponseDto.addResult(responseDto);
         }
+
         return listResponseDto;
     }
 

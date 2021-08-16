@@ -14,36 +14,43 @@ import java.util.Optional;
 
 public interface ChallengeRecordRepository extends JpaRepository<ChallengeRecord, Long> {
 
-    @Query("select c from ChallengeRecord c inner join fetch c.challenge " +
-            "where c.challengeRecordStatus = true " +
-            "and c.challenge.challengeStatus = true " +
-            "and c.challenge.challengeProgress = 1 " +
-            "order by c.challenge.challengeStartDate asc")
-    List<ChallengeRecord> findAllByChallengeStatusTrueAndProgressNotStart();
+//    @Query("select c from ChallengeRecord c inner join fetch c.challenge " +
+//            "where c.challengeRecordStatus = true " +
+//            "and c.challenge.challengeStatus = true " +
+//            "and c.challenge.challengeProgress = 1 " +
+//            "order by c.challenge.challengeStartDate asc")
+//    List<ChallengeRecord> findAllByChallengeStatusTrueAndProgressNotStart();
 
-    @Query("select r from ChallengeRecord r " +
-            "inner join fetch r.member " +
-            "Where r.challengeRecordStatus = true and r.challenge = :challenge")
-    List<ChallengeRecord> findAllByChallenge(Challenge challenge);
+//    @Query("select r from ChallengeRecord r " +
+//            "inner join fetch r.member " +
+//            "Where r.challengeRecordStatus = true and r.challenge = :challenge")
+//    List<ChallengeRecord> findAllByChallenge(Challenge challenge);
 
-    @Query("select r from ChallengeRecord r " +
-            "inner join fetch r.member " +
-            "Where r.challengeRecordStatus = true and r.challenge = :challenge")
-    Optional<List<ChallengeRecord>> optionalFindAllByChallenge(Challenge challenge);
+//    @Query("select r from ChallengeRecord r " +
+//            "inner join fetch r.member " +
+//            "Where r.challengeRecordStatus = true and r.challenge = :challenge")
+//    Optional<List<ChallengeRecord>> optionalFindAllByChallenge(Challenge challenge);
 
-    @Query("select c from ChallengeRecord c " +
-            "inner join fetch c.challenge " +
-            "inner join fetch c.member " +
-            "Where c.challengeRecordStatus = true " +
-            "and c.challenge.challengeId in :challengeIdList")
-    List<ChallengeRecord> findAllByChallengeId(List<Long> challengeIdList);
+//    @Query("select c from ChallengeRecord c " +
+//            "inner join fetch c.challenge " +
+//            "inner join fetch c.member " +
+//            "Where c.challengeRecordStatus = true " +
+//            "and c.challenge.challengeId in :challengeIdList")
+//    List<ChallengeRecord> findAllByChallengeIdList(List<Long> challengeIdList);
 
-    @Query("select c " +
-            "from ChallengeRecord c inner join fetch c.challenge " +
-            "where c.challenge.challengeStatus = true and c.challenge.challengeProgress = 1 " +
-            "and c.member.email not in :email group by c.challenge.challengeId " +
-            "order by count(c.challenge.challengeId) desc")
-    List<ChallengeRecord> findPopularOrderByDesc(String email, Pageable pageable);
+//    @Query("select c from ChallengeRecord c " +
+//            "inner join fetch c.challenge " +
+//            "inner join fetch c.member " +
+//            "Where c.challengeRecordStatus = true " +
+//            "and c.challenge.challengeId = :challengeId")
+//    List<ChallengeRecord> findAllByChallengeId(Long challengeId);
+
+//    @Query("select c " +
+//            "from ChallengeRecord c inner join fetch c.challenge " +
+//            "where c.challenge.challengeStatus = true and c.challenge.challengeProgress = 1 " +
+//            "and c.member.email not in :email group by c.challenge.challengeId " +
+//            "order by count(c.challenge.challengeId) desc")
+//    List<ChallengeRecord> findPopularOrderByDesc(String email, Pageable pageable);
 
     @Query("select c " +
             "from ChallengeRecord c " +
