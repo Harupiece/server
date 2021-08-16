@@ -95,7 +95,7 @@ public class ChallengeService {
         challenge.putChallenge(requestDto);
     }
 
-    public Page<ChallengeSourceResponseDto> getAllChallenge(int page) {
+    public List<ChallengeSourceResponseDto> getAllChallenge(int page) {
         List<ChallengeRecord> records = challengeRecordQueryRepository.findAllByChallengeStatusTrueAndProgressNotStart();
         List<Challenge> challenges = records.stream().map(ChallengeRecord::getChallenge).collect(Collectors.toList());
 //        List<Long> challengeIdList = new ArrayList<>();
@@ -106,12 +106,12 @@ public class ChallengeService {
 //                .map(c -> new ChallengeSourceResponseDto(c, records))
 //                .collect(Collectors.toList());
 
-        List<ChallengeSourceResponseDto> sources = challenges
+       return challenges
                 .stream()
                 .distinct()
                 .map(c -> new ChallengeSourceResponseDto(c, records))
                 .collect(Collectors.toList());
-        return listToPage(page, sources);
+//        return listToPage(page, sources);
     }
 
     public ChallengeMainResponseDto getMainPage(String email) {

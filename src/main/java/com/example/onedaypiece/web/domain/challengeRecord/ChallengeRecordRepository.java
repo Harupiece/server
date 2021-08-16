@@ -50,8 +50,6 @@ public interface ChallengeRecordRepository extends JpaRepository<ChallengeRecord
             "and r.member = :member")
     List<ChallengeRecord> findAllByMember(Member member);
 
-    @Query("select CASE WHEN count(c.challengeRecordId)>0 then true else false end " +
-
 //    @Query("select c from ChallengeRecord c inner join fetch c.challenge " +
 //            "where c.challengeRecordStatus = true " +
 //            "and c.challenge.challengeStatus = true " +
@@ -104,14 +102,14 @@ public interface ChallengeRecordRepository extends JpaRepository<ChallengeRecord
 //            "and c.challenge = :challenge")
 //    int countByChallenge(Challenge challenge);
 
-            // 본인이 참여한 챌린지중 진행중인첼린지
+    // 본인이 참여한 챌린지중 진행중인첼린지
 //    @Query("select c from ChallengeRecord c " +
 //            "Where c.challengeRecordStatus = true " +
 //            "and c.member = :member " +
 //            "and c.challenge.challengeProgress = :progress")
 //    List<ChallengeRecord> findAllByMemberAndProgress(Member member, Long progress);
 
-            // 진행중과 진행예정 챌린지 in을 사용하기
+    // 진행중과 진행예정 챌린지 in을 사용하기
 //    @Query("select c " +
 //            "from ChallengeRecord c " +
 //            "Where c.challengeRecordStatus = true " +
@@ -120,15 +118,17 @@ public interface ChallengeRecordRepository extends JpaRepository<ChallengeRecord
 //    List<ChallengeRecord> findAllByMemberAndProgressAndExpected(@Param("member") Member member,@Param("progress") Long progress, @Param("expected") Long expected);
 
 
-            //    List<ChallengeRecord> findAllByChallenge();
+    //    List<ChallengeRecord> findAllByChallenge();
 //            "and c.challenge.challengeProgress = 2 ")
 //            "where c.challengeRecordStatus= true " +
 //            "inner join c.challenge " +
 //    @Query("select c from ChallengeRecord c " +
+
+    @Query("select CASE WHEN count(c.challengeRecordId)>0 then true else false end " +
             "from ChallengeRecord c " +
             "Where c.challengeRecordStatus = true " +
             "and c.challenge.challengeId = :challengeId " +
             "and c.member = :member " +
             "and c.challenge.challengeProgress in (:progress, :expected) ")
-    boolean existsByChallengeIdAndAndMember (Long challengeId, Member member, Long progress, Long expected);
+    boolean existsByChallengeIdAndAndMember(Long challengeId, Member member, Long progress, Long expected);
 }

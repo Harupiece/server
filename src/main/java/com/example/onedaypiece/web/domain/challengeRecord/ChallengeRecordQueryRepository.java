@@ -30,6 +30,7 @@ public class ChallengeRecordQueryRepository {
         return queryFactory
                 .select(challengeRecord)
                 .from(challengeRecord)
+                .distinct()
                 .join(challengeRecord.challenge).fetchJoin()
                 .where(challengeRecord.challengeRecordStatus.eq(true),
                         challengeRecord.challenge.challengeStatus.eq(true),
@@ -142,8 +143,7 @@ public class ChallengeRecordQueryRepository {
      */
     public List<ChallengeRecord> findAllByStatusTrue() {
         return queryFactory
-                .select(challengeRecord)
-                .from(challengeRecord)
+                .selectFrom(challengeRecord)
                 .join(challengeRecord.challenge).fetchJoin()
                 .join(challengeRecord.member).fetchJoin()
                 .where(challengeRecord.challengeRecordStatus.eq(true),
@@ -177,8 +177,7 @@ public class ChallengeRecordQueryRepository {
      */
     public List<ChallengeRecord> findAllByMemberAndProgress(Member member, Long progress) {
         return queryFactory
-                .select(challengeRecord)
-                .from(challengeRecord)
+                .selectFrom(challengeRecord)
                 .where(challengeRecord.challengeRecordStatus.eq(true),
                         challengeRecord.member.eq(member),
                         challengeRecord.challenge.challengeProgress.eq(progress))
@@ -195,8 +194,7 @@ public class ChallengeRecordQueryRepository {
      */
     public List<ChallengeRecord> findAllByMemberAndProgressAndExpected(Member member, Long progress, Long expected) {
         return queryFactory
-                .select(challengeRecord)
-                .from(challengeRecord)
+                .selectFrom(challengeRecord)
                 .where(challengeRecord.member.eq(member),
                         challengeRecord.challenge.challengeProgress.in(progress, expected))
                 .fetch();
@@ -211,8 +209,7 @@ public class ChallengeRecordQueryRepository {
      */
     public List<ChallengeRecord> findAllByChallenge() {
         return queryFactory
-                .select(challengeRecord)
-                .from(challengeRecord)
+                .selectFrom(challengeRecord)
                 .where(challengeRecord.challengeRecordStatus.eq(true),
                         challengeRecord.challenge.challengeProgress.eq(2L))
                 .fetch();

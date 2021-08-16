@@ -25,8 +25,7 @@ public class ChallengeQueryRepository {
      **/
     public Slice<Challenge> findAllByCategoryName(CategoryName categoryName, Pageable page) {
         List<Challenge> challengeList = queryFactory
-                .select(challenge)
-                .from(challenge)
+                .selectFrom(challenge)
                 .where(challenge.challengeStatus.eq(true),
                         challenge.challengeProgress.eq(1L),
                         challenge.categoryName.eq(categoryName))
@@ -46,8 +45,7 @@ public class ChallengeQueryRepository {
      **/
     public Slice<Challenge> findAllByWords(String words, Pageable page) {
         List<Challenge> challengeList = queryFactory
-                .select(challenge)
-                .from(challenge)
+                .selectFrom(challenge)
                 .where(challenge.challengeStatus.eq(true),
                         challenge.challengeProgress.eq(1L),
                         challenge.challengeTitle.like(words))
