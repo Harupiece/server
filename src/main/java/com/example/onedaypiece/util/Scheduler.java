@@ -1,6 +1,5 @@
 package com.example.onedaypiece.util;
 
-import com.example.onedaypiece.exception.ApiRequestException;
 import com.example.onedaypiece.web.domain.challenge.Challenge;
 import com.example.onedaypiece.web.domain.challenge.ChallengeQueryRepository;
 import com.example.onedaypiece.web.domain.challenge.ChallengeRepository;
@@ -112,14 +111,17 @@ public class Scheduler {
                 .stream()
                 .filter(this::isChallengeTimeToStart)
                 .collect(Collectors.toList());
-        whenChallengeStart(startList);
+        Long result1 = challengeQueryRepository.updateChallengeProgress(2L, startList);
+        log.info(today + " / " + result1 + " Challenge Start");
 
         // 챌린지 종료
         List<Challenge> endList = challengeList
                 .stream()
                 .filter(this::isChallengeTimeToEnd)
                 .collect(Collectors.toList());
-        whenChallengeEnd(endList);
+        Long result2 = challengeQueryRepository.updateChallengeProgress(3L, endList);
+        challengeRecordRepository.updateChallengePoint(endList);
+        log.info(today + " / " + result2 + " Challenge End");
 
         // 챌린지 완주 포인트 지급
         long result = endList
@@ -131,20 +133,8 @@ public class Scheduler {
     }
 
 
-    private void whenChallengeStart(List<Challenge> challengeList) {
-        Long result = challengeQueryRepository.updateChallengeProgress(2L, challengeList);
-        log.info(today + " / " + result + " Challenge Start");
-    }
-
-    private void whenChallengeEnd(List<Challenge> challengeList) {
-        Long result = challengeQueryRepository.updateChallengeProgress(3L, challengeList);
-        challengeRecordRepository.updateChallengePoint(challengeList);
-        log.info(today + " / " + result + " Challenge End");
-    }
-
     private void getPointWhenChallengeEnd(Challenge challenge) {
-        List<ChallengeRecord> recordList = challengeRecordQueryRepository.optionalFindAllByChallenge(challenge)
-                .orElseThrow(() -> new ApiRequestException("인원이 없는 챌린지"));
+        List<ChallengeRecord> recordList = challengeRecordQueryRepository.findAllByChallengeOnScheduler(challenge);
 
         List<Member> memberList = recordList
                 .stream()
@@ -160,9 +150,9 @@ public class Scheduler {
                 .collect(Collectors.toList());
 
         pointHistoryRepository.saveAll(pointHistoryList);
-//        memberRepository.updatePointAll(memberList, resultPoint);
-        memberList.forEach(member -> member.getPoint()
-                .setAcquiredPoint(member.getPoint().getAcquiredPoint() + resultPoint));
+        memberRepository.updatePointAll(memberList, resultPoint);
+//        memberList.forEach(member -> member.getPoint()
+//                .setAcquiredPoint(member.getPoint().getAcquiredPoint() + resultPoint));
     }
 
     private boolean isChallengeTimeToStart(Challenge c) {

@@ -61,14 +61,14 @@ public class ChallengeRecordQueryRepository {
      * "Where r.challengeRecordStatus = true and r.challenge = :challenge")
      * Optional<List<ChallengeRecord>> optionalFindAllByChallenge(Challenge challenge);
      */
-    public Optional<List<ChallengeRecord>> optionalFindAllByChallenge(Challenge challenge) {
-        return Optional.ofNullable(queryFactory
+    public List<ChallengeRecord> findAllByChallengeOnScheduler(Challenge challenge) {
+        return queryFactory
                 .select(challengeRecord)
                 .from(challengeRecord)
                 .join(challengeRecord.member).fetchJoin()
                 .where(challengeRecord.challengeRecordStatus.eq(true),
                         challengeRecord.challenge.eq(challenge))
-                .fetch());
+                .fetch();
     }
 
     /**
