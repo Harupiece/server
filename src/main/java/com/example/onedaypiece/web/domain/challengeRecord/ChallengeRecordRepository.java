@@ -52,26 +52,33 @@ public interface ChallengeRecordRepository extends JpaRepository<ChallengeRecord
 //            "order by count(c.challenge.challengeId) desc")
 //    List<ChallengeRecord> findPopularOrderByDesc(String email, Pageable pageable);
 
-    @Query("select c " +
-            "from ChallengeRecord c " +
-            "inner join fetch c.challenge " +
-            "inner join fetch c.member " +
-            "Where c.challengeRecordStatus = true and c.challenge.challengeProgress = 1 " +
-            "order by c.modifiedAt desc")
-    List<ChallengeRecord> findAllByStatusTrueOrderByModifiedAtDesc();
+//    @Query("select c " +
+//            "from ChallengeRecord c " +
+//            "inner join fetch c.challenge " +
+//            "inner join fetch c.member " +
+//            "Where c.challengeRecordStatus = true and c.challenge.challengeProgress = 1 " +
+//            "order by c.modifiedAt desc")
+//    List<ChallengeRecord> findAllByStatusTrueOrderByModifiedAtDesc();
 
-    @Query("select count(c.challengeRecordId) from ChallengeRecord c Where c.challengeRecordStatus = true and c.challenge = :challenge")
-    int countByChallenge(Challenge challenge);
+//    @Query("select count(c.challengeRecordId) " +
+//            "from ChallengeRecord c " +
+//            "Where c.challengeRecordStatus = true " +
+//            "and c.challenge = :challenge")
+//    int countByChallenge(Challenge challenge);
 
     // 본인이 참여한 챌린지중 진행중인첼린지
-    @Query("select c from ChallengeRecord c " +
-            "Where c.challengeRecordStatus = true " +
-            "and c.member = :member " +
-            "and c.challenge.challengeProgress = :progress")
-    List<ChallengeRecord> findAllByMemberAndProgress(Member member, Long progress);
+//    @Query("select c from ChallengeRecord c " +
+//            "Where c.challengeRecordStatus = true " +
+//            "and c.member = :member " +
+//            "and c.challenge.challengeProgress = :progress")
+//    List<ChallengeRecord> findAllByMemberAndProgress(Member member, Long progress);
 
     // 진행중과 진행예정 챌린지 in을 사용하기
-    @Query("select c from ChallengeRecord c Where c.challengeRecordStatus = true and c.member = :member and c.challenge.challengeProgress in (:progress, :expected) ")
+    @Query("select c " +
+            "from ChallengeRecord c " +
+            "Where c.challengeRecordStatus = true " +
+            "and c.member = :member " +
+            "and c.challenge.challengeProgress in (:progress, :expected) ")
     List<ChallengeRecord> findAllByMemberAndProgressAndExpected(@Param("member") Member member,@Param("progress") Long progress, @Param("expected") Long expected);
 
     // 채팅방 입장할 때 사용
