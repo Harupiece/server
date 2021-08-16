@@ -111,8 +111,10 @@ public class MemberService {
 
         // 자기가 참여한 챌린지에서 현재 진행중인리스트
         List<ChallengeRecord> targetList = challengeRecordRepository.findAllByMemberAndProgressAndExpected(member,2L, 1L);
+        // 완료된 챌린지 리스트
+        List<ChallengeRecord> completeList = challengeRecordRepository.findAllByMemberAndProgress(member,3L);
 
-        return new MemberTokenResponseDto(tokenDto, member, targetList.size());
+        return new MemberTokenResponseDto(tokenDto, member, targetList.size(), completeList.size());
     }
 
     // 새로고침
@@ -122,8 +124,10 @@ public class MemberService {
 
         // 자기가 참여한 챌린지에서 현재 진행중인리스트
         List<ChallengeRecord> targetList = challengeRecordRepository.findAllByMemberAndProgressAndExpected(member,2L, 1L);
+        // 완료된 챌린지 리스트
+        List<ChallengeRecord> completeList = challengeRecordRepository.findAllByMemberAndProgress(member,3L);
 
-        return new ReloadResponseDto(member, targetList.size());
+        return new ReloadResponseDto(member, targetList.size(), completeList.size());
     }
 
 
@@ -158,9 +162,11 @@ public class MemberService {
 
         // 자기가 참여한 챌린지에서 현재 진행중인리스트
         List<ChallengeRecord> targetList = challengeRecordRepository.findAllByMemberAndProgressAndExpected(member,2L, 1L);
+        // 완료된 챌린지 리스트
+        List<ChallengeRecord> completeList = challengeRecordRepository.findAllByMemberAndProgress(member,3L);
 
         // 토큰 발급
-        return new MemberTokenResponseDto(tokenDto, member, targetList.size());
+        return new MemberTokenResponseDto(tokenDto, member, targetList.size(), completeList.size());
     }
 
     // 마이 페이지 비밀번호 수정
