@@ -5,8 +5,6 @@ import com.example.onedaypiece.web.domain.challenge.CategoryName;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Getter
 public class ChallengeRequestDto {
@@ -44,7 +42,6 @@ public class ChallengeRequestDto {
         if(challengeBad == null || challengeBad.isEmpty()){
             throw new ApiRequestException("나쁜예시가 비었습니다.");
         }
-
 
         this.challengeTitle = challengeTitle;
         this.challengeContent = challengeContent;

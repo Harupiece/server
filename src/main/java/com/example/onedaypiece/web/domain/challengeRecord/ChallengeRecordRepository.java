@@ -17,25 +17,9 @@ public interface ChallengeRecordRepository extends JpaRepository<ChallengeRecord
     @Query("select c from ChallengeRecord c inner join fetch c.challenge " +
             "where c.challengeRecordStatus = true " +
             "and c.challenge.challengeStatus = true " +
-            "and c.challenge.challengeProgress < 3 " +
-            "order by c.modifiedAt desc")
-    List<ChallengeRecord> findAllByChallengeStatusTrue();
-
-    @Query("select c from ChallengeRecord c inner join fetch c.challenge " +
-            "where c.challengeRecordStatus = true " +
-            "and c.challenge.challengeStatus = true " +
             "and c.challenge.challengeProgress = 1 " +
             "order by c.challenge.challengeStartDate asc")
     List<ChallengeRecord> findAllByChallengeStatusTrueAndProgressNotStart();
-
-    @Query("select c from ChallengeRecord c inner join fetch c.challenge " +
-            "where c.challengeRecordStatus = true " +
-            "and c.challenge.challengeStatus = true " +
-            "and c.challenge.challengeProgress < 3 " +
-            "order by c.modifiedAt desc")
-    List<ChallengeRecord> findAllByChallengeStatusTrueByPaged(Pageable pageable);
-
-    void deleteByChallengeAndMember(Challenge challenge, Member member);
 
     @Query("select r from ChallengeRecord r " +
             "inner join fetch r.member " +
@@ -51,8 +35,8 @@ public interface ChallengeRecordRepository extends JpaRepository<ChallengeRecord
             "inner join fetch c.challenge " +
             "inner join fetch c.member " +
             "Where c.challengeRecordStatus = true " +
-            "and c.challenge.challengeId = :challengeId")
-    List<ChallengeRecord> findAllByChallengeId(Long challengeId);
+            "and c.challenge.challengeId in :challengeIdList")
+    List<ChallengeRecord> findAllByChallengeId(List<Long> challengeIdList);
 
     @Query("select c " +
             "from ChallengeRecord c inner join fetch c.challenge " +
@@ -60,8 +44,6 @@ public interface ChallengeRecordRepository extends JpaRepository<ChallengeRecord
             "and c.member.email not in :email group by c.challenge.challengeId " +
             "order by count(c.challenge.challengeId) desc")
     List<ChallengeRecord> findPopularOrderByDesc(String email, Pageable pageable);
-
-    void deleteAllByChallenge(Challenge challenge);
 
     @Query("select c " +
             "from ChallengeRecord c " +

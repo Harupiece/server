@@ -2,6 +2,7 @@ package com.example.onedaypiece.util;
 
 import com.example.onedaypiece.exception.ApiRequestException;
 import com.example.onedaypiece.web.domain.challenge.Challenge;
+import com.example.onedaypiece.web.domain.challenge.ChallengeQueryRepository;
 import com.example.onedaypiece.web.domain.challenge.ChallengeRepository;
 import com.example.onedaypiece.web.domain.challengeRecord.ChallengeRecord;
 import com.example.onedaypiece.web.domain.challengeRecord.ChallengeRecordRepository;
@@ -35,6 +36,7 @@ public class Scheduler {
     private final PostingRepository postingRepository;
     private final ChallengeRecordRepository challengeRecordRepository;
     private final ChallengeRepository challengeRepository;
+    private final ChallengeQueryRepository challengeQueryRepository;
     private final PointHistoryRepository pointHistoryRepository;
     private final MemberRepository memberRepository;
 
@@ -128,12 +130,12 @@ public class Scheduler {
 
 
     private void whenChallengeStart(List<Challenge> challengeList) {
-        int result = challengeRepository.updateChallengeProgress(2L, challengeList);
+        Long result = challengeQueryRepository.updateChallengeProgress(2L, challengeList);
         log.info(today + " / " + result + " Challenge Start");
     }
 
     private void whenChallengeEnd(List<Challenge> challengeList) {
-        int result = challengeRepository.updateChallengeProgress(3L, challengeList);
+        Long result = challengeQueryRepository.updateChallengeProgress(3L, challengeList);
         challengeRecordRepository.updateChallengePoint(challengeList);
         log.info(today + " / " + result + " Challenge End");
     }
