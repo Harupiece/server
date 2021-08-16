@@ -7,6 +7,8 @@ import com.example.onedaypiece.web.domain.challengeRecord.ChallengeRecord;
 import com.example.onedaypiece.web.domain.challengeRecord.ChallengeRecordQueryRepository;
 import com.example.onedaypiece.web.domain.challengeRecord.ChallengeRecordRepository;
 import com.example.onedaypiece.web.domain.member.Member;
+import com.example.onedaypiece.web.domain.member.MemberQueryRepository;
+import com.example.onedaypiece.web.domain.point.Point;
 import com.example.onedaypiece.web.domain.pointHistory.PointHistory;
 import com.example.onedaypiece.web.domain.pointHistory.PointHistoryRepository;
 import com.example.onedaypiece.web.domain.posting.PostingQueryRepository;
@@ -38,6 +40,8 @@ public class Scheduler {
     private final ChallengeRepository challengeRepository;
     private final ChallengeQueryRepository challengeQueryRepository;
     private final PointHistoryRepository pointHistoryRepository;
+    private final MemberQueryRepository memberQueryRepository;
+
 
     private final LocalDateTime today = LocalDate.now().atStartOfDay();
 
@@ -146,11 +150,13 @@ public class Scheduler {
                 .stream()
                 .map(r -> new PointHistory(resultPoint, r))
                 .collect(Collectors.toList());
-
         pointHistoryRepository.saveAll(pointHistoryList);
-        memberRepository.updatePointAll(memberList, resultPoint);
-//        memberList.forEach(member -> member.getPoint()
-//                .setAcquiredPoint(member.getPoint().getAcquiredPoint() + resultPoint));
+
+        List<Point> pointList = memberList
+                .stream()
+                .map(Member::getPoint)
+                .collect(Collectors.toList());
+        memberQueryRepository.updatePointAll(pointList, resultPoint);
     }
 
     private boolean isChallengeTimeToStart(Challenge c) {
