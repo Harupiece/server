@@ -74,18 +74,14 @@ public class StompHandler implements ChannelInterceptor {
             String sessionId = (String) message.getHeaders().get("simpSessionId");
             String roomId = redisRepository.getMemberEnterRoomId(sessionId);
             log.info("SUBSCRIBE22222222222 {}", sessionId);
-
-            String jwtToken = accessor.getFirstNativeHeader("token");
-            String memberEmail = tokenProvider.getMemberEmail(jwtToken);
-
+            log.info("accessor! {}", accessor.getCommand());
 
             // 클라이언트 퇴장 메시지를 채팅방에 발송한다.(redis publish)
-            Member member = memberRepository.findByEmail(memberEmail)
+            String email = Optional.ofNullable((Principal)
+                    message.getHeaders().get("username")).map(Principal::getName).orElse("UnknownUser");
+            Member member = memberRepository.findByEmail(email)
                     .orElseThrow(() -> new RuntimeException("등록되지 않은 회원입니다."));
             String nickname = member.getNickname();
-
-            log.info("SUBSCRIBE33333333333333 {}", memberEmail);
-
             chatMessageService.sendChatMessage(ChatMessage.builder().type(ChatMessage.MessageType.QUIT).roomId(roomId).sender(nickname).build());
 
             // 퇴장한 클라이언트의 roomId 맵핑 정보를 삭제한다.
