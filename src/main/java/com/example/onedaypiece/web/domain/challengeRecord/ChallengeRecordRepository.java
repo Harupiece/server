@@ -124,7 +124,7 @@ public interface ChallengeRecordRepository extends JpaRepository<ChallengeRecord
 //            "inner join c.challenge " +
 //    @Query("select c from ChallengeRecord c " +
 
-    @Query("select CASE WHEN count(c.challengeRecordId)>0 then true else false end " +
+    @Query("select CASE WHEN count(c.challengeRecordId) > 0 then true else false end " +
             "from ChallengeRecord c " +
             "Where c.challengeRecordStatus = true " +
             "and c.challenge.challengeId = :challengeId " +

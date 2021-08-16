@@ -28,7 +28,7 @@ public class ChallengeSearchService {
     private final ChallengeRecordQueryRepository challengeRecordQueryRepository;
     private final ChallengeQueryRepository challengeQueryRepository;
 
-    final int pageSize = 8;
+    final int pageSize = 999;
 
     public ChallengeListResponseDto getChallengeByCategoryName(CategoryName categoryName, int page) {
         Slice<Challenge> challengeList = challengeQueryRepository.
