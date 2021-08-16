@@ -8,7 +8,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Optional;
 
 import static com.example.onedaypiece.web.domain.challengeRecord.QChallengeRecord.challengeRecord;
 

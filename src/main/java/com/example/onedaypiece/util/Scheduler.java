@@ -27,7 +27,6 @@ import java.util.stream.Collectors;
 
 import static com.example.onedaypiece.web.domain.challenge.CategoryName.OFFICIAL;
 
-
 @Slf4j
 @RequiredArgsConstructor
 @Component
@@ -41,7 +40,6 @@ public class Scheduler {
     private final ChallengeQueryRepository challengeQueryRepository;
     private final PointHistoryRepository pointHistoryRepository;
     private final MemberQueryRepository memberQueryRepository;
-
 
     private final LocalDateTime today = LocalDate.now().atStartOfDay();
 
