@@ -25,14 +25,7 @@ public class RedisSubscriber {
             ChatMessage chatMessage = objectMapper.readValue(publishMessage, ChatMessage.class);
             // 채팅방을 구독한 클라이언트에게 메시지 발송
             messagingTemplate.convertAndSend("/sub/api/chat/rooms/" + chatMessage.getRoomId(), chatMessage);
-            ChatMessage message = ChatMessage.builder()
-                    .type(chatMessage.getType())
-                    .roomId(chatMessage.getRoomId())
-                    .sender(chatMessage.getSender())
-                    .message(chatMessage.getMessage())
-                    .profileImg(chatMessage.getProfileImg())
-                    .build();
-            chatMessageRepository.save(message);
+
             log.info("sub confirm {}, {}", chatMessage.getRoomId(), chatMessage);
         } catch (Exception e) {
             log.error("Subscriber Exception {}", e);

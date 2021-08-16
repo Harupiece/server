@@ -33,7 +33,7 @@ public class ChatRoomService {
         // 진행예정이거나 진행중인 챌린지인지 확인, 참여중인 멤버가 맞는지 확인
         Long challengeId = Long.parseLong(roomId);
         if (challengeRecordRepository.existsByChallengeIdAndAndMember(challengeId, member, 2L, 1L)){
-            List<ChatMessage> chatMessages = chatMessageRepository.findAllByRoomIdOrderByCreatedAt(roomId);
+            List<ChatMessage> chatMessages = chatMessageRepository.findAllByRoomId(roomId);
             return new ChatRoomResponseDto(roomId, chatMessages);
         } else {
             throw new ApiRequestException("종료된 챌린지에서의 채팅 서비스를 사용할 수 없습니다.");
