@@ -2,23 +2,15 @@ package com.example.onedaypiece.web.domain.challengeRecord;
 
 import com.example.onedaypiece.web.domain.challenge.Challenge;
 import com.example.onedaypiece.web.domain.member.Member;
-import com.example.onedaypiece.web.domain.posting.Posting;
-import com.example.onedaypiece.web.domain.posting.QPosting;
-import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.beans.Expression;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
 import static com.example.onedaypiece.web.domain.challengeRecord.QChallengeRecord.challengeRecord;
-import static com.example.onedaypiece.web.domain.posting.QPosting.posting;
 
 @Repository
 @RequiredArgsConstructor
