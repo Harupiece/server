@@ -2,6 +2,7 @@ package com.example.onedaypiece.chat.pubsub;
 
 import com.example.onedaypiece.chat.model.ChatMessage;
 import com.example.onedaypiece.chat.repository.ChatMessageRepository;
+import com.example.onedaypiece.exception.ApiRequestException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,7 +29,7 @@ public class RedisSubscriber {
 
             log.info("sub confirm {}, {}", chatMessage.getRoomId(), chatMessage);
         } catch (Exception e) {
-            log.error("Subscriber Exception {}", e);
+            log.error("RedisSubscriber Exception {}", e);
         }
     }
 }

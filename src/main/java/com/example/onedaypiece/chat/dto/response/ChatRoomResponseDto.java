@@ -2,6 +2,7 @@ package com.example.onedaypiece.chat.dto.response;
 
 import com.example.onedaypiece.chat.model.ChatMessage;
 import com.example.onedaypiece.web.domain.challengeRecord.ChallengeRecord;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -16,6 +17,7 @@ public class ChatRoomResponseDto {
     private Long count; // 인원수
     private List<ChatMessage> chatMessages;
 
+    @Builder
     public ChatRoomResponseDto(String roomId, List<ChatMessage> chatMessages){
         this.roomId = roomId;
         this.chatMessages = chatMessages;

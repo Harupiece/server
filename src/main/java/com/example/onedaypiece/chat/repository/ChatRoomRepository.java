@@ -7,12 +7,5 @@ import java.util.Optional;
 
 
 public interface ChatRoomRepository extends JpaRepository<ChatRoom, Long> {
-    Optional<ChatRoom> findByRoomId(String roomId);
-
-//    @Query("select c ,c.challenge.member " +
-//            "from ChatRoom c " +
-//            "join fetch c.challenge " +
-//            "where c.member.email = :email")
-//    Optional<ChatRoom> findByMemberEmail(String email);
 
 }

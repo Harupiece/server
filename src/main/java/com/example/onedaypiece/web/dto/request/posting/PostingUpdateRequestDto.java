@@ -1,9 +1,6 @@
 package com.example.onedaypiece.web.dto.request.posting;
 
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 
 import javax.validation.constraints.NotBlank;
 
@@ -16,7 +13,7 @@ public class PostingUpdateRequestDto {
     @NotBlank(message = "내용이 비어있어요!")
     private String postingContent;
 
-    //테스트 코드용 생성자
+    @Builder
     public PostingUpdateRequestDto(String postingImg, String postingContent) {
         this.postingImg = postingImg;
         this.postingContent = postingContent;

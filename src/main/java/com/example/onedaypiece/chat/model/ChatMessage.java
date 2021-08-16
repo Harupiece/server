@@ -1,17 +1,13 @@
 package com.example.onedaypiece.chat.model;
 
 import com.example.onedaypiece.chat.dto.request.ChatMessageRequestDto;
-import com.example.onedaypiece.service.MemberService;
-import com.example.onedaypiece.web.domain.common.Timestamped;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
@@ -24,6 +20,9 @@ public class ChatMessage  implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long chatMessageId;
+
+
+
 
     public enum MessageType {
         // 메시지 타입 : 입장, 퇴장, 채팅
@@ -59,31 +58,35 @@ public class ChatMessage  implements Serializable {
 
     }
 
-    public ChatMessage(ChatMessageRequestDto requestDto) {
-        this.type = requestDto.getType();
-        this.roomId = requestDto.getRoomId();
-        this.sender = requestDto.getNickname();
-        this.message = requestDto.getMessage();
-        this.profileImg = requestDto.getProfileImg();
-        this.createdAt = createTime();
+    public static ChatMessage createMessage(ChatMessageRequestDto requestDto) {
+        return ChatMessage.builder()
+                .type(requestDto.getType())
+                .roomId(requestDto.getRoomId())
+                .sender(requestDto.getNickname())
+                .message(requestDto.getMessage())
+                .profileImg(requestDto.getProfileImg())
+                .createdAt(createTime())
+                .build();
     }
 
-    public void createENTER(ChatMessageRequestDto requestDto){
-        this.message = requestDto.getNickname() + "님이 방에 입장했습니다.";
+
+    public void createENTER(String nickName){
+        this.message = nickName + "님이 방에 입장했습니다.";
         this.sender = "[알림]";
     }
 
-    public void createQUIT(ChatMessageRequestDto requestDto){
-        this.message = requestDto.getNickname() + "님이 방에서 퇴장했습니다.";
+    public void createQUIT(String nickName){
+        this.message = nickName + "님이 방에서 퇴장했습니다.";
         this.sender = "[알림]";
     }
 
-    private String createTime(){
+    private static String createTime(){
         SimpleDateFormat time = new SimpleDateFormat("yyyy-MM-dd E a HH:mm");
         Calendar calendar = Calendar.getInstance();
         Date date = calendar.getTime();
         time.setTimeZone(TimeZone.getTimeZone("Asia/Seoul"));
         return time.format(date);
     }
+
 
 }
