@@ -10,9 +10,12 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.TimeZone;
 
-@Setter
 @Getter
 @Entity
 @NoArgsConstructor
@@ -42,22 +45,45 @@ public class ChatMessage  implements Serializable {
     @Column
     private String profileImg; // 프로필 이미지
 
+    @Column
+    private String createdAt; // 채팅 입력 시간
+
     @Builder
-    public ChatMessage(MessageType type, String roomId, String sender, String message, String profileImg){
+    public ChatMessage(MessageType type, String roomId, String sender, String message, String profileImg, String createdAt) {
         this.type = type;
         this.roomId = roomId;
         this.sender = sender;
         this.message = message;
         this.profileImg = profileImg;
+        this.createdAt = createdAt;
 
     }
 
-    public ChatMessage(ChatMessageRequestDto requestDto){
+    public ChatMessage(ChatMessageRequestDto requestDto) {
         this.type = requestDto.getType();
         this.roomId = requestDto.getRoomId();
         this.sender = requestDto.getNickname();
         this.message = requestDto.getMessage();
         this.profileImg = requestDto.getProfileImg();
+        this.createdAt = createTime();
     }
-}
 
+    public void createENTER(ChatMessageRequestDto requestDto){
+        this.message = requestDto.getNickname() + "님이 방에 입장했습니다.";
+        this.sender = "[알림]";
+    }
+
+    public void createQUIT(ChatMessageRequestDto requestDto){
+        this.message = requestDto.getNickname() + "님이 방에서 퇴장했습니다.";
+        this.sender = "[알림]";
+    }
+
+    private String createTime(){
+        SimpleDateFormat time = new SimpleDateFormat("yyyy-MM-dd E a HH:mm");
+        Calendar calendar = Calendar.getInstance();
+        Date date = calendar.getTime();
+        time.setTimeZone(TimeZone.getTimeZone("Asia/Seoul"));
+        return time.format(date);
+    }
+
+}
