@@ -34,7 +34,7 @@ public class ChallengeController {
     }
 
     @GetMapping("/api/guest/challenge-all/{page}") // 모든 챌린지
-    public ResponseEntity<Page<ChallengeSourceResponseDto>> getAllChallenge(@PathVariable int page) {
+    public ResponseEntity<List<ChallengeSourceResponseDto>> getAllChallenge(@PathVariable int page) {
         return ResponseEntity.ok().body(challengeService.getAllChallenge(page));
     }
 

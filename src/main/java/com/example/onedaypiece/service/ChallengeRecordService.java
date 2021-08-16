@@ -4,6 +4,7 @@ import com.example.onedaypiece.exception.ApiRequestException;
 import com.example.onedaypiece.web.domain.challenge.Challenge;
 import com.example.onedaypiece.web.domain.challenge.ChallengeRepository;
 import com.example.onedaypiece.web.domain.challengeRecord.ChallengeRecord;
+import com.example.onedaypiece.web.domain.challengeRecord.ChallengeRecordQueryRepository;
 import com.example.onedaypiece.web.domain.challengeRecord.ChallengeRecordRepository;
 import com.example.onedaypiece.web.domain.member.Member;
 import com.example.onedaypiece.web.domain.member.MemberRepository;
@@ -13,7 +14,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static com.example.onedaypiece.web.domain.challenge.CategoryName.OFFICIAL;
 
@@ -22,6 +22,7 @@ import static com.example.onedaypiece.web.domain.challenge.CategoryName.OFFICIAL
 public class ChallengeRecordService {
 
     private final ChallengeRecordRepository challengeRecordRepository;
+    private final ChallengeRecordQueryRepository challengeRecordQueryRepository;
     private final ChallengeRepository challengeRepository;
     private final MemberRepository memberRepository;
 
@@ -64,7 +65,7 @@ public class ChallengeRecordService {
             throw new ApiRequestException("이미 해당 카테고리에 챌린지를 진행중입니다.");
         }
         if (!challenge.getCategoryName().equals(OFFICIAL) &&
-                challengeRecordRepository.countByChallenge(challenge) >= 10) {
+                challengeRecordQueryRepository.countByChallenge(challenge) >= 10) {
             throw new ApiRequestException("챌린지는 10명까지만 참여 가능합니다.");
         }
     }
