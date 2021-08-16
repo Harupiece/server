@@ -13,7 +13,7 @@ public class ReloadResponseDto {
     private MemberResponseDto userInfo;
 
 
-    public ReloadResponseDto(Member member, int challengeCount){
-        this.userInfo = new MemberResponseDto(member, challengeCount);
+    public ReloadResponseDto(Member member, int challengeCount, int completeChallengeCount){
+        this.userInfo = new MemberResponseDto(member, challengeCount, completeChallengeCount);
     }
 }

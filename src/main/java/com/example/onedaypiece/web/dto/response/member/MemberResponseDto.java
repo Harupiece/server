@@ -15,8 +15,9 @@ public class MemberResponseDto {
     private Long point;
     private Long memberLevel; // 멤버 레벨 계산해서하기
     private int challengeCount; // 자기가 참여한 챌린지 개수
+    private int completeChallengeCount; // 완료한 챌린지 개수
 
-    public MemberResponseDto(Member member, int challengeCount){
+    public MemberResponseDto(Member member, int challengeCount, int completeChallengeCount){
         this.memberId = member.getMemberId();
         this.nickname = member.getNickname();
         this.profileImg = member.getProfileImg();
@@ -24,6 +25,7 @@ public class MemberResponseDto {
         this.memberLevel = calculLevel(member.getPoint().getAcquiredPoint());
 
         this.challengeCount = challengeCount;
+        this.completeChallengeCount = completeChallengeCount;
     }
 
 

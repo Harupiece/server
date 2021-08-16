@@ -15,12 +15,12 @@ public class MemberTokenResponseDto {
     private Long accessTokenExpiresIn;
     private MemberResponseDto userInfo;
 
-    public MemberTokenResponseDto(TokenDto tokenDto, Member member, int challengeCount){
+    public MemberTokenResponseDto(TokenDto tokenDto, Member member, int challengeCount, int completeChallengeCount){
         this.grantType = tokenDto.getGrantType();
         this.accessToken = tokenDto.getAccessToken();
         this.refreshToken = tokenDto.getRefreshToken();
         this.accessTokenExpiresIn = tokenDto.getAccessTokenExpiresIn();
-        this.userInfo = new MemberResponseDto(member, challengeCount);
+        this.userInfo = new MemberResponseDto(member, challengeCount, completeChallengeCount);
     }
 
 }
