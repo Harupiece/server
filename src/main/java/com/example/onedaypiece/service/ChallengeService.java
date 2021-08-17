@@ -42,8 +42,6 @@ public class ChallengeService {
     private final ChallengeRecordQueryRepository challengeRecordQueryRepository;
     private final MemberRepository memberRepository;
     private final ChatRoomRepository chatRoomRepository;
-    private final ChatRoomService chatRoomService;
-    private final RedisRepository redisRepository;
 
     // 채팅룸 저장
     @Resource(name = "redisTemplate")

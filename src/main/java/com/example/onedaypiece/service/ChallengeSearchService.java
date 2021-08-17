@@ -31,19 +31,19 @@ public class ChallengeSearchService {
     final int pageSize = 999;
 
     public ChallengeListResponseDto getChallengeByCategoryName(CategoryName categoryName, int page) {
-        Slice<Challenge> challengeList = challengeQueryRepository.
+        List<Challenge> challengeList = challengeQueryRepository.
                 findAllByCategoryName(categoryName, PageRequest.of(page - 1, pageSize));
         return listResponseDtoSource(challengeList);
     }
 
     public ChallengeListResponseDto getChallengeSearchResult(String searchWords, int page) {
-        Slice<Challenge> challengeList = challengeQueryRepository.
+        List<Challenge> challengeList = challengeQueryRepository.
                 findAllByWords(
                         searchWords.trim(), PageRequest.of(page - 1, pageSize));
         return listResponseDtoSource(challengeList);
     }
 
-    private ChallengeListResponseDto listResponseDtoSource(Slice<Challenge> challengeList) {
+    private ChallengeListResponseDto listResponseDtoSource(List<Challenge> challengeList) {
         ChallengeListResponseDto listResponseDto = new ChallengeListResponseDto();
 
         List<ChallengeRecord> recordList = challengeRecordQueryRepository.findAllByChallengeIdList(challengeList
