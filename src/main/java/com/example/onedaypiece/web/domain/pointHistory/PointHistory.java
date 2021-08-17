@@ -23,11 +23,11 @@ public class PointHistory extends Timestamped {
     @Column
     private Long getPoint;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="posting_id")
     private Posting posting;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="challenge_record_id")
     private ChallengeRecord challengeRecord;
 

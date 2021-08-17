@@ -10,6 +10,7 @@ import com.example.onedaypiece.web.domain.member.Member;
 import com.example.onedaypiece.web.domain.member.MemberRepository;
 import com.example.onedaypiece.web.domain.point.Point;
 import com.example.onedaypiece.web.domain.point.PointRepository;
+import com.example.onedaypiece.web.domain.pointHistory.PointHistory;
 import com.example.onedaypiece.web.domain.pointHistory.PointHistoryRepository;
 import com.example.onedaypiece.web.domain.token.RefreshToken;
 import com.example.onedaypiece.web.domain.token.RefreshTokenRepository;
@@ -278,6 +279,23 @@ public class MemberService {
 
         return new MemberHistoryResponseDto(memberResponseDto , pointHistoryList);
     }
+
+    // 마이 페이지 히스토리
+    @Transactional(readOnly = true)
+    public List<PointHistory> getHistory2(String email){
+        // 1. 자기가 얻은 포인트 가져오기
+        Member member = getMemberByEmail(email);
+        return pointHistoryRepository.findHistory2(member);
+    }
+
+
+
+
+
+
+
+
+
 
 
     // 닉네임 중복확인
