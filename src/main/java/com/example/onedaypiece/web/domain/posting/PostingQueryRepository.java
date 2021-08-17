@@ -85,18 +85,7 @@ public class PostingQueryRepository  {
                 .fetch();
     }
 
-    public List<SchedulerIdListDto> findPostingListTest(List<Long> challengeId, List<Long> memberId, LocalDateTime today){
 
-        return queryFactory.select(new QSchedulerIdListDto(
-                posting.challenge.challengeId,
-                posting.member.memberId))
-                .from(posting)
-                .where(postingStatusIsTrue(),
-                        posting.challenge.challengeId.in(challengeId),
-                        posting.member.memberId.in(memberId),
-                        posting.createdAt.lt(today))
-                .fetch();
-    }
 
 
     private BooleanExpression eqChallengeId(Long challengeId) {

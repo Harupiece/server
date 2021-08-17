@@ -276,8 +276,11 @@ public class MemberService {
         List<PointHistoryDto> pointHistoryList = memberHistoryList.stream()
                 .map(memberHistory -> new PointHistoryDto(memberHistory))
                 .collect(Collectors.toList());
+        List<PointHistoryDto> pointHistoryList2 = memberHistoryList.stream()
+                .map(memberHistory -> new PointHistoryDto(memberHistory))
+                .collect(Collectors.toList());
 
-        return new MemberHistoryResponseDto(memberResponseDto , pointHistoryList);
+        return new MemberHistoryResponseDto(memberResponseDto , pointHistoryList,pointHistoryList2);
     }
 
     // 마이 페이지 히스토리
@@ -287,14 +290,6 @@ public class MemberService {
         Member member = getMemberByEmail(email);
         return pointHistoryRepository.findHistory2(member);
     }
-
-
-
-
-
-
-
-
 
 
 

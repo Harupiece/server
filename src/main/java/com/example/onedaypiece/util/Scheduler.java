@@ -41,10 +41,13 @@ public class Scheduler {
     private final ChallengeQueryRepository challengeQueryRepository;
     private final PointHistoryRepository pointHistoryRepository;
     private final MemberQueryRepository memberQueryRepository;
+    private final MemberRepository memberRepository;
+    private final SchedulerQueryRepository schedulerQueryRepository;
 
     private final LocalDateTime today = LocalDate.now().atStartOfDay();
 
     //    01 00 00
+
     @Scheduled(cron = "01 00 * * * *") // 초, 분, 시, 일, 월, 주 순서
     @Transactional
     public void certificationKick() {
@@ -55,7 +58,6 @@ public class Scheduler {
                 .map(challengeRecord -> challengeRecord.getChallenge().getChallengeId())
                 .distinct()
                 .collect(Collectors.toList());
-
         // 챌린지 참여중인 멤버
         List<Long> memberId = challengeMember.stream()
                 .map(challengeRecord -> challengeRecord.getMember().getMemberId())
@@ -63,33 +65,20 @@ public class Scheduler {
                 .collect(Collectors.toList());
 
         // 인증 글 올렸지만 인증 받지 못한 친구
-        List<SchedulerIdListDto> postingList = postingQueryRepository.findPostingListTest(challengeId, memberId, today);
-
+        List<SchedulerIdListDto> UncertifiedList = schedulerQueryRepository.findUncertifiedList(challengeId, memberId, today);
 
         // 인증글 작성하지 않은 사람.
-        List<ChallengeRecord> postingList2 = challengeRecordRepository.findPostingListTest2(challengeId, today);
+        List<SchedulerIdListDto> NotWrittenList = schedulerQueryRepository.findNotWrittenList(challengeId,memberId, today);
 
+        List<Long> UncertifiedMember = getKickMember(UncertifiedList);
+        List<Long> NotWrittenMember = getKickMember(NotWrittenList);
+        List<Long> UncertifiedChallenge = getKickChallenge(UncertifiedList);
+        List<Long> NotWrittenChallenge = getKickChallenge(NotWrittenList);
 
-        List<Long> kickMember = postingList.stream()
-                .map(SchedulerIdListDto::getMemberId).distinct()
-                .collect(Collectors.toList());
+        UncertifiedMember.addAll(NotWrittenMember);
+        UncertifiedChallenge.addAll(NotWrittenChallenge);
 
-        List<Long> kickMember2 = postingList2.stream()
-                .map(posting -> posting.getMember().getMemberId()).distinct()
-                .collect(Collectors.toList());
-
-        List<Long> kickChallenge = postingList.stream()
-                .map(SchedulerIdListDto::getChallengeId).distinct()
-                .collect(Collectors.toList());
-
-        List<Long> kickChallenge2 = postingList2.stream()
-                .map(posting -> posting.getChallenge().getChallengeId()).distinct()
-                .collect(Collectors.toList());
-
-        kickMember.addAll(kickMember2);
-        kickChallenge.addAll(kickChallenge2);
-
-        int updateResult = challengeRecordRepository.kickMemberOnChallenge(kickMember,kickChallenge);
+        int updateResult = challengeRecordRepository.kickMemberOnChallenge(UncertifiedMember,UncertifiedChallenge);
         log.info("updateResult 벌크 연산 result: {} ", updateResult);
     }
 
@@ -157,12 +146,22 @@ public class Scheduler {
                 .collect(Collectors.toList());
         memberQueryRepository.updatePointAll(pointList, resultPoint);
     }
-
     private boolean isChallengeTimeToStart(Challenge c) {
         return c.getChallengeProgress() == 1L && c.getChallengeStartDate().isEqual(today);
     }
 
     private boolean isChallengeTimeToEnd(Challenge c) {
         return c.getChallengeProgress() == 2L && c.getChallengeEndDate().isBefore(today);
+    }
+    private List<Long> getKickChallenge(List<SchedulerIdListDto> postingList) {
+        return postingList.stream()
+                .map(SchedulerIdListDto::getChallengeId).distinct()
+                .collect(Collectors.toList());
+    }
+
+    private List<Long> getKickMember(List<SchedulerIdListDto> postingList) {
+        return postingList.stream()
+                .map(SchedulerIdListDto::getMemberId).distinct()
+                .collect(Collectors.toList());
     }
 }
