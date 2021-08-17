@@ -54,7 +54,7 @@ public class ChallengeQueryRepository {
                 .where(challenge.challengeStatus.eq(true),
                         challenge.challengeProgress.eq(1L),
                         challenge.challengeTitle.contains(words))
-                .orderBy(challenge.modifiedAt.desc())
+                .orderBy(challenge.modifiedAt.asc())
                 .offset(page.getOffset())
                 .limit(page.getPageSize() + 1)
                 .fetch();
