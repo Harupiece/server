@@ -2,6 +2,7 @@ package com.example.onedaypiece.service;
 
 import com.example.onedaypiece.exception.ApiRequestException;
 import com.example.onedaypiece.web.domain.certification.Certification;
+import com.example.onedaypiece.web.domain.certification.CertificationQueryRepository;
 import com.example.onedaypiece.web.domain.certification.CertificationRepository;
 import com.example.onedaypiece.web.domain.challenge.Challenge;
 import com.example.onedaypiece.web.domain.challenge.ChallengeRepository;
@@ -10,10 +11,12 @@ import com.example.onedaypiece.web.domain.member.MemberRepository;
 import com.example.onedaypiece.web.domain.posting.Posting;
 import com.example.onedaypiece.web.domain.posting.PostingQueryRepository;
 import com.example.onedaypiece.web.domain.posting.PostingRepository;
+import com.example.onedaypiece.web.dto.query.certification.CertificationQueryDto;
 import com.example.onedaypiece.web.dto.query.posting.PostingListQueryDto;
 import com.example.onedaypiece.web.dto.request.posting.PostingCreateRequestDto;
 import com.example.onedaypiece.web.dto.request.posting.PostingUpdateRequestDto;
 import com.example.onedaypiece.web.dto.response.posting.PostingListDto;
+import com.example.onedaypiece.web.dto.response.posting.PostingResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
@@ -25,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -37,6 +41,7 @@ public class PostingService {
     private final ChallengeRepository challengeRepository;
     private final CertificationRepository certificationRepository;
     private final PostingQueryRepository postingQueryRepository;
+    private final CertificationQueryRepository certificationQueryRepository;
 
     /**
      * 1.포스트 저장
@@ -46,11 +51,11 @@ public class PostingService {
         Member member = getMemberByEmail(email);
         Challenge challenge = getChallenge(postingCreateRequestDto.getChallengeId());
         Posting posting = Posting.createPosting(postingCreateRequestDto,member,challenge);
-        Certification certification = Certification.createCertification(member, posting);
-
 
         // 포스팅 검사
         duplicatePosting(member,challenge);
+
+        Certification certification = Certification.createCertification(member, posting);
 
         postingRepository.save(posting);
         certificationRepository.save(certification);
@@ -66,13 +71,16 @@ public class PostingService {
 
         Pageable pageable = PageRequest.of(page-1,6);
 
-        // QueryRepository 적용
-//        Slice<Posting> postingList =postingRepository.findPostingList(challengeId,pageable);
         Slice<PostingListQueryDto> postingList =postingQueryRepository.findPostingList(challengeId,pageable);
 
-        List<Certification> certificationList = certificationRepository.findAllByPosting(challengeId);
+        List<CertificationQueryDto> certificationList = certificationQueryRepository.findAllByPosting(challengeId);
 
-        return PostingListDto.createPostingListDto(postingList,certificationList);
+        List<PostingResponseDto> postingResponseDtoList = postingList
+                .stream()
+                .map(posting -> PostingResponseDto.of(posting, certificationList))
+                .collect(Collectors.toList());
+
+        return PostingListDto.createPostingListDto(postingResponseDtoList,postingList.hasNext());
     }
 
     /**
@@ -104,7 +112,7 @@ public class PostingService {
         validateMember(member, posting.getMember().getMemberId());
 
         // 인증 검사.
-        isApprovalIsTrue(posting);
+        isApprovalTrue(posting);
 
         posting.deletePosting();
         return posting.getPostingId();
@@ -117,7 +125,6 @@ public class PostingService {
     }
 
     private Challenge getChallenge(Long challengeId) {
-        log.info("getChallenge : {} ",challengeId);
         return challengeRepository.findByChallengeStatusTrueAndChallengeId(challengeId)
                 .orElseThrow(() -> new ApiRequestException("등록된 챌린지가 없습니다."));
     }
@@ -127,7 +134,7 @@ public class PostingService {
                 .orElseThrow(() -> new ApiRequestException("등록된 멤버가 없습니다."));
     }
 
-    private void isApprovalIsTrue(Posting posting) {
+    private void isApprovalTrue(Posting posting) {
         if(posting.isPostingApproval()){
             throw new ApiRequestException("이미 인증된 게시글은 삭제할 수 없습니다.");
         }

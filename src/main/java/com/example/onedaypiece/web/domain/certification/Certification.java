@@ -4,6 +4,7 @@ package com.example.onedaypiece.web.domain.certification;
 import com.example.onedaypiece.web.domain.common.Timestamped;
 import com.example.onedaypiece.web.domain.member.Member;
 import com.example.onedaypiece.web.domain.posting.Posting;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -27,6 +28,7 @@ public class Certification extends Timestamped {
     @JoinColumn(name="member_id")
     private Member member;
 
+    @Builder
     public Certification(Member member, Posting posting) {
         this.member=member;
         this.posting = posting;
@@ -34,7 +36,12 @@ public class Certification extends Timestamped {
 
 
     public static Certification createCertification(Member member, Posting posting) {
-        Certification certification =new Certification(member, posting);
+        Certification certification =Certification
+                .builder()
+                .member(member)
+                .posting(posting)
+                .build();
+
         posting.addCount();
         return certification;
     }

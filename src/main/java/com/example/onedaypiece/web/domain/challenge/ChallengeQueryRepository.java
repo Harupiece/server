@@ -1,15 +1,11 @@
 package com.example.onedaypiece.web.domain.challenge;
 
-import com.example.onedaypiece.util.RepositoryHelper;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Repository;
 
-import javax.persistence.EntityManager;
-import javax.swing.text.html.parser.Entity;
 import java.util.List;
 
 import static com.example.onedaypiece.web.domain.challenge.QChallenge.challenge;

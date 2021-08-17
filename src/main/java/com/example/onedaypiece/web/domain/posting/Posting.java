@@ -89,7 +89,6 @@ public class Posting extends Timestamped {
         this.postingCount += 1;
     }
 
-    // 수정 가능 여부 로직
 
     // 인증 상태 로직
     public void updateApproval() {
