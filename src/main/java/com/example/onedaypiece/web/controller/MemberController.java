@@ -88,12 +88,21 @@ public class MemberController {
         return ResponseEntity.ok().body(responseDto);
     }
     
+//    // 마이페이지 히스토리 1
+//    @GetMapping("/mypage/history")
+//    public ResponseEntity<MemberHistoryResponseDto> getHistory(@AuthenticationPrincipal UserDetails userDetails){
+//        MemberHistoryResponseDto responseDto = memberService.getHistory(userDetails.getUsername());
+//         return ResponseEntity.ok().body(responseDto);
+//    }
+
     // 마이페이지 히스토리 1
     @GetMapping("/mypage/history")
     public ResponseEntity<MemberHistoryResponseDto> getHistory(@AuthenticationPrincipal UserDetails userDetails){
-        MemberHistoryResponseDto responseDto = memberService.getHistory(userDetails.getUsername());
-         return ResponseEntity.ok().body(responseDto);
+        MemberHistoryResponseDto responseDto = memberService.getHistory2(userDetails.getUsername());
+        return ResponseEntity.ok().body(responseDto);
     }
+
+
 
     @GetMapping("/hello-world")
     public String get123(){

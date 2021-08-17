@@ -257,7 +257,7 @@ public class MemberService {
         return new MyPageEndResponseDto(member, endList);
     }
 
-    // 마이 페이지 히스토리
+    // 마이 페이지 히스토리 1
     @Transactional(readOnly = true)
     public MemberHistoryResponseDto getHistory(String email){
         MemberResponseDto memberResponseDto;
@@ -279,6 +279,35 @@ public class MemberService {
 
 
         return new MemberHistoryResponseDto(memberResponseDto, pointHistoryList);
+    }
+
+    // 마이 페이지 히스토리 2
+    @Transactional(readOnly = true)
+    public MemberHistoryResponseDto getHistory2(String email){
+        MemberResponseDto memberResponseDto;
+
+        // 1. 자기가 얻은 포인트 가져오기
+        List<MemberHistoryDto> memberHistoryList1 = pointHistoryRepository.findHistory1(email);
+        List<MemberHistoryDto> memberHistoryList2 = pointHistoryRepository.findHistory2(email);
+
+        if(memberHistoryList1.size() == 0){
+            Member member = getMemberByEmail(email);
+            memberResponseDto = new MemberResponseDto(member);
+        } else{
+            memberResponseDto = new MemberResponseDto(memberHistoryList1.get(0));
+        }
+
+        // 2. 포인트에 관한것만 빼기 원하는정보만 빼기 히스토리에관한것만 따로뺴고
+        List<PointHistoryDto> pointHistoryListP = memberHistoryList1.stream()
+                .map(memberHistory -> new PointHistoryDto(memberHistory))
+                .collect(Collectors.toList());
+
+        List<PointHistoryDto> pointHistoryListC = memberHistoryList2.stream()
+                .map(memberHistory -> new PointHistoryDto(memberHistory))
+                .collect(Collectors.toList());
+
+
+        return new MemberHistoryResponseDto(memberResponseDto, pointHistoryListP, pointHistoryListC);
     }
 
     // 닉네임 중복확인
