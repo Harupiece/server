@@ -18,28 +18,18 @@ public class MemberHistoryResponseDto {
     private Long point;
     private Long level; // 멤버 레벨 계산해서하기
 
-    private List<PointHistoryDto> pointHistoryList;
-    private List<PointHistoryDto> pointHistoryList2;
+    private List<PointHistoryDto> postingGetpoint;
+    private List<PointHistoryDto> challengeGetpoint;
 
-    public MemberHistoryResponseDto(MemberResponseDto member, List<PointHistoryDto> pointHistoryList) {
+    public MemberHistoryResponseDto(MemberResponseDto member, List<PointHistoryDto> postingGetpoint, List<PointHistoryDto> challengeGetpoint) {
         this.memberId = member.getMemberId();
         this.nickname = member.getNickname();
         this.profileImage = member.getProfileImg();
         this.point = member.getPoint();
         this.level = CalculLevel.calculLevel(member.getPoint());
         // 포인트히스토리
-        this.pointHistoryList = pointHistoryList;
-    }
-
-    public MemberHistoryResponseDto(MemberResponseDto member, List<PointHistoryDto> pointHistoryList, List<PointHistoryDto> pointHistoryList2) {
-        this.memberId = member.getMemberId();
-        this.nickname = member.getNickname();
-        this.profileImage = member.getProfileImg();
-        this.point = member.getPoint();
-        this.level = CalculLevel.calculLevel(member.getPoint());
-        // 포인트히스토리
-        this.pointHistoryList = pointHistoryList;
-        this.pointHistoryList2 = pointHistoryList2;
+        this.postingGetpoint = postingGetpoint;
+        this.challengeGetpoint = challengeGetpoint;
     }
 
 

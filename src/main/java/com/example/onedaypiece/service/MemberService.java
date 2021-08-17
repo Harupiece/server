@@ -257,52 +257,28 @@ public class MemberService {
         return new MyPageEndResponseDto(member, endList);
     }
 
-    // 마이 페이지 히스토리 1
+    // 마이 페이지 히스토리
     @Transactional(readOnly = true)
     public MemberHistoryResponseDto getHistory(String email){
         MemberResponseDto memberResponseDto;
 
         // 1. 자기가 얻은 포인트 가져오기
-        List<MemberHistoryDto> memberHistoryList = pointHistoryRepository.findHistory(email);
+        List<MemberHistoryDto> memberHistoryListPosting = pointHistoryRepository.findHistoryPosting(email);
+        List<MemberHistoryDto> memberHistoryListChallenge = pointHistoryRepository.findHistoryChallenge(email);
 
-        if(memberHistoryList.size() == 0){
+        if(memberHistoryListPosting.size() == 0){
             Member member = getMemberByEmail(email);
             memberResponseDto = new MemberResponseDto(member);
         } else{
-            memberResponseDto = new MemberResponseDto(memberHistoryList.get(0));
+            memberResponseDto = new MemberResponseDto(memberHistoryListPosting.get(0));
         }
 
         // 2. 포인트에 관한것만 빼기 원하는정보만 빼기 히스토리에관한것만 따로뺴고
-        List<PointHistoryDto> pointHistoryList = memberHistoryList.stream()
+        List<PointHistoryDto> pointHistoryListP = memberHistoryListPosting.stream()
                 .map(memberHistory -> new PointHistoryDto(memberHistory))
                 .collect(Collectors.toList());
 
-
-        return new MemberHistoryResponseDto(memberResponseDto, pointHistoryList);
-    }
-
-    // 마이 페이지 히스토리 2
-    @Transactional(readOnly = true)
-    public MemberHistoryResponseDto getHistory2(String email){
-        MemberResponseDto memberResponseDto;
-
-        // 1. 자기가 얻은 포인트 가져오기
-        List<MemberHistoryDto> memberHistoryList1 = pointHistoryRepository.findHistory1(email);
-        List<MemberHistoryDto> memberHistoryList2 = pointHistoryRepository.findHistory2(email);
-
-        if(memberHistoryList1.size() == 0){
-            Member member = getMemberByEmail(email);
-            memberResponseDto = new MemberResponseDto(member);
-        } else{
-            memberResponseDto = new MemberResponseDto(memberHistoryList1.get(0));
-        }
-
-        // 2. 포인트에 관한것만 빼기 원하는정보만 빼기 히스토리에관한것만 따로뺴고
-        List<PointHistoryDto> pointHistoryListP = memberHistoryList1.stream()
-                .map(memberHistory -> new PointHistoryDto(memberHistory))
-                .collect(Collectors.toList());
-
-        List<PointHistoryDto> pointHistoryListC = memberHistoryList2.stream()
+        List<PointHistoryDto> pointHistoryListC = memberHistoryListChallenge.stream()
                 .map(memberHistory -> new PointHistoryDto(memberHistory))
                 .collect(Collectors.toList());
 
