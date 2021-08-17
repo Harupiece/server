@@ -51,7 +51,7 @@ public class Scheduler {
     @Scheduled(cron = "01 00 * * * *") // 초, 분, 시, 일, 월, 주 순서
     @Transactional
     public void certificationKick() {
-        List<ChallengeRecord> challengeMember = challengeRecordQueryRepository.findAllByChallenge();
+        List<ChallengeRecord> challengeMember = schedulerQueryRepository.findAllByChallenge();
 
         //진행중인 챌린지 리스트
         List<Long> challengeId = challengeMember.stream()
@@ -68,7 +68,7 @@ public class Scheduler {
         List<SchedulerIdListDto> UncertifiedList = schedulerQueryRepository.findUncertifiedList(challengeId, memberId, today);
 
         // 인증글 작성하지 않은 사람.
-        List<SchedulerIdListDto> NotWrittenList = schedulerQueryRepository.findNotWrittenList(challengeId,memberId, today);
+        List<SchedulerIdListDto> NotWrittenList = schedulerQueryRepository.findNotWrittenList(challengeId);
 
         List<Long> UncertifiedMember = getKickMember(UncertifiedList);
         List<Long> NotWrittenMember = getKickMember(NotWrittenList);
@@ -85,7 +85,7 @@ public class Scheduler {
     @Scheduled(cron = "02 00 * * * *") // 초, 분, 시, 일, 월, 주 순서
     @Transactional
     public void postingStatusUpdate() {
-        List<Long> postingIdList = postingQueryRepository.findSchedulerUpdatePosting(today);
+        List<Long> postingIdList = schedulerQueryRepository.findSchedulerUpdatePosting(today);
         // 벌크성 쿼리 업데이트
         long updateResult = postingRepository.updatePostingStatus(postingIdList);
         log.info("updateResult 벌크 연산 result: {} ", updateResult);
