@@ -1,6 +1,7 @@
 package com.example.onedaypiece.web.controller;
 
 import com.example.onedaypiece.service.MemberService;
+import com.example.onedaypiece.web.domain.pointHistory.PointHistory;
 import com.example.onedaypiece.web.dto.request.login.LoginRequestDto;
 import com.example.onedaypiece.web.dto.request.mypage.ProfileUpdateRequestDto;
 import com.example.onedaypiece.web.dto.request.mypage.PwUpdateRequestDto;
@@ -17,6 +18,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 
 @RequestMapping("/api/member")
@@ -85,7 +88,7 @@ public class MemberController {
         return ResponseEntity.ok().body(responseDto);
     }
     
-    // 마이페이지 히스토리
+    // 마이페이지 히스토리 1
     @GetMapping("/mypage/history")
     public ResponseEntity<MemberHistoryResponseDto> getHistory(@AuthenticationPrincipal UserDetails userDetails){
         MemberHistoryResponseDto responseDto = memberService.getHistory(userDetails.getUsername());
@@ -97,6 +100,13 @@ public class MemberController {
         return "hello world";
     }
 
+
+
+//    // 마이페이지 히스토리 2
+    @GetMapping("/mypage/history2")
+    public ResponseEntity<List<PointHistory>> getHistory2(@AuthenticationPrincipal UserDetails userDetails){
+        return ResponseEntity.ok().body(memberService.getHistory2(userDetails.getUsername()));
+    }
 
 
 }
