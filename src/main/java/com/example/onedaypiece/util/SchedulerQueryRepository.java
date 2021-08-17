@@ -10,6 +10,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -20,10 +21,15 @@ import static com.querydsl.jpa.JPAExpressions.*;
 
 @Repository
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class SchedulerQueryRepository {
 
     private final JPAQueryFactory queryFactory;
 
+
+    /**
+    *진행중인 챌린지
+      */
     public List<ChallengeRecord> findAllByChallenge() {
         return queryFactory
                 .selectFrom(challengeRecord)
@@ -32,6 +38,9 @@ public class SchedulerQueryRepository {
                         challengeRecord.challenge.challengeProgress.eq(2L))
                 .fetch();
     }
+    /**
+     *인증받지 못한자
+     */
     public List<SchedulerIdListDto> findUncertifiedList(List<Long> challengeId, List<Long> memberId, LocalDateTime today){
 
         return queryFactory.select(new QSchedulerIdListDto(
@@ -45,6 +54,9 @@ public class SchedulerQueryRepository {
                         posting.postingCount.eq(1L))
                 .fetch();
     }
+    /**
+     *글 쓰지 않은 자
+     */
     public List<SchedulerIdListDto> findNotWrittenList(List<Long> challengeId){
 
         return queryFactory.select(new QSchedulerIdListDto(
@@ -59,6 +71,9 @@ public class SchedulerQueryRepository {
                         posting.isNull())
                 .fetch();
     }
+    /**
+     * 수정 가능 여부 (당일만 가능)
+     */
     public List<Long> findSchedulerUpdatePosting(LocalDateTime today) {
         return queryFactory
                 .select(posting.postingId)

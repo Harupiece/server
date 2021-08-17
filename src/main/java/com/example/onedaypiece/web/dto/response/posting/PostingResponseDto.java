@@ -1,6 +1,7 @@
 package com.example.onedaypiece.web.dto.response.posting;
 
 import com.example.onedaypiece.web.domain.certification.Certification;
+import com.example.onedaypiece.web.dto.query.certification.CertificationQueryDto;
 import com.example.onedaypiece.web.dto.query.posting.PostingListQueryDto;
 import lombok.Builder;
 import lombok.Getter;
@@ -46,7 +47,13 @@ public class PostingResponseDto {
         this.memberResponseDto = memberResponseDto;
     }
 
-    public static PostingResponseDto of (PostingListQueryDto posting, List<Certification> certificationList) {
+    public static PostingResponseDto of (PostingListQueryDto posting, List<CertificationQueryDto> certificationList) {
+        List<Long> certificationMember = certificationList.stream()
+                .filter(certification ->
+                        certification.getPostingId().equals(posting.getPostingId()))
+                .map(CertificationQueryDto::getMemberId)
+                .collect(Collectors.toList());
+
         return PostingResponseDto.builder()
                 .postingId(posting.getPostingId())
                 .nickName(posting.getNickName())
@@ -59,14 +66,7 @@ public class PostingResponseDto {
                 .postingModifyOk(posting.isPostingModifyOk())
                 .createdAt(posting.getCreatedAt())
                 .modifiedAt(posting.getModifiedAt())
-                .memberResponseDto(
-                        certificationList.stream()
-                        .filter(certification ->
-                                certification.getPosting().getPostingId().equals(posting.getPostingId()))
-                        .map(certification ->
-                                certification.getMember().getMemberId())
-                        .collect(Collectors.toList())
-                )
+                .memberResponseDto(certificationMember)
                 .build();
     }
 }
