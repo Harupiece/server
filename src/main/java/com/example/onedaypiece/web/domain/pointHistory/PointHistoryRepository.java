@@ -27,7 +27,7 @@ public interface PointHistoryRepository extends JpaRepository<PointHistory, Long
             "left join p.posting.member.point " +
             "left join p.posting.challenge " +
             "where p.posting.member.email =:email " +
-            "or p.challengeRecord.member.email = :email" )
+            "or p.challengeRecord.member.email = :email " )
     List<MemberHistoryDto> findHistory(String email);
 
 

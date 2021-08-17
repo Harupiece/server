@@ -97,16 +97,9 @@ public class MemberController {
 
     @GetMapping("/hello-world")
     public String get123(){
-        return "hello world";
+        return "hello world sibal";
     }
 
-
-
-//    // 마이페이지 히스토리 2
-    @GetMapping("/mypage/history2")
-    public ResponseEntity<List<PointHistory>> getHistory2(@AuthenticationPrincipal UserDetails userDetails){
-        return ResponseEntity.ok().body(memberService.getHistory2(userDetails.getUsername()));
-    }
 
 
 }
