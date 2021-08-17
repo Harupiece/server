@@ -114,14 +114,13 @@ public class Scheduler {
         log.info(today + " / " + result2 + " Challenge End");
 
         // 챌린지 완주 포인트 지급
-        long result = endList
+        long result3 = endList
                 .stream()
                 .peek(c -> System.out.println("filteredChallenge : " + c.getChallengeId()))
                 .peek(this::getPointWhenChallengeEnd)
                 .count();
-        log.info(today + " / " + result + " members get points");
+        log.info(today + " / " + result3 + " members get points");
     }
-
 
     private void getPointWhenChallengeEnd(Challenge challenge) {
         List<ChallengeRecord> recordList = challengeRecordQueryRepository.findAllByChallengeOnScheduler(challenge);
