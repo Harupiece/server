@@ -24,6 +24,14 @@ public class SchedulerQueryRepository {
 
     private final JPAQueryFactory queryFactory;
 
+    public List<ChallengeRecord> findAllByChallenge() {
+        return queryFactory
+                .selectFrom(challengeRecord)
+                .innerJoin(challengeRecord.challenge)
+                .where(challengeRecord.challengeRecordStatus.isTrue(),
+                        challengeRecord.challenge.challengeProgress.eq(2L))
+                .fetch();
+    }
     public List<SchedulerIdListDto> findUncertifiedList(List<Long> challengeId, List<Long> memberId, LocalDateTime today){
 
         return queryFactory.select(new QSchedulerIdListDto(
@@ -37,7 +45,7 @@ public class SchedulerQueryRepository {
                         posting.postingCount.eq(1L))
                 .fetch();
     }
-    public List<SchedulerIdListDto> findNotWrittenList(List<Long> challengeId,List<Long> memberId, LocalDateTime today){
+    public List<SchedulerIdListDto> findNotWrittenList(List<Long> challengeId){
 
         return queryFactory.select(new QSchedulerIdListDto(
                 challengeRecord.challenge.challengeId,
@@ -51,6 +59,14 @@ public class SchedulerQueryRepository {
                         posting.isNull())
                 .fetch();
     }
-
+    public List<Long> findSchedulerUpdatePosting(LocalDateTime today) {
+        return queryFactory
+                .select(posting.postingId)
+                .from(posting)
+                .where(posting.postingStatus.isTrue(),
+                        posting.postingModifyOk.isTrue(),
+                        posting.createdAt.lt(today))
+                .fetch();
+    }
 
 }

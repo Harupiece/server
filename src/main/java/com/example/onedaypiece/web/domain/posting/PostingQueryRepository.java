@@ -74,16 +74,7 @@ public class PostingQueryRepository  {
     /**
      * 스케줄러
      */
-    public List<Long> findSchedulerUpdatePosting(LocalDateTime today) {
 
-        return queryFactory
-                .select(posting.postingId)
-                .from(posting)
-                .where(postingStatusIsTrue(),
-                        posting.postingModifyOk.isTrue(),
-                        posting.createdAt.lt(today))
-                .fetch();
-    }
 
 
 
