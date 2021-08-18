@@ -5,12 +5,16 @@ import com.example.onedaypiece.chat.model.ChatMessage;
 import com.example.onedaypiece.chat.repository.ChatMessageRepository;
 import com.example.onedaypiece.chat.repository.ChatRoomRepository;
 import com.example.onedaypiece.exception.ApiRequestException;
+import com.example.onedaypiece.util.RepositoryHelper;
 import com.example.onedaypiece.web.domain.challengeRecord.ChallengeRecordRepository;
 import com.example.onedaypiece.web.domain.member.Member;
 import com.example.onedaypiece.web.domain.member.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,6 +22,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @Service
+@Slf4j
 public class ChatRoomService {
 
     private final ChallengeRecordRepository challengeRecordRepository;
@@ -39,9 +44,15 @@ public class ChatRoomService {
 
         List<ChatMessage> chatMessages = chatMessageRepository.findAllByRoomIdOrderByCreatedAtDesc(roomId,pageable);
 
+        Pageable pageable2 = PageRequest.of(page-1,20, Sort.by("createAt").ascending());
+
+        Slice<ChatMessage> chatMessages1 = RepositoryHelper.toSlice(chatMessages, pageable2);
+        
+
         return ChatRoomResponseDto.builder()
                 .roomId(roomId)
                 .chatMessages(chatMessages)
+                .hasNext(chatMessages1.hasNext())
                 .build();
     }
 

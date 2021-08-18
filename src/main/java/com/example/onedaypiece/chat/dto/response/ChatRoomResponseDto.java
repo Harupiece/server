@@ -16,10 +16,12 @@ public class ChatRoomResponseDto {
     private String roomId;
     private Long count; // 인원수
     private List<ChatMessage> chatMessages;
+    private boolean hasNext;
 
     @Builder
-    public ChatRoomResponseDto(String roomId, List<ChatMessage> chatMessages){
+    public ChatRoomResponseDto(String roomId, List<ChatMessage> chatMessages,boolean hasNext){
         this.roomId = roomId;
         this.chatMessages = chatMessages;
+        this.hasNext=hasNext;
     }
 }
