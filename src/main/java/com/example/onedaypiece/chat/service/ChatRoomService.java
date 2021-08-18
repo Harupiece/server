@@ -18,6 +18,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @RequiredArgsConstructor
@@ -37,20 +38,17 @@ public class ChatRoomService {
         Member member = getMember(email);
         Long challengeId = Long.parseLong(roomId);
         existsByChallengeProgress(member, challengeId);
-
-
-        Pageable pageable = PageRequest.of(page-1,5);
-
-        List<ChatMessage> chatMessages = chatMessageRepository.findAllByRoomIdOrderByCreatedAtDesc(roomId,pageable);
-
-        Pageable pageable2 = PageRequest.of(page-1,5, Sort.by("createAt").ascending());
-
-        Slice<ChatMessage> chatMessages1 = RepositoryHelper.toSlice(chatMessages, pageable2);
         
+        // 나중에 다 바꿀거 테스트용
+        Pageable pageable = PageRequest.of(page-1,5);
+        List<ChatMessage> chatMessages = chatMessageRepository.findAllByRoomIdOrderByCreatedAtDesc(roomId,pageable);
+        Pageable pageable2 = PageRequest.of(page-1,5, Sort.by("createAt").ascending());
+        Slice<ChatMessage> chatMessages1 = RepositoryHelper.toSlice(chatMessages, pageable2);
+        List<ChatMessage> chatMessages2 = chatMessages1.getContent();
 
         return ChatRoomResponseDto.builder()
                 .roomId(roomId)
-                .chatMessages(chatMessages1)
+                .chatMessages(chatMessages2)
                 .hasNext(chatMessages1.hasNext())
                 .build();
     }
