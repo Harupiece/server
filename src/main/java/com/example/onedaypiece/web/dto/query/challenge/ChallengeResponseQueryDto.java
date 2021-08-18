@@ -52,6 +52,7 @@ public class ChallengeResponseQueryDto {
         this.challengeBad = challenge.getChallengeBad();
         this.challengeHoliday = challenge.getChallengeHoliday();
         this.challengeMember.addAll(challengeMember);
+
         if (ChronoUnit.DAYS.between(challenge.getChallengeStartDate(), challenge.getChallengeEndDate()) <= 7) {
             tagList.add("#1주");
         } else if (ChronoUnit.DAYS.between(challenge.getChallengeStartDate(), challenge.getChallengeEndDate()) <= 14) {

@@ -1,10 +1,9 @@
 package com.example.onedaypiece.web.domain.posting;
 
 import com.example.onedaypiece.util.RepositoryHelper;
+import com.example.onedaypiece.web.domain.certification.QCertification;
 import com.example.onedaypiece.web.dto.query.posting.PostingListQueryDto;
 import com.example.onedaypiece.web.dto.query.posting.QPostingListQueryDto;
-import com.example.onedaypiece.web.dto.query.posting.QSchedulerIdListDto;
-import com.example.onedaypiece.web.dto.query.posting.SchedulerIdListDto;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +14,7 @@ import org.springframework.stereotype.Repository;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static com.example.onedaypiece.web.domain.certification.QCertification.*;
 import static com.example.onedaypiece.web.domain.posting.QPosting.posting;
 
 
@@ -43,10 +43,11 @@ public class PostingQueryRepository  {
                         posting.postingCount
                 ))
                 .from(posting)
+                .join(posting.challenge)
+                .join(posting.member)
                 .where(
                         eqChallengeId(challengeId),
                         postingStatusIsTrue())
-                .leftJoin(posting.challenge)
                 .orderBy(posting.createdAt.desc())
                 .offset(page.getOffset())
                 .limit(page.getPageSize()+1)
@@ -54,8 +55,6 @@ public class PostingQueryRepository  {
 
         return RepositoryHelper.toSlice(postingList,page);
     }
-
-
 
     /**
      * 하루 1개 포스팅
@@ -70,34 +69,6 @@ public class PostingQueryRepository  {
                         posting.createdAt.gt(now))
                 .fetchFirst() != null;
     }
-
-    /**
-     * 스케줄러
-     */
-    public List<Long> findSchedulerUpdatePosting(LocalDateTime today) {
-
-        return queryFactory
-                .select(posting.postingId)
-                .from(posting)
-                .where(postingStatusIsTrue(),
-                        posting.postingModifyOk.isTrue(),
-                        posting.createdAt.lt(today))
-                .fetch();
-    }
-
-    public List<SchedulerIdListDto> findPostingListTest(List<Long> challengeId, List<Long> memberId, LocalDateTime today){
-
-        return queryFactory.select(new QSchedulerIdListDto(
-                posting.challenge.challengeId,
-                posting.member.memberId))
-                .from(posting)
-                .where(postingStatusIsTrue(),
-                        posting.challenge.challengeId.in(challengeId),
-                        posting.member.memberId.in(memberId),
-                        posting.createdAt.lt(today))
-                .fetch();
-    }
-
 
     private BooleanExpression eqChallengeId(Long challengeId) {
         return challengeId != null ? posting.challenge.challengeId.eq(challengeId) : null;

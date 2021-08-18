@@ -1,6 +1,7 @@
 package com.example.onedaypiece.web.dto.response.posting;
 
 import com.example.onedaypiece.web.domain.certification.Certification;
+import com.example.onedaypiece.web.dto.query.certification.CertificationQueryDto;
 import com.example.onedaypiece.web.dto.query.posting.PostingListQueryDto;
 import lombok.Builder;
 import lombok.Getter;
@@ -22,18 +23,11 @@ public class PostingListDto {
         this.hasNext = hasNext;
     }
 
-
-    public static PostingListDto createPostingListDto(Slice<PostingListQueryDto> postingList, List<Certification> certificationList) {
-        List<PostingResponseDto> postingResponseDtoList = postingList
-                .stream()
-                .map(posting -> PostingResponseDto.of(posting, certificationList))
-                .collect(Collectors.toList());
+    public static PostingListDto createPostingListDto(List<PostingResponseDto> postingResponseDtoList, boolean hasNext) {
 
         return PostingListDto.builder()
                 .postList(postingResponseDtoList)
-                .hasNext(postingList.hasNext())
+                .hasNext(hasNext)
                 .build();
-
-
     }
 }

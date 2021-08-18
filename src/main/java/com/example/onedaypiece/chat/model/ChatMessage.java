@@ -4,7 +4,7 @@ import com.example.onedaypiece.chat.dto.request.ChatMessageRequestDto;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import springfox.documentation.annotations.Cacheable;
+
 
 import javax.persistence.*;
 import java.io.*;
@@ -25,6 +25,8 @@ public class ChatMessage  implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long chatMessageId;
+
+
 
     public enum MessageType {
         // 메시지 타입 : 입장, 퇴장, 채팅
@@ -70,7 +72,6 @@ public class ChatMessage  implements Serializable {
                 .createdAt(createTime())
                 .build();
     }
-
 
     public void createENTER(String nickName){
         this.message = nickName + "님이 방에 입장했습니다.";

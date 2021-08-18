@@ -209,7 +209,8 @@ public class ChallengeRecordQueryRepository {
     public List<ChallengeRecord> findAllByChallenge() {
         return queryFactory
                 .selectFrom(challengeRecord)
-                .where(challengeRecord.challengeRecordStatus.eq(true),
+                .innerJoin(challengeRecord.challenge)
+                .where(challengeRecord.challengeRecordStatus.isTrue(),
                         challengeRecord.challenge.challengeProgress.eq(2L))
                 .fetch();
     }

@@ -1,10 +1,9 @@
 package com.example.onedaypiece.web.domain.challenge;
 
-import com.example.onedaypiece.util.RepositoryHelper;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -23,8 +22,9 @@ public class ChallengeQueryRepository {
      * "ORDER BY c.modifiedAt DESC")
      * List<Challenge> findAllByCategoryNameOrderByModifiedAtDescListed(CategoryName categoryName, Pageable pageable);
      **/
-    public Slice<Challenge> findAllByCategoryName(CategoryName categoryName, Pageable page) {
-        List<Challenge> challengeList = queryFactory
+    public List<Challenge> findAllByCategoryName(CategoryName categoryName, Pageable page) {
+//        List<Challenge> challengeList =
+        return queryFactory
                 .selectFrom(challenge)
                 .where(challenge.challengeStatus.eq(true),
                         challenge.challengeProgress.eq(1L),
@@ -34,7 +34,7 @@ public class ChallengeQueryRepository {
                 .limit(page.getPageSize() + 1)
                 .fetch();
 
-        return RepositoryHelper.toSlice(challengeList, page);
+//        return RepositoryHelper.toSlice(challengeList, page);
     }
 
     /**
@@ -43,18 +43,19 @@ public class ChallengeQueryRepository {
      * "ORDER BY c.modifiedAt DESC")
      * List<Challenge> findAllByWordsAndChallengeStatusTrueOrderByModifiedAtDesc(String words, Pageable pageable);
      **/
-    public Slice<Challenge> findAllByWords(String words, Pageable page) {
-        List<Challenge> challengeList = queryFactory
+    public List<Challenge> findAllByWords(String words, Pageable page) {
+//        List<Challenge> challengeList =
+        return queryFactory
                 .selectFrom(challenge)
                 .where(challenge.challengeStatus.eq(true),
                         challenge.challengeProgress.eq(1L),
-                        challenge.challengeTitle.like(words))
-                .orderBy(challenge.modifiedAt.desc())
+                        challenge.challengeTitle.contains(words))
+                .orderBy(challenge.modifiedAt.asc())
                 .offset(page.getOffset())
                 .limit(page.getPageSize() + 1)
                 .fetch();
 
-        return RepositoryHelper.toSlice(challengeList, page);
+//        return RepositoryHelper.toSlice(challengeList, page);
     }
 
     /**
@@ -62,6 +63,7 @@ public class ChallengeQueryRepository {
      * @Query("update Challenge c set c.challengeProgress = :progress where c in :challengeList")
      * int updateChallengeProgress(Long progress, List<Challenge> challengeList);
      **/
+    @Modifying
     public Long updateChallengeProgress(Long progress, List<Challenge> challengeList) {
         return queryFactory
                 .update(challenge)

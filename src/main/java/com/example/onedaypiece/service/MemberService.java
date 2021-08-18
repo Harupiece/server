@@ -263,40 +263,28 @@ public class MemberService {
         MemberResponseDto memberResponseDto;
 
         // 1. 자기가 얻은 포인트 가져오기
-        List<MemberHistoryDto> memberHistoryList = pointHistoryRepository.findHistory(email);
+        List<MemberHistoryDto> memberHistoryListPosting = pointHistoryRepository.findHistoryPosting(email);
+        List<MemberHistoryDto> memberHistoryListChallenge = pointHistoryRepository.findHistoryChallenge(email);
 
-        if(memberHistoryList.size() == 0){
+        if(memberHistoryListPosting.size() == 0){
             Member member = getMemberByEmail(email);
             memberResponseDto = new MemberResponseDto(member);
         } else{
-            memberResponseDto = new MemberResponseDto(memberHistoryList.get(0));
+            memberResponseDto = new MemberResponseDto(memberHistoryListPosting.get(0));
         }
 
         // 2. 포인트에 관한것만 빼기 원하는정보만 빼기 히스토리에관한것만 따로뺴고
-        List<PointHistoryDto> pointHistoryList = memberHistoryList.stream()
+        List<PointHistoryDto> pointHistoryListP = memberHistoryListPosting.stream()
                 .map(memberHistory -> new PointHistoryDto(memberHistory))
                 .collect(Collectors.toList());
 
-        return new MemberHistoryResponseDto(memberResponseDto , pointHistoryList);
+        List<PointHistoryDto> pointHistoryListC = memberHistoryListChallenge.stream()
+                .map(memberHistory -> new PointHistoryDto(memberHistory))
+                .collect(Collectors.toList());
+
+
+        return new MemberHistoryResponseDto(memberResponseDto, pointHistoryListP, pointHistoryListC);
     }
-
-    // 마이 페이지 히스토리
-    @Transactional(readOnly = true)
-    public List<PointHistory> getHistory2(String email){
-        // 1. 자기가 얻은 포인트 가져오기
-        Member member = getMemberByEmail(email);
-        return pointHistoryRepository.findHistory2(member);
-    }
-
-
-
-
-
-
-
-
-
-
 
     // 닉네임 중복확인
     private void existNickname(String nickname){

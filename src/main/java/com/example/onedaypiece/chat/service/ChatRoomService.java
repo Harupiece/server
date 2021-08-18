@@ -4,22 +4,25 @@ import com.example.onedaypiece.chat.dto.response.ChatMessageResponseDto;
 import com.example.onedaypiece.chat.dto.response.ChatRoomResponseDto;
 import com.example.onedaypiece.chat.model.ChatMessage;
 import com.example.onedaypiece.chat.repository.ChatMessageRepository;
-import com.example.onedaypiece.chat.repository.ChatRoomRepository;
 import com.example.onedaypiece.exception.ApiRequestException;
 import com.example.onedaypiece.web.domain.challengeRecord.ChallengeRecordRepository;
 import com.example.onedaypiece.web.domain.member.Member;
 import com.example.onedaypiece.web.domain.member.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
 
 @RequiredArgsConstructor
 @Service
+@Slf4j
 public class ChatRoomService {
 
     private final ChallengeRecordRepository challengeRecordRepository;
@@ -30,21 +33,22 @@ public class ChatRoomService {
 
     // 채팅방 입장(member가 현재 참여 중인)
     public ChatRoomResponseDto getEachChatRoom(String roomId, String email,int page) {
-        page =1;
 
         Member member = getMember(email);
         Long challengeId = Long.parseLong(roomId);
         existsByChallengeProgress(member, challengeId);
 
-        Pageable pageable = PageRequest.of(page-1,20);
 
-        List<ChatMessage> chatMessages = chatMessageRepository.findAllByRoomIdOrderByCreatedAtDesc(roomId,pageable);
-
-        List<ChatMessageResponseDto> chatMessageResponseDtoList =
-                chatMessages.stream().map(ChatMessageResponseDto::new).collect(Collectors.toList());
+        Pageable pageable = PageRequest.of(page-1,15);
+        Slice<ChatMessage> chatMessages = chatMessageRepository.findAllByRoomIdOrderByCreatedAtDesc(roomId,pageable);
+        List<ChatMessageResponseDto> chatMessageResponseDtoList = chatMessages.getContent().stream()
+                .sorted(Comparator.comparing(chatMessage -> chatMessage.getCreatedAt()))
+                .map(chatMessage -> new ChatMessageResponseDto(chatMessage))
+                .collect(Collectors.toList());
 
         return ChatRoomResponseDto.builder()
                 .chatMessages(chatMessageResponseDtoList)
+                .hasNext(chatMessages.hasNext())
                 .build();
     }
 
