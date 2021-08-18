@@ -49,7 +49,7 @@ public class Scheduler {
     //    01 00 00
 
 
-    @Scheduled(cron = "01 0 0 * * *") // 초, 분, 시, 일, 월, 주 순서
+    @Scheduled(cron = "01 49 00 * * *") // 초, 분, 시, 일, 월, 주 순서
     @Transactional
     public void certificationKick() {
 
@@ -85,7 +85,7 @@ public class Scheduler {
         log.info("updateResult 벌크 연산 result: {} ", updateResult);
     }
 
-    @Scheduled(cron = "02 0 0 * * *") // 초, 분, 시, 일, 월, 주 순서
+    @Scheduled(cron = "02 49 00 * * *") // 초, 분, 시, 일, 월, 주 순서
     @Transactional
     public void postingStatusUpdate() {
         List<Long> postingIdList = schedulerQueryRepository.findSchedulerUpdatePosting(today);
@@ -94,7 +94,7 @@ public class Scheduler {
         log.info("updateResult 벌크 연산 result: {} ", updateResult);
     }
 
-    @Scheduled(cron = "03 0 0 * * *") // 초, 분, 시, 일, 월, 주 순서
+    @Scheduled(cron = "03 49 00 * * *") // 초, 분, 시, 일, 월, 주 순서
     @Transactional
     public void challengeStatusUpdate() {
         log.info("challengeStatusUpdate method has started");
