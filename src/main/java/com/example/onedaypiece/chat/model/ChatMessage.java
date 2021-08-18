@@ -4,25 +4,27 @@ import com.example.onedaypiece.chat.dto.request.ChatMessageRequestDto;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import springfox.documentation.annotations.Cacheable;
 
 import javax.persistence.*;
-import java.io.Serializable;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.TimeZone;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Getter
 @Entity
 @NoArgsConstructor
 public class ChatMessage  implements Serializable {
 
+    private static final String BAD_WORD = "badword";
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long chatMessageId;
-
-
-
 
     public enum MessageType {
         // 메시지 타입 : 입장, 퇴장, 채팅
@@ -63,7 +65,7 @@ public class ChatMessage  implements Serializable {
                 .type(requestDto.getType())
                 .roomId(requestDto.getRoomId())
                 .sender(requestDto.getNickname())
-                .message(requestDto.getMessage())
+                .message(messageFilter(requestDto.getMessage()))
                 .profileImg(requestDto.getProfileImg())
                 .createdAt(createTime())
                 .build();
@@ -80,7 +82,7 @@ public class ChatMessage  implements Serializable {
         this.sender = "[알림]";
     }
 
-    private static String createTime(){
+    public static String createTime(){
         SimpleDateFormat time = new SimpleDateFormat("yyyy-MM-dd E a HH:mm");
         Calendar calendar = Calendar.getInstance();
         Date date = calendar.getTime();
@@ -88,5 +90,35 @@ public class ChatMessage  implements Serializable {
         return time.format(date);
     }
 
+    //createBadwordList().contains(message)
+    public static String messageFilter(String message){
+////        List<String>
+//
+//
+////        List<Integer> indexList = new ArrayList<>();
+////        int index = createBadwordList().indexOf(message);
+////        while(index != -1){
+////            // 걸린 욕설 찾아와야 함
+////            indexList.add(index);
+////            index = createBadwordList().indexOf(message, createBadwordList().get());
+////            String targetWord = message;
+////            message = message.replace(message, "**");
+//        }
+        return message;
+    }
 
+    // /home/dhkdrb897/badwordList.txt
+    public static List<String> createBadwordList(){
+        Path path = Paths.get("C:/Users/User/Desktop/bad.txt");
+        List<String> list = new ArrayList<>();
+        try (BufferedReader reader = Files.newBufferedReader(path)) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                list = Arrays.asList(line);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
 }

@@ -63,6 +63,36 @@ public class ChatMessageService {
         redisTemplate.convertAndSend(channelTopic.getTopic(), chatMessage);
     }
 
+    public void pubTalkMessage(ChatMessageRequestDto requestDto) {
+        ChatMessage chatMessage = ChatMessage.createMessage(requestDto);
+        validatePubMessage(requestDto);
+        pubMessage(chatMessage);
+    }
+
+    public void pubEnterMessage(ChatMessageRequestDto requestDto) {
+        ChatMessage chatMessage = ChatMessage.createMessage(requestDto);
+        validatePubMessage(requestDto);
+        chatMessage.createENTER(requestDto.getNickname());
+        pubMessage(chatMessage);
+    }
+
+    public void pubQuitMessage(ChatMessageRequestDto requestDto) {
+        ChatMessage chatMessage = ChatMessage.createMessage(requestDto);
+        validatePubMessage(requestDto);
+        chatMessage.createQUIT(requestDto.getNickname());
+        pubMessage(chatMessage);
+    }
+
+    public void validatePubMessage(ChatMessageRequestDto requestDto){
+        Member member = getmember(requestDto);
+        validateChatRoom(requestDto, member);
+    }
+
+    public void pubMessage(ChatMessage chatMessage){
+        chatMessageRepository.save(chatMessage);
+        redisTemplate.convertAndSend(channelTopic.getTopic(), chatMessage);
+    }
+
     private Member getmember(ChatMessageRequestDto requestDto) {
         return memberRepository.findByNickname(requestDto.getNickname())
                 .orElseThrow(() -> new ApiRequestException("조회되지 않는 회원입니다."));
@@ -71,11 +101,8 @@ public class ChatMessageService {
     private void validateChatRoom(ChatMessageRequestDto requestDto, Member member) {
         boolean b = challengeRecordRepository.existsByChallengeIdAndAndMember(
                 Long.parseLong(requestDto.getRoomId()), member, 2L, 1L);
-
-        log.info("챌린지 트루입니까? {}", b);
-
         if (!b) {
-            throw new ApiRequestException("입장하실 챌린지가 없습니다.");
+            throw new ApiRequestException("입장 가능한 챌린지가 없습니다.");
         }
     }
 }

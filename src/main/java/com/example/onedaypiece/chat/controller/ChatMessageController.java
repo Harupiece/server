@@ -30,4 +30,22 @@ public class ChatMessageController {
         return ResponseEntity.ok().build();
     }
 
+    @MessageMapping("/talk")
+    public ResponseEntity<Void> pubTalkMessage(@RequestBody ChatMessageRequestDto requestDto){
+        chatMessageService.pubTalkMessage(requestDto);
+        return ResponseEntity.ok().build();
+    }
+
+    @MessageMapping("/enter")
+    public ResponseEntity<Void> pubEnterMessage(@RequestBody ChatMessageRequestDto requestDto){
+        chatMessageService.pubEnterMessage(requestDto);
+        return ResponseEntity.ok().build();
+    }
+
+    @MessageMapping("/quit")
+    public ResponseEntity<Void> pubQuitMessage(@RequestBody ChatMessageRequestDto requestDto){
+        chatMessageService.pubQuitMessage(requestDto);
+        return ResponseEntity.ok().build();
+    }
+
 }

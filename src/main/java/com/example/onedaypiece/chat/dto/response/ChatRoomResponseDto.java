@@ -13,13 +13,11 @@ import java.util.List;
 @NoArgsConstructor
 public class ChatRoomResponseDto {
 
-    private String roomId;
     private Long count; // 인원수
-    private List<ChatMessage> chatMessages;
+    private List<ChatMessageResponseDto> chatMessages;
 
     @Builder
-    public ChatRoomResponseDto(String roomId, List<ChatMessage> chatMessages){
-        this.roomId = roomId;
+    public ChatRoomResponseDto(List<ChatMessageResponseDto> chatMessages){
         this.chatMessages = chatMessages;
     }
 }

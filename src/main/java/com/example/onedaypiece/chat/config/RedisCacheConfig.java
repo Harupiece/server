@@ -12,17 +12,28 @@ import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 import java.time.Duration;
+import java.util.HashMap;
+import java.util.Map;
 
 @Configuration
 @EnableCaching
 public class RedisCacheConfig {
+
+    private static final String BAD_WORD = "badword";
 
     @Bean
     public CacheManager chatCacheManager(RedisConnectionFactory connectionFactory){
         RedisCacheConfiguration redisCacheConfiguration = RedisCacheConfiguration.defaultCacheConfig()
                 .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()))
                 .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer()))
-                .entryTtl(Duration.ofHours(5L));
-        return RedisCacheManager.RedisCacheManagerBuilder.fromConnectionFactory(connectionFactory).cacheDefaults(redisCacheConfiguration).build();
+                .entryTtl(Duration.ofHours(3L));
+
+        Map<String, RedisCacheConfiguration> cacheConfigurationMap = new HashMap<>();
+        cacheConfigurationMap.put(BAD_WORD, RedisCacheConfiguration.defaultCacheConfig())
+                .entryTtl(Duration.ofHours(24L));
+
+        return RedisCacheManager.RedisCacheManagerBuilder.fromConnectionFactory(connectionFactory)
+                .withInitialCacheConfigurations(cacheConfigurationMap)
+                .cacheDefaults(redisCacheConfiguration).build();
     }
 }

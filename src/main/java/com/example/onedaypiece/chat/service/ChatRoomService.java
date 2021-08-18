@@ -1,5 +1,6 @@
 package com.example.onedaypiece.chat.service;
 
+import com.example.onedaypiece.chat.dto.response.ChatMessageResponseDto;
 import com.example.onedaypiece.chat.dto.response.ChatRoomResponseDto;
 import com.example.onedaypiece.chat.model.ChatMessage;
 import com.example.onedaypiece.chat.repository.ChatMessageRepository;
@@ -14,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @RequiredArgsConstructor
@@ -38,9 +40,11 @@ public class ChatRoomService {
 
         List<ChatMessage> chatMessages = chatMessageRepository.findAllByRoomIdOrderByCreatedAtDesc(roomId,pageable);
 
+        List<ChatMessageResponseDto> chatMessageResponseDtoList =
+                chatMessages.stream().map(ChatMessageResponseDto::new).collect(Collectors.toList());
+
         return ChatRoomResponseDto.builder()
-                .roomId(roomId)
-                .chatMessages(chatMessages)
+                .chatMessages(chatMessageResponseDtoList)
                 .build();
     }
 
