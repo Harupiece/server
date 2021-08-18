@@ -48,11 +48,8 @@ public class Scheduler {
 
     //    01 00 00
 
-<<<<<<< HEAD
+
     @Scheduled(cron = "01 00 00 * * *") // 초, 분, 시, 일, 월, 주 순서
-=======
-    @Scheduled(cron = "01 0/1 * * * *") // 초, 분, 시, 일, 월, 주 순서
->>>>>>> parent of d305bf5 (프론트 요구사항 해결)
     @Transactional
     public void certificationKick() {
 
