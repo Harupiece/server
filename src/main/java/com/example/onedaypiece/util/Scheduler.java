@@ -49,7 +49,7 @@ public class Scheduler {
     //    01 00 00
 
 
-    @Scheduled(cron = "01 0 * * * *") // 초, 분, 시, 일, 월, 주 순서
+    @Scheduled(cron = "01 05 0 * * *") // 초, 분, 시, 일, 월, 주 순서
     @Transactional
     public void certificationKick() {
 
@@ -85,7 +85,7 @@ public class Scheduler {
         log.info("updateResult 벌크 연산 result: {} ", updateResult);
     }
 
-    @Scheduled(cron = "02 0 * * * *") // 초, 분, 시, 일, 월, 주 순서
+    @Scheduled(cron = "02 05 0 * * *") // 초, 분, 시, 일, 월, 주 순서
     @Transactional
     public void postingStatusUpdate() {
         List<Long> postingIdList = schedulerQueryRepository.findSchedulerUpdatePosting(today);
@@ -94,7 +94,7 @@ public class Scheduler {
         log.info("updateResult 벌크 연산 result: {} ", updateResult);
     }
 
-    @Scheduled(cron = "03 0 * * * *") // 초, 분, 시, 일, 월, 주 순서
+    @Scheduled(cron = "03 05 0 * * *") // 초, 분, 시, 일, 월, 주 순서
     public void challengeStatusUpdate() {
         log.info("challengeStatusUpdate method has started");
         List<Challenge> challengeList = challengeRepository.findAllByChallengeStatusTrueAndChallengeProgressLessThan(3L);
@@ -119,8 +119,7 @@ public class Scheduler {
         challengeEndPoint(endList);
     }
 
-    @Transactional
-    public void challengeEndPoint(List<Challenge> endList) {
+    private void challengeEndPoint(List<Challenge> endList) {
         long result3 = endList
                 .stream()
                 .peek(c -> System.out.println("filteredChallenge : " + c.getChallengeId()))
@@ -129,15 +128,13 @@ public class Scheduler {
         log.info(today + " / " + result3 + " members get points");
     }
 
-    @Transactional
-    public void challengeEnd(List<Challenge> endList) {
+    private void challengeEnd(List<Challenge> endList) {
         Long result2 = challengeQueryRepository.updateChallengeProgress(3L, endList);
         challengeRecordRepository.updateChallengePoint(endList);
         log.info(today + " / " + result2 + " Challenge End");
     }
 
-    @Transactional
-    public void challengeStart(List<Challenge> startList) {
+    private void challengeStart(List<Challenge> startList) {
         Long result1 = challengeQueryRepository.updateChallengeProgress(2L, startList);
         log.info(today + " / " + result1 + " Challenge Start");
     }
