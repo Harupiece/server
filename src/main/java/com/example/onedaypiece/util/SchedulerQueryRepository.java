@@ -1,18 +1,23 @@
 package com.example.onedaypiece.util;
 
 import com.example.onedaypiece.web.domain.challengeRecord.ChallengeRecord;
+import com.example.onedaypiece.web.domain.challengeRecord.QChallengeRecord;
+import com.example.onedaypiece.web.domain.posting.QPosting;
 import com.example.onedaypiece.web.dto.query.posting.QSchedulerIdListDto;
 import com.example.onedaypiece.web.dto.query.posting.SchedulerIdListDto;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static com.example.onedaypiece.web.domain.challengeRecord.QChallengeRecord.challengeRecord;
-import static com.example.onedaypiece.web.domain.posting.QPosting.posting;
+import static com.example.onedaypiece.web.domain.challengeRecord.QChallengeRecord.*;
+import static com.example.onedaypiece.web.domain.posting.QPosting.*;
+import static com.querydsl.jpa.JPAExpressions.*;
 
 @Repository
 @RequiredArgsConstructor

@@ -34,6 +34,7 @@ public class ChatRoomService {
         Long challengeId = Long.parseLong(roomId);
         existsByChallengeProgress(member, challengeId);
 
+
         Pageable pageable = PageRequest.of(page-1,20);
 
         List<ChatMessage> chatMessages = chatMessageRepository.findAllByRoomIdOrderByCreatedAtDesc(roomId,pageable);
