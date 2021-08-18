@@ -48,7 +48,11 @@ public class Scheduler {
 
     //    01 00 00
 
-    @Scheduled(cron = "01 00 * * * *") // 초, 분, 시, 일, 월, 주 순서
+<<<<<<< HEAD
+    @Scheduled(cron = "01 00 00 * * *") // 초, 분, 시, 일, 월, 주 순서
+=======
+    @Scheduled(cron = "01 0/1 * * * *") // 초, 분, 시, 일, 월, 주 순서
+>>>>>>> parent of d305bf5 (프론트 요구사항 해결)
     @Transactional
     public void certificationKick() {
 
@@ -84,7 +88,7 @@ public class Scheduler {
         log.info("updateResult 벌크 연산 result: {} ", updateResult);
     }
 
-    @Scheduled(cron = "02 00 * * * *") // 초, 분, 시, 일, 월, 주 순서
+    @Scheduled(cron = "02 00 00 * * *") // 초, 분, 시, 일, 월, 주 순서
     @Transactional
     public void postingStatusUpdate() {
         List<Long> postingIdList = schedulerQueryRepository.findSchedulerUpdatePosting(today);
@@ -93,7 +97,7 @@ public class Scheduler {
         log.info("updateResult 벌크 연산 result: {} ", updateResult);
     }
 
-    @Scheduled(cron = "03 00 * * * *") // 초, 분, 시, 일, 월, 주 순서
+    @Scheduled(cron = "03 00 00 * * *") // 초, 분, 시, 일, 월, 주 순서
     @Transactional
     public void challengeStatusUpdate() {
         List<Challenge> challengeList = challengeRepository.findAllByChallengeStatusTrueAndChallengeProgressLessThan(3L);

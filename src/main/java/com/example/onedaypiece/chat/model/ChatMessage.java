@@ -21,9 +21,6 @@ public class ChatMessage  implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long chatMessageId;
 
-
-
-
     public enum MessageType {
         // 메시지 타입 : 입장, 퇴장, 채팅
         ENTER, QUIT, TALK
@@ -81,7 +78,7 @@ public class ChatMessage  implements Serializable {
     }
 
     private static String createTime(){
-        SimpleDateFormat time = new SimpleDateFormat("yyyy-MM-dd E a HH:mm");
+        SimpleDateFormat time = new SimpleDateFormat("yyyy-MM-dd E a HH:mm:ss");
         Calendar calendar = Calendar.getInstance();
         Date date = calendar.getTime();
         time.setTimeZone(TimeZone.getTimeZone("Asia/Seoul"));

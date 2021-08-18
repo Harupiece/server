@@ -43,11 +43,12 @@ public class PostingQueryRepository  {
                         posting.postingCount
                 ))
                 .from(posting)
-                .join(posting.challenge)
-                .join(posting.member)
+                .join(certification)
                 .where(
                         eqChallengeId(challengeId),
                         postingStatusIsTrue())
+                .join(posting.challenge)
+                .join(posting.member)
                 .orderBy(posting.createdAt.desc())
                 .offset(page.getOffset())
                 .limit(page.getPageSize()+1)
