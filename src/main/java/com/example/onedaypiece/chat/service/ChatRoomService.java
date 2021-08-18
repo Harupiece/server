@@ -33,25 +33,24 @@ public class ChatRoomService {
 
     // 채팅방 입장(member가 현재 참여 중인)
     public ChatRoomResponseDto getEachChatRoom(String roomId, String email,int page) {
-        page =1;
 
         Member member = getMember(email);
         Long challengeId = Long.parseLong(roomId);
         existsByChallengeProgress(member, challengeId);
 
 
-        Pageable pageable = PageRequest.of(page-1,20);
+        Pageable pageable = PageRequest.of(page-1,5);
 
         List<ChatMessage> chatMessages = chatMessageRepository.findAllByRoomIdOrderByCreatedAtDesc(roomId,pageable);
 
-        Pageable pageable2 = PageRequest.of(page-1,20, Sort.by("createAt").ascending());
+        Pageable pageable2 = PageRequest.of(page-1,5, Sort.by("createAt").ascending());
 
         Slice<ChatMessage> chatMessages1 = RepositoryHelper.toSlice(chatMessages, pageable2);
         
 
         return ChatRoomResponseDto.builder()
                 .roomId(roomId)
-                .chatMessages(chatMessages)
+                .chatMessages(chatMessages1)
                 .hasNext(chatMessages1.hasNext())
                 .build();
     }

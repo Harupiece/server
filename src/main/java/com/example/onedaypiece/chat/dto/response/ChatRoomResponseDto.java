@@ -5,6 +5,7 @@ import com.example.onedaypiece.web.domain.challengeRecord.ChallengeRecord;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -15,11 +16,11 @@ public class ChatRoomResponseDto {
 
     private String roomId;
     private Long count; // 인원수
-    private List<ChatMessage> chatMessages;
+    private Slice<ChatMessage> chatMessages;
     private boolean hasNext;
 
     @Builder
-    public ChatRoomResponseDto(String roomId, List<ChatMessage> chatMessages,boolean hasNext){
+    public ChatRoomResponseDto(String roomId, Slice<ChatMessage> chatMessages, boolean hasNext){
         this.roomId = roomId;
         this.chatMessages = chatMessages;
         this.hasNext=hasNext;
