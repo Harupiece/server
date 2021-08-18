@@ -4,6 +4,7 @@ import com.example.onedaypiece.chat.dto.request.ChatMessageRequestDto;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.domain.Slice;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -65,7 +66,6 @@ public class ChatMessage  implements Serializable {
                 .createdAt(createTime())
                 .build();
     }
-
 
     public void createENTER(String nickName){
         this.message = nickName + "님이 방에 입장했습니다.";
