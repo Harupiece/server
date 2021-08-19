@@ -216,23 +216,20 @@ public class ChallengeService {
                 throw new ApiRequestException("비밀번호는 4자리 이상으로 설정해야합니다.");
             }
         }
-        if(requestDto.getChallengeTitle() == null || requestDto.getChallengeTitle().isEmpty()){
-            throw new ApiRequestException("제목이 입력해주세요.");
-        }
         if(!StringUtils.hasText(requestDto.getChallengeTitle())){
-            throw new ApiRequestException("제목이 입력해주세요.");
+            throw new ApiRequestException("제목 없습니다.");
         }
         if(!StringUtils.hasText(requestDto.getChallengeContent())){
-            throw new ApiRequestException("내용이 비었습니다.");
+            throw new ApiRequestException("내용이 없습니다.");
         }
         if(!StringUtils.hasText(requestDto.getChallengeImgUrl())){
-            throw new ApiRequestException("챌린지 이미지가 비었습니다.");
+            throw new ApiRequestException("챌린지 이미지가 없습니다.");
         }
         if(!StringUtils.hasText(requestDto.getChallengeGood())){
-            throw new ApiRequestException("좋은예시가 비었습니다.");
+            throw new ApiRequestException("좋은 예시가 없습니다.");
         }
         if(!StringUtils.hasText(requestDto.getChallengeBad())){
-            throw new ApiRequestException("나쁜예시가 비었습니다.");
+            throw new ApiRequestException("나쁜 예시가 없습니다.");
         }
     }
 }
