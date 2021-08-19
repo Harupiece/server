@@ -128,7 +128,7 @@ public class MemberService {
         // 자기가 참여한 챌린지에서 현재 진행중인리스트
         List<ChallengeRecord> targetList = challengeRecordQueryRepository.findAllByMemberAndProgressAndExpected(member,2L, 1L);
         // 완료된 챌린지 리스트
-        List<ChallengeRecord> completeList = challengeRecordQueryRepository.findAllByMemberAndProgressLessThan(member,3L);
+        List<ChallengeRecord> completeList = challengeRecordQueryRepository.findAllByMemberAndProgress(member,3L);
 
         return new ReloadResponseDto(member, targetList.size(), completeList.size());
     }

@@ -183,15 +183,6 @@ public class ChallengeRecordQueryRepository {
                 .fetch();
     }
 
-    public List<ChallengeRecord> findAllByMemberAndProgressLessThan(Member member, Long progress) {
-        return queryFactory
-                .selectFrom(challengeRecord)
-                .where(challengeRecord.challengeRecordStatus.eq(true),
-                        challengeRecord.member.eq(member),
-                        challengeRecord.challenge.challengeProgress.lt(progress))
-                .fetch();
-    }
-
     /**
      * @Query("select c " +
      * "from ChallengeRecord c " +
