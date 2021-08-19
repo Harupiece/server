@@ -14,15 +14,14 @@ import java.util.List;
 @NoArgsConstructor
 public class ChatRoomResponseDto {
 
-    private String roomId;
     private Long count; // 인원수
-    private List<ChatMessage> chatMessages;
+    private List<ChatMessageResponseDto> chatMessages;
     private boolean hasNext;
 
     @Builder
-    public ChatRoomResponseDto(String roomId, List<ChatMessage> chatMessages, boolean hasNext){
-        this.roomId = roomId;
+    public ChatRoomResponseDto(List<ChatMessageResponseDto> chatMessages, boolean hasNext) {
         this.chatMessages = chatMessages;
-        this.hasNext=hasNext;
+        this.hasNext = hasNext;
     }
 }
+
