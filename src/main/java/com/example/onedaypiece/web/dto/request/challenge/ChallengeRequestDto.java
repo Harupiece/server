@@ -1,9 +1,7 @@
 package com.example.onedaypiece.web.dto.request.challenge;
 
-import com.example.onedaypiece.exception.ApiRequestException;
 import com.example.onedaypiece.web.domain.challenge.CategoryName;
 import lombok.Getter;
-import lombok.Setter;
 
 import java.time.LocalDateTime;
 
@@ -23,26 +21,6 @@ public class ChallengeRequestDto {
     public ChallengeRequestDto(String challengeTitle, String challengeContent, String challengePassword, CategoryName categoryName,
                                LocalDateTime challengeStartDate, LocalDateTime challengeEndDate, String challengeImgUrl,
                                String challengeGood, String challengeBad, String challengeHoliday){
-
-        if(challengeTitle == null || challengeTitle.isEmpty()){
-            throw new ApiRequestException("제목이 비었습니다.");
-        }
-
-        if(challengeContent == null || challengeContent.isEmpty()){
-            throw new ApiRequestException("내용이 비었습니다.");
-        }
-
-        if(challengeImgUrl == null || challengeImgUrl.isEmpty()){
-            throw new ApiRequestException("챌린지 이미지가 비었습니다.");
-        }
-
-        if(challengeGood == null || challengeGood.isEmpty()){
-            throw new ApiRequestException("좋은예시가 비었습니다.");
-        }
-
-        if(challengeBad == null || challengeBad.isEmpty()){
-            throw new ApiRequestException("나쁜예시가 비었습니다.");
-        }
 
         this.challengeTitle = challengeTitle;
         this.challengeContent = challengeContent;

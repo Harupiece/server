@@ -238,6 +238,10 @@ public class ChallengeRecordQueryRepository {
                 .fetch();
     }
 
+    public List<ChallengeRecord> findAllByMember(Member member) {
+        return null;
+    }
+
 //    /**
 //     * @Query("select distinct c from ChallengeRecord c " +
 //     * "left join fetch Posting p on c.challenge.challengeId = p.challenge.challengeId " +

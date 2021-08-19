@@ -125,27 +125,25 @@ public class Scheduler {
                 .collect(Collectors.toList());
 
         // 챌린지 시작
-        System.out.println("챌린지 시작");
         challengeStart(startList);
 
         // 챌린지 종료
-        System.out.println("챌린지 종료");
         challengeEnd(endList);
 
         // 챌린지 완주 포인트 지급
-        System.out.println("챌린지 완주 포인트 지급");
         challengeEndPoint(endList);
     }
 
     @Scheduled(cron = "04 0 0 * * *")
     @Transactional
     public void createOfficialChallenge() {
-        System.out.println("4번 4번 4번");
         Member member = memberRepository.findById(1L).orElseThrow(() -> new NullPointerException("없는 유저입니다."));
+
+        final int CREATE_DELAY = 7;
+        final int PROGRESS_PERIOD = 6;
 
         ChallengeRequestDto requestDto = null;
         int dayValue = today.getDayOfWeek().getValue();
-        System.out.println();
         // 월요일이 1, 일요일이 7
         if (dayValue == 1) {
             requestDto = new ChallengeRequestDto(
@@ -155,8 +153,8 @@ public class Scheduler {
                             "3. 인증샷을 올리고 다른 분들의 인증 게시물도 구경하면서 인증버튼을 눌러주세요\uD83D\uDE04",
                     "",
                     OFFICIAL,
-                    today.plusDays(7),
-                    today.plusDays(7 + 6),
+                    today.plusDays(CREATE_DELAY),
+                    today.plusDays(CREATE_DELAY + PROGRESS_PERIOD),
                     "https://cdn.pixabay.com/photo/2016/02/12/16/45/cat-1196374_960_720.jpg",
                     "https://cdn.pixabay.com/photo/2016/02/12/16/45/cat-1196374_960_720.jpg",
                     "https://cdn.pixabay.com/photo/2016/02/12/16/45/cat-1196374_960_720.jpg",
@@ -170,8 +168,8 @@ public class Scheduler {
                             "3. 인증샷을 올리고 다른 분들의 인증 게시물도 구경하면서 인증버튼을 꼭 눌러주세요\uD83D\uDE04",
                     "",
                     OFFICIAL,
-                    today.plusDays(7),
-                    today.plusDays(7 + 6),
+                    today.plusDays(CREATE_DELAY),
+                    today.plusDays(CREATE_DELAY + PROGRESS_PERIOD),
                     "https://cdn.pixabay.com/photo/2016/02/12/16/45/cat-1196374_960_720.jpg",
                     "https://cdn.pixabay.com/photo/2016/02/12/16/45/cat-1196374_960_720.jpg",
                     "https://cdn.pixabay.com/photo/2016/02/12/16/45/cat-1196374_960_720.jpg",
@@ -185,8 +183,8 @@ public class Scheduler {
                             "3. 인증샷을 올리고 다른 분들의 인증 게시물도 구경하면서 인증버튼을 꼭 눌러주세요\uD83D\uDE04",
                     "",
                     OFFICIAL,
-                    today.plusDays(7),
-                    today.plusDays(7 + 6),
+                    today.plusDays(CREATE_DELAY),
+                    today.plusDays(CREATE_DELAY + PROGRESS_PERIOD),
                     "https://cdn.pixabay.com/photo/2016/02/12/16/45/cat-1196374_960_720.jpg",
                     "https://cdn.pixabay.com/photo/2016/02/12/16/45/cat-1196374_960_720.jpg",
                     "https://cdn.pixabay.com/photo/2016/02/12/16/45/cat-1196374_960_720.jpg",
@@ -228,14 +226,12 @@ public class Scheduler {
     private void getPointWhenChallengeEnd(Challenge challenge) {
         List<ChallengeRecord> recordList = challengeRecordQueryRepository.findAllByChallengeOnScheduler(challenge);
 
-        System.out.println("challenge = " + challenge.getChallengeId());
-        System.out.println("size = " + recordList.size());
-
         List<Member> memberList = recordList
                 .stream()
                 .map(ChallengeRecord::getMember)
                 .collect(Collectors.toList());
 
+        if (memberList.size() > 0) {
         long postingCount = postingRepository.findAllByChallengeAndMember(challenge, memberList.get(0)).size();
         Long resultPoint = postingCount * 500L * (challenge.getCategoryName().equals(OFFICIAL) ? 2L : 1L);
 
@@ -245,7 +241,6 @@ public class Scheduler {
                 .collect(Collectors.toList());
         pointHistoryRepository.saveAll(pointHistoryList);
 
-        if (memberList.size() > 0) {
             List<Point> pointList = memberList
                     .stream()
                     .map(Member::getPoint)
