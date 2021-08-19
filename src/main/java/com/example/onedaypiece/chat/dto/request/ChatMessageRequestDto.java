@@ -12,5 +12,5 @@ public class ChatMessageRequestDto {
     private String profileImg; // 유저의 프로필 이미지
     private String message;
     private String createdAt;
-
+    private String alert; //[알림]
 }
