@@ -113,11 +113,12 @@ public class MemberService {
         Member member = getMemberByEmail(requestDto.getEmail());
 
         // 자기가 참여한 챌린지에서 현재 진행중인리스트
-        List<ChallengeRecord> targetList = challengeRecordQueryRepository.findAllByMemberAndProgressAndExpected(member,2L, 1L);
+        List<ChallengeRecord> targetList1 = challengeRecordQueryRepository.findAllByMemberAndStatus(member,1L);
+        List<ChallengeRecord> targetList2 = challengeRecordQueryRepository.findAllByMemberAndStatus(member,2L);
         // 완료된 챌린지 리스트
         List<ChallengeRecord> completeList = challengeRecordQueryRepository.findAllByMemberAndProgress(member,3L);
 
-        return new MemberTokenResponseDto(tokenDto, member, targetList.size(), completeList.size());
+        return new MemberTokenResponseDto(tokenDto, member, targetList1.size() + targetList2.size(), completeList.size());
     }
 
     // 새로고침
@@ -126,11 +127,14 @@ public class MemberService {
         Member member = getMemberByEmail(email);
 
         // 자기가 참여한 챌린지에서 현재 진행중인리스트
-        List<ChallengeRecord> targetList = challengeRecordQueryRepository.findAllByMemberAndProgressAndExpected(member,2L, 1L);
+        // 1번과 2번 상태가 겹치는거같음
+        List<ChallengeRecord> targetList1 = challengeRecordQueryRepository.findAllByMemberAndStatus(member,1L);
+        List<ChallengeRecord> targetList2 = challengeRecordQueryRepository.findAllByMemberAndStatus(member,2L);
+
         // 완료된 챌린지 리스트
         List<ChallengeRecord> completeList = challengeRecordQueryRepository.findAllByMemberAndProgress(member,3L);
 
-        return new ReloadResponseDto(member, targetList.size(), completeList.size());
+        return new ReloadResponseDto(member, targetList1.size() + targetList2.size(), completeList.size());
     }
 
 
@@ -164,12 +168,14 @@ public class MemberService {
         refreshTokenRepository.save(newRefreshToken);
 
         // 자기가 참여한 챌린지에서 현재 진행중인리스트
-        List<ChallengeRecord> targetList = challengeRecordQueryRepository.findAllByMemberAndProgressAndExpected(member,2L, 1L);
+        // 1번과 2번 상태가 겹치는거같음
+        List<ChallengeRecord> targetList1 = challengeRecordQueryRepository.findAllByMemberAndStatus(member,1L);
+        List<ChallengeRecord> targetList2 = challengeRecordQueryRepository.findAllByMemberAndStatus(member,2L);
         // 완료된 챌린지 리스트
         List<ChallengeRecord> completeList = challengeRecordQueryRepository.findAllByMemberAndProgress(member,3L);
 
         // 토큰 발급
-        return new MemberTokenResponseDto(tokenDto, member, targetList.size(), completeList.size());
+        return new MemberTokenResponseDto(tokenDto, member, targetList1.size() + targetList2.size(), completeList.size());
     }
 
     // 마이 페이지 비밀번호 수정
