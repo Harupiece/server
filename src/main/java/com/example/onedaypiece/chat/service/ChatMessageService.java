@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -43,6 +44,7 @@ public class ChatMessageService {
         pubMessage(chatMessage);
     }
 
+    @Transactional
     public void pubEnterMessage(ChatMessageRequestDto requestDto) {
         ChatMessage chatMessage = ChatMessage.createMessage(requestDto);
         validatePubMessage(requestDto);
@@ -50,6 +52,7 @@ public class ChatMessageService {
         pubMessage(chatMessage);
     }
 
+    @Transactional
     public void pubQuitMessage(ChatMessageRequestDto requestDto) {
         ChatMessage chatMessage = ChatMessage.createMessage(requestDto);
         validatePubMessage(requestDto);
