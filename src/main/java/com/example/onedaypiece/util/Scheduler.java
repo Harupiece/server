@@ -133,46 +133,45 @@ public class Scheduler {
         ChallengeRequestDto requestDto = null;
         int dayValue = today.getDayOfWeek().getValue();
         // 월요일이 1, 일요일이 7
-        switch (today.getDayOfWeek().getValue()) {
-            case 1:
-                requestDto = new ChallengeRequestDto(
-                        "매일 물 2L 마시기",
-                        "매일 물 2L 마시기\uD83D\uDE04",
-                        "",
-                        OFFICIAL,
-                        today.plusDays(7),
-                        today.plusDays(7 + 6),
-                        "https://cdn.pixabay.com/photo/2016/02/12/16/45/cat-1196374_960_720.jpg",
-                        "https://cdn.pixabay.com/photo/2016/02/12/16/45/cat-1196374_960_720.jpg",
-                        "https://cdn.pixabay.com/photo/2016/02/12/16/45/cat-1196374_960_720.jpg",
-                        ""
-                );
-            case 3:
-                requestDto = new ChallengeRequestDto(
-                        "매일 산책하기",
-                        "매일 산책하기",
-                        "",
-                        OFFICIAL,
-                        today.plusDays(7),
-                        today.plusDays(7 + 6),
-                        "https://cdn.pixabay.com/photo/2016/02/12/16/45/cat-1196374_960_720.jpg",
-                        "https://cdn.pixabay.com/photo/2016/02/12/16/45/cat-1196374_960_720.jpg",
-                        "https://cdn.pixabay.com/photo/2016/02/12/16/45/cat-1196374_960_720.jpg",
-                        ""
-                );
-            case 5:
-                requestDto = new ChallengeRequestDto(
-                        "매일 물 2L 마시기",
-                        "매일 물 2L 마시기",
-                        "",
-                        OFFICIAL,
-                        today.plusDays(7),
-                        today.plusDays(7 + 6),
-                        "https://cdn.pixabay.com/photo/2016/02/12/16/45/cat-1196374_960_720.jpg",
-                        "https://cdn.pixabay.com/photo/2016/02/12/16/45/cat-1196374_960_720.jpg",
-                        "https://cdn.pixabay.com/photo/2016/02/12/16/45/cat-1196374_960_720.jpg",
-                        ""
-                );
+        if (dayValue == 1) {
+            requestDto = new ChallengeRequestDto(
+                    "매일 물 2L 마시기",
+                    "매일 물 2L 마시기\uD83D\uDE04",
+                    "",
+                    OFFICIAL,
+                    today.plusDays(7),
+                    today.plusDays(7 + 6),
+                    "https://cdn.pixabay.com/photo/2016/02/12/16/45/cat-1196374_960_720.jpg",
+                    "https://cdn.pixabay.com/photo/2016/02/12/16/45/cat-1196374_960_720.jpg",
+                    "https://cdn.pixabay.com/photo/2016/02/12/16/45/cat-1196374_960_720.jpg",
+                    ""
+            );
+        } else if (dayValue == 3) {
+            requestDto = new ChallengeRequestDto(
+                    "매일 산책하기",
+                    "매일 산책하기",
+                    "",
+                    OFFICIAL,
+                    today.plusDays(7),
+                    today.plusDays(7 + 6),
+                    "https://cdn.pixabay.com/photo/2016/02/12/16/45/cat-1196374_960_720.jpg",
+                    "https://cdn.pixabay.com/photo/2016/02/12/16/45/cat-1196374_960_720.jpg",
+                    "https://cdn.pixabay.com/photo/2016/02/12/16/45/cat-1196374_960_720.jpg",
+                    ""
+            );
+        } else if (dayValue == 5) {
+            requestDto = new ChallengeRequestDto(
+                    "매일 물 2L 마시기",
+                    "매일 물 2L 마시기",
+                    "",
+                    OFFICIAL,
+                    today.plusDays(7),
+                    today.plusDays(7 + 6),
+                    "https://cdn.pixabay.com/photo/2016/02/12/16/45/cat-1196374_960_720.jpg",
+                    "https://cdn.pixabay.com/photo/2016/02/12/16/45/cat-1196374_960_720.jpg",
+                    "https://cdn.pixabay.com/photo/2016/02/12/16/45/cat-1196374_960_720.jpg",
+                    ""
+            );
         }
         if (requestDto != null) {
             Challenge challenge = new Challenge(requestDto, member);
