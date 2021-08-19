@@ -24,12 +24,6 @@ public class ChatMessageController {
     private final ChatMessageService chatMessageService;
 
     // 웹소켓으로 들어오는 메시지 발행 처리 -> 클라이언트에서는 /pub/message로 발행 요청
-    @MessageMapping("/message")
-    public ResponseEntity<Void> pubMessage(@RequestBody ChatMessageRequestDto requestDto) {
-        chatMessageService.sendChatMessage(requestDto);
-        return ResponseEntity.ok().build();
-    }
-
     @MessageMapping("/talk")
     public ResponseEntity<Void> pubTalkMessage(@RequestBody ChatMessageRequestDto requestDto){
         chatMessageService.pubTalkMessage(requestDto);

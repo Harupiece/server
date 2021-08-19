@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -18,14 +19,13 @@ import java.util.stream.Collectors;
 @Getter
 @Entity
 @NoArgsConstructor
-public class ChatMessage  implements Serializable {
+public class ChatMessage implements Serializable {
 
     private static final String BAD_WORD = "badword";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long chatMessageId;
-
 
 
     public enum MessageType {
@@ -73,17 +73,17 @@ public class ChatMessage  implements Serializable {
                 .build();
     }
 
-    public void createENTER(String nickName){
+    public void createENTER(String nickName) {
         this.message = nickName + "님이 방에 입장했습니다.";
         this.sender = "[알림]";
     }
 
-    public void createQUIT(String nickName){
+    public void createQUIT(String nickName) {
         this.message = nickName + "님이 방에서 퇴장했습니다.";
         this.sender = "[알림]";
     }
 
-    public static String createTime(){
+    public static String createTime() {
         SimpleDateFormat time = new SimpleDateFormat("yyyy-MM-dd E a HH:mm");
         Calendar calendar = Calendar.getInstance();
         Date date = calendar.getTime();
@@ -91,35 +91,41 @@ public class ChatMessage  implements Serializable {
         return time.format(date);
     }
 
-    //createBadwordList().contains(message)
-    public static String messageFilter(String message){
-////        List<String>
-//
-//
-////        List<Integer> indexList = new ArrayList<>();
-////        int index = createBadwordList().indexOf(message);
-////        while(index != -1){
-////            // 걸린 욕설 찾아와야 함
-////            indexList.add(index);
-////            index = createBadwordList().indexOf(message, createBadwordList().get());
-////            String targetWord = message;
-////            message = message.replace(message, "**");
-//        }
-        return message;
-    }
-
-    // /home/dhkdrb897/badwordList.txt
-    public static List<String> createBadwordList(){
-        Path path = Paths.get("C:/Users/User/Desktop/bad.txt");
-        List<String> list = new ArrayList<>();
-        try (BufferedReader reader = Files.newBufferedReader(path)) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                list = Arrays.asList(line);
+    // /home/dhkdrb897/bad.txt
+    // C:/Users/User/Desktop/bad.txt
+    public static String messageFilter(String message) {
+        FileInputStream fis;
+        InputStreamReader isr;
+        BufferedReader bReader;
+        try {
+            fis = new FileInputStream("/home/dhkdrb897/badword.txt");
+            isr = new InputStreamReader(fis, StandardCharsets.UTF_8);
+            bReader = new BufferedReader(isr);
+            String words = bReader.readLine();
+            String[] badwordList = words.split(",");
+            int size = badwordList.length;
+            String filterword = "";
+            for (int i = 0; i < size; i++) {
+                filterword = badwordList[i];
+                filterword = filterword.trim();
+                if (message.contains(filterword)) {
+                    int s = filterword.length();
+                    String change = "";
+                    int j = 0;
+                    while (j < s) {
+                        change = change + "*";
+                        j++;
+                    }
+                    message = message.replaceAll(filterword, change);
+                    System.out.println(message);
+                }
             }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            System.out.println("지정 경로에 해당파일 없음");
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return list;
+        return message;
     }
 }

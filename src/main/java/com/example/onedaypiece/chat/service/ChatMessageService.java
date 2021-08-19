@@ -37,32 +37,6 @@ public class ChatMessageService {
     }
 
     // 채팅방에 알림 메세지 발송
-    public void sendChatMessage(ChatMessageRequestDto requestDto) {
-
-        System.out.println("requestDto = " + requestDto.getRoomId());
-        System.out.println("requestDto = " + requestDto.getNickname());
-
-        ChatMessage chatMessage = ChatMessage.createMessage(requestDto);
-        Member member = getmember(requestDto);
-        validateChatRoom(requestDto, member);
-
-        if (ChatMessage.MessageType.ENTER.equals(requestDto.getType())) {
-            chatMessage.createENTER(requestDto.getNickname());
-            chatMessageRepository.save(chatMessage);
-
-        }
-        else if (ChatMessage.MessageType.QUIT.equals(requestDto.getType())) {
-            chatMessage.createQUIT(requestDto.getNickname());
-            chatMessageRepository.save(chatMessage);
-
-        }
-        else if(ChatMessage.MessageType.TALK.equals(requestDto.getType())){
-            chatMessageRepository.save(chatMessage);
-        }
-
-        redisTemplate.convertAndSend(channelTopic.getTopic(), chatMessage);
-    }
-
     public void pubTalkMessage(ChatMessageRequestDto requestDto) {
         ChatMessage chatMessage = ChatMessage.createMessage(requestDto);
         validatePubMessage(requestDto);
