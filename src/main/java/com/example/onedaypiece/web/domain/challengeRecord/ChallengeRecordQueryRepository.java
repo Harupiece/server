@@ -179,7 +179,7 @@ public class ChallengeRecordQueryRepository {
                 .selectFrom(challengeRecord)
                 .where(challengeRecord.challengeRecordStatus.eq(true),
                         challengeRecord.member.eq(member),
-                        challengeRecord.challenge.challengeProgress.eq(progress))
+                        challengeRecord.challenge.challengeProgress.lt(progress))
                 .fetch();
     }
 
