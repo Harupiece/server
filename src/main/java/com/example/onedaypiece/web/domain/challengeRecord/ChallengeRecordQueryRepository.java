@@ -5,6 +5,7 @@ import com.example.onedaypiece.web.domain.member.Member;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -239,7 +240,13 @@ public class ChallengeRecordQueryRepository {
     }
 
     public List<ChallengeRecord> findAllByMember(Member member) {
-        return null;
+        return queryFactory
+                .selectFrom(challengeRecord)
+                .where(challengeRecord.challengeRecordStatus.eq(true),
+                        challengeRecord.challenge.challengeStatus.eq(true),
+                        challengeRecord.challenge.challengeProgress.lt(3L),
+                        challengeRecord.member.eq(member))
+                .fetch();
     }
 
 //    /**
