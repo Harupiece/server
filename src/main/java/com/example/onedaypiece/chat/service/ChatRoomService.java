@@ -42,7 +42,7 @@ public class ChatRoomService {
         Slice<ChatMessage> chatMessages = chatMessageRepository.findAllByRoomIdOrderByCreatedAtDesc(roomId,pageable);
 
         List<ChatMessage> chatMessages2 = chatMessages.getContent().stream()
-                .sorted(Comparator.comparing(ChatMessage::getCreatedAt))
+                .sorted(Comparator.comparing(chatMessage1 -> chatMessage1.getCreatedAt()))
                 .collect(Collectors.toList());
 
         return ChatRoomResponseDto.builder()

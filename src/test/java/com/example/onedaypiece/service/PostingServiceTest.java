@@ -1,128 +1,111 @@
-//package com.example.onedaypiece.service;
-//
-//import com.example.onedaypiece.exception.ApiRequestException;
-//import com.example.onedaypiece.web.domain.challenge.CategoryName;
-//import com.example.onedaypiece.web.domain.challenge.Challenge;
-//import com.example.onedaypiece.web.domain.challenge.ChallengeRepository;
-//import com.example.onedaypiece.web.domain.member.Member;
-//import com.example.onedaypiece.web.domain.member.MemberRepository;
-//import com.example.onedaypiece.web.domain.posting.Posting;
-//import com.example.onedaypiece.web.domain.posting.PostingRepository;
-//import com.example.onedaypiece.web.dto.request.challenge.ChallengeRequestDto;
-//import com.example.onedaypiece.web.dto.request.posting.PostingCreateRequestDto;
-//import com.example.onedaypiece.web.dto.request.posting.PostingUpdateRequestDto;
-//import org.junit.jupiter.api.Test;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.boot.test.context.SpringBootTest;
-//import org.springframework.security.crypto.password.PasswordEncoder;
-//import org.springframework.transaction.annotation.Transactional;
-//
-//import java.time.LocalDateTime;
-//
-//import static org.junit.jupiter.api.Assertions.assertEquals;
-//import static org.junit.jupiter.api.Assertions.assertFalse;
-//
-//@SpringBootTest
-//@Transactional
-//public class PostingServiceTest {
-//
-//    @Autowired
-//    MemberRepository memberRepository;
-//    @Autowired
-//    ChallengeRepository challengeRepository;
-//    @Autowired
-//    PostingRepository postingRepository;
-//    @Autowired
-//    PasswordEncoder passwordEncoder;
-//
-//    @Test
-//    public void createPosting() {
-//
-//        //given
-//        PostingCreateRequestDto postingRequestDto = getPostingRequestDto();
-//        Member member = getMember();
-//        Challenge challenge = getChallenge(member);
-//
-//        Posting posting = Posting.createPosting(postingRequestDto, member, challenge);
-//
-//        LocalDateTime now = LocalDateTime.now();
-//
-//        if (now.isBefore(challenge.getChallengeStartDate())) {
-//            throw new ApiRequestException("챌린지 시작 후에 게시글 등록 가능합니다.");
-//        }
-//
-//        //when
-//        postingRepository.save(posting);
-//
-//        Posting findPosting =
-//                postingRepository.findById(posting.getPostingId()).orElseThrow(() -> new ApiRequestException("포스팅이 없습니다."));
-//
-//        //then
-//        assertEquals(posting.getPostingId(), findPosting.getPostingId());
-//
-//    }
-//    @Test
-//    public void updatePosting() {
-//
-//        //given
-//
-//        Member member = getMember();
-//        Challenge challenge =getChallenge(member);
-//        PostingCreateRequestDto postingRequestDto = getPostingRequestDto();
-//        Posting posting = Posting.createPosting(postingRequestDto, member, challenge);
-//
-//        PostingUpdateRequestDto postingUpdateRequestDto = new PostingUpdateRequestDto("이미지입니다.", "테스트 콘텐츠 입니다");
-//
-//        postingRepository.save(posting);
-//
-//
-//        //when
-//        posting.updatePosting(postingUpdateRequestDto);
-//
-//        //then
-//
-//        assertEquals(posting.getPostingContent(), postingUpdateRequestDto.getPostingContent());
-//        assertEquals(posting.getPostingImg(), postingUpdateRequestDto.getPostingImg());
-//
-//    }
-//    @Test
-//    public void deletePosting() {
-//        //given
-//        Member member = getMember();
-//        Challenge challenge = getChallenge(member);
-//        PostingCreateRequestDto postingRequestDto = getPostingRequestDto();
-//        Posting posting = Posting.createPosting(postingRequestDto, member, challenge);
-//
-//        //when
-//
-//        posting.deletePosting();
-//
-//        //then
-//
-//        assertFalse(posting.isPostingStatus());
-//    }
-//
-//    private PostingCreateRequestDto getPostingRequestDto() {
-//        return new PostingCreateRequestDto("이미지", "컨텐츠", 12L, 1L);
-//    }
-//    private Member getMember() {
-//        return new Member("test1@naver.com", passwordEncoder.encode("1234"), "닉네임1", "프로필1");
-//    }
-//    private Challenge getChallenge(Member member) {
-//        CategoryName categoryName = null;
-//        ChallengeRequestDto challengeTestRequestDto = new ChallengeRequestDto(
-//                "challengeTitle",
-//                "challengeContent",
-//                "", categoryName,
-//                LocalDateTime.now(),
-//                LocalDateTime.now().
-//                        plusDays(1),
-//                "challengeImgUrl",
-//                "challengeGood",
-//                "challengeBad",
-//                "challengeHoliday");
-//
-//        return new Challenge(challengeTestRequestDto,member);
-//    }
-//
-//}
+package com.example.onedaypiece.service;
+
+import com.example.onedaypiece.web.domain.certification.CertificationRepository;
+import com.example.onedaypiece.web.domain.challenge.CategoryName;
+import com.example.onedaypiece.web.domain.challenge.Challenge;
+import com.example.onedaypiece.web.domain.challenge.ChallengeRepository;
+import com.example.onedaypiece.web.domain.member.Member;
+import com.example.onedaypiece.web.domain.member.MemberRepository;
+import com.example.onedaypiece.web.domain.member.MemberRole;
+import com.example.onedaypiece.web.domain.point.Point;
+import com.example.onedaypiece.web.domain.point.PointRepository;
+import com.example.onedaypiece.web.domain.posting.PostingRepository;
+import com.example.onedaypiece.web.dto.request.posting.PostingCreateRequestDto;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Spy;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.Optional;
+
+import static org.mockito.BDDMockito.given;
+
+@ExtendWith(MockitoExtension.class)
+public class PostingServiceTest {
+
+    @Spy
+    @InjectMocks
+    PostingService postingService;
+
+    @Mock
+    PostingRepository postingRepository;
+
+    @Mock
+    MemberRepository memberRepository;
+
+    @Mock
+    CertificationRepository certificationRepository;
+
+    @Mock
+    ChallengeRepository challengeRepository;
+
+    @Mock
+    PointRepository pointRepository;
+
+
+    @DisplayName("포스팅 작성 성공")
+    @Test
+    void createPosting (){
+        //given
+
+        // dto
+        PostingCreateRequestDto dto = PostingCreateRequestDto.builder()
+                .postingImg("테스트이미지")
+                .postingContent("테스트콘텐츠")
+                .challengeId(1L)
+                .build();
+        // 포인트
+        Point point = Point.builder()
+//                .pointId(200L)
+                .acquiredPoint(0L)
+                .build();
+
+        pointRepository.save(point);
+        // 멤버
+        Member member = Member.builder()
+//                .memberId(200L)
+                .email("qwer@qwer.com")
+                .profileImg("test.jpg")
+                .nickname("김진태")
+                .password("1234")
+                .memberStatus(1L)
+                .point(point)
+                .role(MemberRole.MEMBER)
+                .build();
+
+        memberRepository.save(member);
+        //챌린지
+        Challenge challenge = Challenge.builder()
+//                .challengeId(200L)
+                .challengeTitle("테스트 챌린지 타이틀")
+                .challengeContent("테스트 챌린지 콘텐츠")
+                .categoryName(CategoryName.EXERCISE)
+                .challengeImgUrl("challengeTest.jpg")
+                .challengeGood("good.jpg")
+                .challengeBad("bad.jpg")
+                .challengeHoliday("")
+                .build();
+
+        challengeRepository.save(challenge);
+
+
+
+
+        //mocking
+        given(pointRepository.findById(200L)).willReturn(Optional.of(point));
+        given(memberRepository.findById(200L)).willReturn(Optional.of(member));
+        given(challengeRepository.save(challenge)).willReturn(challenge);
+
+        System.out.println("challenge.getChallengeId() = " + challenge.getChallengeId());
+
+        Long posting = postingService.createPosting(dto, "qwer@qwer.com");
+
+        System.out.println("posting = " + posting);
+
+
+    }
+
+}

@@ -2,14 +2,14 @@ package com.example.onedaypiece.web.domain.point;
 
 
 import com.example.onedaypiece.web.domain.common.Timestamped;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Setter
 @Getter
 @Entity
+
 public class Point extends Timestamped {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,6 +18,13 @@ public class Point extends Timestamped {
 
     @Column
     private Long acquiredPoint;
+
+    @Builder
+    public Point(Long pointId, Long acquiredPoint) {
+        this.pointId = pointId;
+        this.acquiredPoint = acquiredPoint;
+    }
+
 
 
     public Point(){
