@@ -37,29 +37,33 @@ public class ChatMessageService {
     }
 
     // 채팅방에 알림 메세지 발송
-    public void sendChatMessage(ChatMessageRequestDto requestDto) {
-
-        System.out.println("requestDto = " + requestDto.getRoomId());
-        System.out.println("requestDto = " + requestDto.getNickname());
-
+    public void pubTalkMessage(ChatMessageRequestDto requestDto) {
         ChatMessage chatMessage = ChatMessage.createMessage(requestDto);
+        validatePubMessage(requestDto);
+        pubMessage(chatMessage);
+    }
+
+    public void pubEnterMessage(ChatMessageRequestDto requestDto) {
+        ChatMessage chatMessage = ChatMessage.createMessage(requestDto);
+        validatePubMessage(requestDto);
+        chatMessage.createENTER(requestDto.getNickname());
+        pubMessage(chatMessage);
+    }
+
+    public void pubQuitMessage(ChatMessageRequestDto requestDto) {
+        ChatMessage chatMessage = ChatMessage.createMessage(requestDto);
+        validatePubMessage(requestDto);
+        chatMessage.createQUIT(requestDto.getNickname());
+        pubMessage(chatMessage);
+    }
+
+    public void validatePubMessage(ChatMessageRequestDto requestDto){
         Member member = getmember(requestDto);
         validateChatRoom(requestDto, member);
+    }
 
-        if (ChatMessage.MessageType.ENTER.equals(requestDto.getType())) {
-            chatMessage.createENTER(requestDto.getNickname());
-            chatMessageRepository.save(chatMessage);
-
-        }
-        else if (ChatMessage.MessageType.QUIT.equals(requestDto.getType())) {
-            chatMessage.createQUIT(requestDto.getNickname());
-            chatMessageRepository.save(chatMessage);
-
-        }
-        else if(ChatMessage.MessageType.TALK.equals(requestDto.getType())){
-            chatMessageRepository.save(chatMessage);
-        }
-
+    public void pubMessage(ChatMessage chatMessage){
+        chatMessageRepository.save(chatMessage);
         redisTemplate.convertAndSend(channelTopic.getTopic(), chatMessage);
     }
 
@@ -71,11 +75,8 @@ public class ChatMessageService {
     private void validateChatRoom(ChatMessageRequestDto requestDto, Member member) {
         boolean b = challengeRecordRepository.existsByChallengeIdAndAndMember(
                 Long.parseLong(requestDto.getRoomId()), member, 2L, 1L);
-
-        log.info("챌린지 트루입니까? {}", b);
-
         if (!b) {
-            throw new ApiRequestException("입장하실 챌린지가 없습니다.");
+            throw new ApiRequestException("입장 가능한 챌린지가 없습니다.");
         }
     }
 }

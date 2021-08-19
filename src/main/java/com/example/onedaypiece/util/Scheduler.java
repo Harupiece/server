@@ -1,5 +1,7 @@
 package com.example.onedaypiece.util;
 
+import com.example.onedaypiece.chat.model.ChatRoom;
+import com.example.onedaypiece.chat.repository.ChatRoomRepository;
 import com.example.onedaypiece.web.domain.challenge.Challenge;
 import com.example.onedaypiece.web.domain.challenge.ChallengeQueryRepository;
 import com.example.onedaypiece.web.domain.challenge.ChallengeRepository;
@@ -15,12 +17,16 @@ import com.example.onedaypiece.web.domain.pointHistory.PointHistoryRepository;
 import com.example.onedaypiece.web.domain.posting.PostingQueryRepository;
 import com.example.onedaypiece.web.domain.posting.PostingRepository;
 import com.example.onedaypiece.web.dto.query.posting.SchedulerIdListDto;
+import com.example.onedaypiece.web.dto.request.challenge.ChallengeRequestDto;
+import com.example.onedaypiece.web.dto.response.challenge.ChallengeResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.HashOperations;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -33,7 +39,6 @@ import static com.example.onedaypiece.web.domain.challenge.CategoryName.OFFICIAL
 @Component
 public class Scheduler {
 
-    private final PostingQueryRepository postingQueryRepository;
     private final PostingRepository postingRepository;
     private final ChallengeRecordRepository challengeRecordRepository;
     private final ChallengeRecordQueryRepository challengeRecordQueryRepository;
@@ -43,13 +48,15 @@ public class Scheduler {
     private final MemberQueryRepository memberQueryRepository;
     private final MemberRepository memberRepository;
     private final SchedulerQueryRepository schedulerQueryRepository;
+    private final ChatRoomRepository chatRoomRepository;
+
+    private HashOperations<String, String, ChatRoom> hashOpsChatRoom;
+    private static final String CHAT_ROOMS = "CHAT_ROOM";
 
     private final LocalDateTime today = LocalDate.now().atStartOfDay();
 
     //    01 00 00
-
-
-    @Scheduled(cron = "01 00 00 * * *") // 초, 분, 시, 일, 월, 주 순서
+    @Scheduled(cron = "01 0 0 * * *") // 초, 분, 시, 일, 월, 주 순서
     @Transactional
     public void certificationKick() {
 
@@ -81,11 +88,11 @@ public class Scheduler {
         UncertifiedMember.addAll(NotWrittenMember);
         UncertifiedChallenge.addAll(NotWrittenChallenge);
 
-        int updateResult = challengeRecordRepository.kickMemberOnChallenge(UncertifiedMember,UncertifiedChallenge);
+        int updateResult = challengeRecordRepository.kickMemberOnChallenge(UncertifiedMember, UncertifiedChallenge);
         log.info("updateResult 벌크 연산 result: {} ", updateResult);
     }
 
-    @Scheduled(cron = "02 00 00 * * *") // 초, 분, 시, 일, 월, 주 순서
+    @Scheduled(cron = "02 0 0 * * *") // 초, 분, 시, 일, 월, 주 순서
     @Transactional
     public void postingStatusUpdate() {
         List<Long> postingIdList = schedulerQueryRepository.findSchedulerUpdatePosting(today);
@@ -94,29 +101,102 @@ public class Scheduler {
         log.info("updateResult 벌크 연산 result: {} ", updateResult);
     }
 
-    @Scheduled(cron = "03 00 00 * * *") // 초, 분, 시, 일, 월, 주 순서
+    @Scheduled(cron = "03 0 0 * * *") // 초, 분, 시, 일, 월, 주 순서
     @Transactional
     public void challengeStatusUpdate() {
         List<Challenge> challengeList = challengeRepository.findAllByChallengeStatusTrueAndChallengeProgressLessThan(3L);
 
-        // 챌린지 시작
         List<Challenge> startList = challengeList
                 .stream()
                 .filter(this::isChallengeTimeToStart)
                 .collect(Collectors.toList());
-        Long result1 = challengeQueryRepository.updateChallengeProgress(2L, startList);
-        log.info(today + " / " + result1 + " Challenge Start");
 
-        // 챌린지 종료
         List<Challenge> endList = challengeList
                 .stream()
                 .filter(this::isChallengeTimeToEnd)
                 .collect(Collectors.toList());
+
+        // 챌린지 시작
+        challengeStart(startList);
+
+        // 챌린지 종료
+        challengeEnd(endList);
+
+        // 챌린지 완주 포인트 지급
+        challengeEndPoint(endList);
+    }
+
+    @Scheduled(cron = "04 0 0 * * *")
+    public void createOfficialChallenge() {
+        Member member = memberRepository.findById(1L).orElseThrow(() -> new NullPointerException("없는 유저입니다."));
+
+        ChallengeRequestDto requestDto = null;
+        int dayValue = today.getDayOfWeek().getValue();
+        // 월요일이 1, 일요일이 7
+        if (dayValue == 1) {
+            requestDto = new ChallengeRequestDto(
+                    "매일 물 2L 마시기",
+                    "매일 물 2L 마시기\uD83D\uDE04",
+                    "",
+                    OFFICIAL,
+                    today.plusDays(7),
+                    today.plusDays(7 + 6),
+                    "https://cdn.pixabay.com/photo/2016/02/12/16/45/cat-1196374_960_720.jpg",
+                    "https://cdn.pixabay.com/photo/2016/02/12/16/45/cat-1196374_960_720.jpg",
+                    "https://cdn.pixabay.com/photo/2016/02/12/16/45/cat-1196374_960_720.jpg",
+                    ""
+            );
+        } else if (dayValue == 3) {
+            requestDto = new ChallengeRequestDto(
+                    "매일 산책하기",
+                    "매일 산책하기",
+                    "",
+                    OFFICIAL,
+                    today.plusDays(7),
+                    today.plusDays(7 + 6),
+                    "https://cdn.pixabay.com/photo/2016/02/12/16/45/cat-1196374_960_720.jpg",
+                    "https://cdn.pixabay.com/photo/2016/02/12/16/45/cat-1196374_960_720.jpg",
+                    "https://cdn.pixabay.com/photo/2016/02/12/16/45/cat-1196374_960_720.jpg",
+                    ""
+            );
+        } else if (dayValue == 5) {
+            requestDto = new ChallengeRequestDto(
+                    "매일 물 2L 마시기",
+                    "매일 물 2L 마시기",
+                    "",
+                    OFFICIAL,
+                    today.plusDays(7),
+                    today.plusDays(7 + 6),
+                    "https://cdn.pixabay.com/photo/2016/02/12/16/45/cat-1196374_960_720.jpg",
+                    "https://cdn.pixabay.com/photo/2016/02/12/16/45/cat-1196374_960_720.jpg",
+                    "https://cdn.pixabay.com/photo/2016/02/12/16/45/cat-1196374_960_720.jpg",
+                    ""
+            );
+        }
+        if (requestDto != null) {
+            Challenge challenge = new Challenge(requestDto, member);
+            ChallengeRecord challengeRecord = new ChallengeRecord(challenge, member);
+            challengeRecordRepository.save(challengeRecord);
+            Long challengeId = challengeRepository.save(challenge).getChallengeId();
+
+            ChatRoom chatRoom = new ChatRoom(challengeId);
+            chatRoomRepository.save(chatRoom);
+            hashOpsChatRoom.put(CHAT_ROOMS, chatRoom.getRoomId(), chatRoom);
+        }
+    }
+
+    private void challengeStart(List<Challenge> startList) {
+        Long result1 = challengeQueryRepository.updateChallengeProgress(2L, startList);
+        log.info(today + " / " + result1 + " Challenge Start");
+    }
+
+    private void challengeEnd(List<Challenge> endList) {
         Long result2 = challengeQueryRepository.updateChallengeProgress(3L, endList);
         challengeRecordRepository.updateChallengePoint(endList);
         log.info(today + " / " + result2 + " Challenge End");
+    }
 
-        // 챌린지 완주 포인트 지급
+    private void challengeEndPoint(List<Challenge> endList) {
         long result3 = endList
                 .stream()
                 .peek(c -> System.out.println("filteredChallenge : " + c.getChallengeId()))
@@ -148,6 +228,7 @@ public class Scheduler {
                 .collect(Collectors.toList());
         memberQueryRepository.updatePointAll(pointList, resultPoint);
     }
+
     private boolean isChallengeTimeToStart(Challenge c) {
         return c.getChallengeProgress() == 1L && c.getChallengeStartDate().isEqual(today);
     }
@@ -155,6 +236,7 @@ public class Scheduler {
     private boolean isChallengeTimeToEnd(Challenge c) {
         return c.getChallengeProgress() == 2L && c.getChallengeEndDate().isBefore(today);
     }
+
     private List<Long> getKickChallenge(List<SchedulerIdListDto> postingList) {
         return postingList.stream()
                 .map(SchedulerIdListDto::getChallengeId).distinct()
