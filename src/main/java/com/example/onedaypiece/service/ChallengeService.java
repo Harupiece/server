@@ -147,17 +147,23 @@ public class ChallengeService {
     private List<ChallengeSourceResponseDto> categoryCollector(CategoryName category, List<ChallengeRecord> records) {
         final int CATEGORY_SIZE = 3;
 
-        Set<Long> recordIdList = new HashSet<>();
-        List<ChallengeRecord> recordList = new ArrayList<>();
+//        Set<Long> recordIdList = new HashSet<>();
+//        List<ChallengeRecord> recordList = new ArrayList<>();
+//
+//        records
+//                .stream()
+//                .filter(r -> !recordIdList.contains(r.getChallenge().getChallengeId()) &&
+//                        r.getChallenge().getCategoryName().equals(category) &&
+//                        recordIdList.size() < CATEGORY_SIZE).forEach(r -> {
+//            recordIdList.add(r.getChallenge().getChallengeId());
+//            recordList.add(r);
+//        });
 
-        records
-                .stream()
-                .filter(r -> !recordIdList.contains(r.getChallenge().getChallengeId()) &&
-                        r.getChallenge().getCategoryName().equals(category) &&
-                        recordIdList.size() < CATEGORY_SIZE).forEach(r -> {
-            recordIdList.add(r.getChallenge().getChallengeId());
-            recordList.add(r);
-        });
+        List<ChallengeRecord> recordList = records.stream()
+                .filter(r -> r.getChallenge().getCategoryName().equals(category))
+                .distinct()
+                .limit(CATEGORY_SIZE)
+                .collect(Collectors.toList());
 
         List<Challenge> list = recordList.stream().map(ChallengeRecord::getChallenge).collect(Collectors.toList());
         return list

@@ -61,6 +61,7 @@ public class ChallengeRecordQueryRepository {
      * Optional<List<ChallengeRecord>> optionalFindAllByChallenge(Challenge challenge);
      */
     public List<ChallengeRecord> findAllByChallengeOnScheduler(Challenge challenge) {
+        System.out.println("query id : " + challenge.getChallengeId());
         return queryFactory
                 .select(challengeRecord)
                 .from(challengeRecord)
@@ -225,6 +226,15 @@ public class ChallengeRecordQueryRepository {
                 .innerJoin(challengeRecord.challenge)
                 .where(challengeRecord.challengeRecordStatus.isTrue(),
                         challengeRecord.challenge.challengeProgress.eq(2L))
+                .fetch();
+    }
+
+    public List<ChallengeRecord> findAllByChallengeProgressLessThan(Long progress) {
+        return queryFactory
+                .selectFrom(challengeRecord)
+                .where(challengeRecord.challengeRecordStatus.eq(true),
+                        challengeRecord.challenge.challengeStatus.eq(true),
+                        challengeRecord.challenge.challengeProgress.lt(progress))
                 .fetch();
     }
 

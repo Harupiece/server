@@ -63,11 +63,4 @@ public class ChallengeSearchService {
 
         return listResponseDto;
     }
-
-    public List<ChallengeTitleSearchResponseDto> getChallengeTitle(Long progress) {
-        return challengeRepository.findAllByChallengeStatusTrueAndChallengeProgressLessThan(progress + 1)
-                .stream()
-                .map(ChallengeTitleSearchResponseDto::new)
-                .collect(Collectors.toList());
-    }
 }

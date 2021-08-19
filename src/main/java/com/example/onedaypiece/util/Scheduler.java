@@ -26,6 +26,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.Resource;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -50,13 +51,14 @@ public class Scheduler {
     private final SchedulerQueryRepository schedulerQueryRepository;
     private final ChatRoomRepository chatRoomRepository;
 
+    @Resource(name = "redisTemplate")
     private HashOperations<String, String, ChatRoom> hashOpsChatRoom;
     private static final String CHAT_ROOMS = "CHAT_ROOM";
 
     private final LocalDateTime today = LocalDate.now().atStartOfDay();
 
     //    01 00 00
-    @Scheduled(cron = "01 50 * * * *") // 초, 분, 시, 일, 월, 주 순서
+    @Scheduled(cron = "01 0 0 * * *") // 초, 분, 시, 일, 월, 주 순서
     @Transactional
     public void certificationKick() {
 
@@ -92,7 +94,7 @@ public class Scheduler {
         log.info("updateResult 벌크 연산 result: {} ", updateResult);
     }
 
-    @Scheduled(cron = "02 50 * * * *") // 초, 분, 시, 일, 월, 주 순서
+    @Scheduled(cron = "02 0 0 * * *") // 초, 분, 시, 일, 월, 주 순서
     @Transactional
     public void postingStatusUpdate() {
         List<Long> postingIdList = schedulerQueryRepository.findSchedulerUpdatePosting(today);
@@ -101,10 +103,16 @@ public class Scheduler {
         log.info("updateResult 벌크 연산 result: {} ", updateResult);
     }
 
-    @Scheduled(cron = "03 50 * * * *") // 초, 분, 시, 일, 월, 주 순서
+    @Scheduled(cron = "03 0 0 * * *") // 초, 분, 시, 일, 월, 주 순서
     @Transactional
     public void challengeStatusUpdate() {
-        List<Challenge> challengeList = challengeRepository.findAllByChallengeStatusTrueAndChallengeProgressLessThan(3L);
+        List<ChallengeRecord> recordList = challengeRecordQueryRepository.findAllByChallengeProgressLessThan(3L);
+
+        List<Challenge> challengeList = recordList
+                .stream()
+                .map(ChallengeRecord::getChallenge)
+                .distinct()
+                .collect(Collectors.toList());
 
         List<Challenge> startList = challengeList
                 .stream()
@@ -117,21 +125,27 @@ public class Scheduler {
                 .collect(Collectors.toList());
 
         // 챌린지 시작
+        System.out.println("챌린지 시작");
         challengeStart(startList);
 
         // 챌린지 종료
+        System.out.println("챌린지 종료");
         challengeEnd(endList);
 
         // 챌린지 완주 포인트 지급
+        System.out.println("챌린지 완주 포인트 지급");
         challengeEndPoint(endList);
     }
 
-    @Scheduled(cron = "04 50 * * * *")
+    @Scheduled(cron = "04 0 0 * * *")
+    @Transactional
     public void createOfficialChallenge() {
+        System.out.println("4번 4번 4번");
         Member member = memberRepository.findById(1L).orElseThrow(() -> new NullPointerException("없는 유저입니다."));
 
         ChallengeRequestDto requestDto = null;
         int dayValue = today.getDayOfWeek().getValue();
+        System.out.println();
         // 월요일이 1, 일요일이 7
         if (dayValue == 1) {
             requestDto = new ChallengeRequestDto(
@@ -214,6 +228,9 @@ public class Scheduler {
     private void getPointWhenChallengeEnd(Challenge challenge) {
         List<ChallengeRecord> recordList = challengeRecordQueryRepository.findAllByChallengeOnScheduler(challenge);
 
+        System.out.println("challenge = " + challenge.getChallengeId());
+        System.out.println("size = " + recordList.size());
+
         List<Member> memberList = recordList
                 .stream()
                 .map(ChallengeRecord::getMember)
@@ -228,11 +245,13 @@ public class Scheduler {
                 .collect(Collectors.toList());
         pointHistoryRepository.saveAll(pointHistoryList);
 
-        List<Point> pointList = memberList
-                .stream()
-                .map(Member::getPoint)
-                .collect(Collectors.toList());
-        memberQueryRepository.updatePointAll(pointList, resultPoint);
+        if (memberList.size() > 0) {
+            List<Point> pointList = memberList
+                    .stream()
+                    .map(Member::getPoint)
+                    .collect(Collectors.toList());
+            memberQueryRepository.updatePointAll(pointList, resultPoint);
+        }
     }
 
     private boolean isChallengeTimeToStart(Challenge c) {

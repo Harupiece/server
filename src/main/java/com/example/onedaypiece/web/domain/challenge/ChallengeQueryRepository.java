@@ -71,4 +71,8 @@ public class ChallengeQueryRepository {
                 .where(challenge.in(challengeList))
                 .execute();
     }
+
+    /**
+     List<Challenge> findAllByChallengeStatusTrueAndChallengeProgressLessThan(Long challengeProgress);
+     **/
 }
