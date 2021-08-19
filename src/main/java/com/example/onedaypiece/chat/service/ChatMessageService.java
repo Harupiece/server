@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -36,24 +37,25 @@ public class ChatMessageService {
             return null;
     }
 
-    // 채팅방에 알림 메세지 발송
+    // 채팅방에 메세지 발송
+    @Transactional
     public void pubTalkMessage(ChatMessageRequestDto requestDto) {
-        ChatMessage chatMessage = ChatMessage.createMessage(requestDto);
+        ChatMessage chatMessage = ChatMessage.createTALKMessage(requestDto);
         validatePubMessage(requestDto);
         pubMessage(chatMessage);
     }
 
+    @Transactional
     public void pubEnterMessage(ChatMessageRequestDto requestDto) {
-        ChatMessage chatMessage = ChatMessage.createMessage(requestDto);
+        ChatMessage chatMessage = ChatMessage.createENTERMessage(requestDto);
         validatePubMessage(requestDto);
-        chatMessage.createENTER(requestDto.getNickname());
         pubMessage(chatMessage);
     }
 
+    @Transactional
     public void pubQuitMessage(ChatMessageRequestDto requestDto) {
-        ChatMessage chatMessage = ChatMessage.createMessage(requestDto);
+        ChatMessage chatMessage = ChatMessage.createQUITMessage(requestDto);
         validatePubMessage(requestDto);
-        chatMessage.createQUIT(requestDto.getNickname());
         pubMessage(chatMessage);
     }
 

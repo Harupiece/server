@@ -41,9 +41,12 @@ public class ChatRoomService {
 
         Pageable pageable = PageRequest.of(page-1,15);
         Slice<ChatMessage> chatMessages = chatMessageRepository.findAllByRoomIdOrderByCreatedAtDesc(roomId,pageable);
+
+
         List<ChatMessageResponseDto> chatMessageResponseDtoList = chatMessages.getContent().stream()
                 .sorted(Comparator.comparing(chatMessage -> chatMessage.getCreatedAt()))
                 .map(chatMessage -> new ChatMessageResponseDto(chatMessage))
+
                 .collect(Collectors.toList());
 
         return ChatRoomResponseDto.builder()

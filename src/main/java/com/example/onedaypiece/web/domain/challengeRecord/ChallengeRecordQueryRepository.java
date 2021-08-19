@@ -174,6 +174,7 @@ public class ChallengeRecordQueryRepository {
      * "and c.challenge.challengeProgress = :progress")
      * List<ChallengeRecord> findAllByMemberAndProgress(Member member, Long progress);
      */
+    // 1번과 2번인 챌린지 레코드
     public List<ChallengeRecord> findAllByMemberAndProgress(Member member, Long progress) {
         return queryFactory
                 .selectFrom(challengeRecord)
@@ -182,7 +183,7 @@ public class ChallengeRecordQueryRepository {
                         challengeRecord.challenge.challengeProgress.eq(progress))
                 .fetch();
     }
-
+// 여기
     /**
      * @Query("select c " +
      * "from ChallengeRecord c " +
@@ -191,14 +192,26 @@ public class ChallengeRecordQueryRepository {
      * "and c.challenge.challengeProgress in (:progress, :expected) ")
      * List<ChallengeRecord> findAllByMemberAndProgressAndExpected(@Param("member") Member member, @Param("progress") Long progress, @Param("expected") Long expected);
      */
-    public List<ChallengeRecord> findAllByMemberAndProgressAndExpected(Member member, Long progress, Long expected) {
+//    public List<ChallengeRecord> findAllByMemberAndProgressAndExpected(Member member, Long progress, Long expected) {
+//        return queryFactory
+//                .selectFrom(challengeRecord)
+//                .where(challengeRecord.member.eq(member),
+//                        challengeRecord.challenge.challengeProgress.in(progress, expected))
+//                .fetch();
+//    }
+
+    public List<ChallengeRecord> findAllByMemberAndStatus(Member member, Long challengeStatus) {
         return queryFactory
                 .selectFrom(challengeRecord)
                 .where(challengeRecord.member.eq(member),
-                        challengeRecord.challenge.challengeProgress.in(progress, expected))
+                        challengeRecord.challengeRecordStatus.eq(true),
+                        challengeRecord.challenge.challengeProgress.eq(challengeStatus))
                 .fetch();
     }
 
+
+
+// 여기
     /**
      * @Query("select c from ChallengeRecord c " +
      * "inner join c.challenge " +
