@@ -51,18 +51,21 @@ public class ChatMessage implements Serializable {
     @Column
     private String createdAt; // 채팅 입력 시간
 
+    @Column
+    private String alert; // [알림]
+
     @Builder
-    public ChatMessage(MessageType type, String roomId, String sender, String message, String profileImg, String createdAt) {
+    public ChatMessage(MessageType type, String roomId, String sender, String message, String profileImg, String createdAt, String alert) {
         this.type = type;
         this.roomId = roomId;
         this.sender = sender;
         this.message = message;
         this.profileImg = profileImg;
         this.createdAt = createdAt;
-
+        this.alert = alert;
     }
 
-    public static ChatMessage createMessage(ChatMessageRequestDto requestDto) {
+    public static ChatMessage createTALKMessage(ChatMessageRequestDto requestDto) {
         return ChatMessage.builder()
                 .type(requestDto.getType())
                 .roomId(requestDto.getRoomId())
@@ -70,17 +73,32 @@ public class ChatMessage implements Serializable {
                 .message(messageFilter(requestDto.getMessage()))
                 .profileImg(requestDto.getProfileImg())
                 .createdAt(createTime())
+                .alert(requestDto.getAlert())
                 .build();
     }
 
-    public void createENTER(String nickName) {
-        this.message = nickName + "님이 방에 입장했습니다.";
-        this.sender = "[알림]";
+    public static ChatMessage createENTERMessage(ChatMessageRequestDto requestDto) {
+        return ChatMessage.builder()
+                .type(requestDto.getType())
+                .roomId(requestDto.getRoomId())
+                .sender(requestDto.getNickname())
+                .message(requestDto.getNickname() + "님이 방에 입장했습니다.")
+                .profileImg(requestDto.getProfileImg())
+                .createdAt(createTime())
+                .alert(requestDto.getAlert())
+                .build();
     }
 
-    public void createQUIT(String nickName) {
-        this.message = nickName + "님이 방에서 퇴장했습니다.";
-        this.sender = "[알림]";
+    public static ChatMessage createQUITMessage(ChatMessageRequestDto requestDto) {
+        return ChatMessage.builder()
+                .type(requestDto.getType())
+                .roomId(requestDto.getRoomId())
+                .sender(requestDto.getNickname())
+                .message(requestDto.getNickname() + "님이 방에서 퇴장했습니다.")
+                .profileImg(requestDto.getProfileImg())
+                .createdAt(createTime())
+                .alert(requestDto.getAlert())
+                .build();
     }
 
     public static String createTime() {
