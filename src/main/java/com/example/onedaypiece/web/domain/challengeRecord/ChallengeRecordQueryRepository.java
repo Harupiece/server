@@ -174,6 +174,7 @@ public class ChallengeRecordQueryRepository {
      * "and c.challenge.challengeProgress = :progress")
      * List<ChallengeRecord> findAllByMemberAndProgress(Member member, Long progress);
      */
+    // 1번과 2번인 챌린지 레코드
     public List<ChallengeRecord> findAllByMemberAndProgress(Member member, Long progress) {
         return queryFactory
                 .selectFrom(challengeRecord)
@@ -203,6 +204,7 @@ public class ChallengeRecordQueryRepository {
         return queryFactory
                 .selectFrom(challengeRecord)
                 .where(challengeRecord.member.eq(member),
+                        challengeRecord.challengeRecordStatus.eq(true),
                         challengeRecord.challenge.challengeProgress.eq(challengeStatus))
                 .fetch();
     }
