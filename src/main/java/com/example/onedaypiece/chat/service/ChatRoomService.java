@@ -1,5 +1,6 @@
 package com.example.onedaypiece.chat.service;
 
+import com.example.onedaypiece.chat.dto.response.ChatMessageResponseDto;
 import com.example.onedaypiece.chat.dto.response.ChatRoomResponseDto;
 import com.example.onedaypiece.chat.model.ChatMessage;
 import com.example.onedaypiece.chat.repository.ChatMessageRepository;
@@ -40,14 +41,13 @@ public class ChatRoomService {
 
         Pageable pageable = PageRequest.of(page-1,15);
         Slice<ChatMessage> chatMessages = chatMessageRepository.findAllByRoomIdOrderByCreatedAtDesc(roomId,pageable);
-
-        List<ChatMessage> chatMessages2 = chatMessages.getContent().stream()
-                .sorted(Comparator.comparing(ChatMessage::getCreatedAt))
+        List<ChatMessageResponseDto> chatMessageResponseDtoList = chatMessages.getContent().stream()
+                .sorted(Comparator.comparing(chatMessage -> chatMessage.getCreatedAt()))
+                .map(chatMessage -> new ChatMessageResponseDto(chatMessage))
                 .collect(Collectors.toList());
 
         return ChatRoomResponseDto.builder()
-                .roomId(roomId)
-                .chatMessages(chatMessages2)
+                .chatMessages(chatMessageResponseDtoList)
                 .hasNext(chatMessages.hasNext())
                 .build();
     }
