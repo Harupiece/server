@@ -57,7 +57,7 @@ public class ChallengeRecordService {
     }
 
     private void requestChallengeException(Challenge challenge, Member member) {
-        List<ChallengeRecord> recordList = challengeRecordRepository.findAllByMember(member);
+        List<ChallengeRecord> recordList = challengeRecordQueryRepository.findAllByMember(member);
         if (recordList.stream().anyMatch(r -> r.getChallenge().equals(challenge))) {
             throw new ApiRequestException("이미 해당 챌린지에 신청한 유저입니다.");
         }
