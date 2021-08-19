@@ -23,8 +23,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ChallengeSearchService {
 
-    private final ChallengeRepository challengeRepository;
-    private final ChallengeRecordRepository challengeRecordRepository;
     private final ChallengeRecordQueryRepository challengeRecordQueryRepository;
     private final ChallengeQueryRepository challengeQueryRepository;
 
@@ -62,12 +60,5 @@ public class ChallengeSearchService {
         }
 
         return listResponseDto;
-    }
-
-    public List<ChallengeTitleSearchResponseDto> getChallengeTitle(Long progress) {
-        return challengeRepository.findAllByChallengeStatusTrueAndChallengeProgressLessThan(progress + 1)
-                .stream()
-                .map(ChallengeTitleSearchResponseDto::new)
-                .collect(Collectors.toList());
     }
 }

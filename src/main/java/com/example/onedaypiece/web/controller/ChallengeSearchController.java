@@ -29,9 +29,4 @@ public class ChallengeSearchController {
                                                                              @PathVariable String searchWords) {
         return ResponseEntity.ok().body(challengeSearchService.getChallengeSearchResult(searchWords, page));
     }
-
-    @GetMapping("/api/guest/challenge-title/{progress}")
-    public ResponseEntity<List<ChallengeTitleSearchResponseDto>> getChallengeTitle(@PathVariable Long progress) {
-        return ResponseEntity.ok().body(challengeSearchService.getChallengeTitle(progress));
-    }
 }

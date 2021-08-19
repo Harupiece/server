@@ -5,6 +5,7 @@ import com.example.onedaypiece.web.domain.member.Member;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -61,6 +62,7 @@ public class ChallengeRecordQueryRepository {
      * Optional<List<ChallengeRecord>> optionalFindAllByChallenge(Challenge challenge);
      */
     public List<ChallengeRecord> findAllByChallengeOnScheduler(Challenge challenge) {
+        System.out.println("query id : " + challenge.getChallengeId());
         return queryFactory
                 .select(challengeRecord)
                 .from(challengeRecord)
@@ -184,6 +186,7 @@ public class ChallengeRecordQueryRepository {
                 .fetch();
     }
 // 여기
+
     /**
      * @Query("select c " +
      * "from ChallengeRecord c " +
@@ -199,7 +202,6 @@ public class ChallengeRecordQueryRepository {
 //                        challengeRecord.challenge.challengeProgress.in(progress, expected))
 //                .fetch();
 //    }
-
     public List<ChallengeRecord> findAllByMemberAndStatus(Member member, Long challengeStatus) {
         return queryFactory
                 .selectFrom(challengeRecord)
@@ -210,8 +212,8 @@ public class ChallengeRecordQueryRepository {
     }
 
 
-
 // 여기
+
     /**
      * @Query("select c from ChallengeRecord c " +
      * "inner join c.challenge " +
@@ -225,6 +227,25 @@ public class ChallengeRecordQueryRepository {
                 .innerJoin(challengeRecord.challenge)
                 .where(challengeRecord.challengeRecordStatus.isTrue(),
                         challengeRecord.challenge.challengeProgress.eq(2L))
+                .fetch();
+    }
+
+    public List<ChallengeRecord> findAllByChallengeProgressLessThan(Long progress) {
+        return queryFactory
+                .selectFrom(challengeRecord)
+                .where(challengeRecord.challengeRecordStatus.eq(true),
+                        challengeRecord.challenge.challengeStatus.eq(true),
+                        challengeRecord.challenge.challengeProgress.lt(progress))
+                .fetch();
+    }
+
+    public List<ChallengeRecord> findAllByMember(Member member) {
+        return queryFactory
+                .selectFrom(challengeRecord)
+                .where(challengeRecord.challengeRecordStatus.eq(true),
+                        challengeRecord.challenge.challengeStatus.eq(true),
+                        challengeRecord.challenge.challengeProgress.lt(3L),
+                        challengeRecord.member.eq(member))
                 .fetch();
     }
 

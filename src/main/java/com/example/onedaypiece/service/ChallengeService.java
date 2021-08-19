@@ -22,6 +22,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
@@ -94,15 +95,8 @@ public class ChallengeService {
     public List<ChallengeSourceResponseDto> getAllChallenge(int page) {
         List<ChallengeRecord> records = challengeRecordQueryRepository.findAllByChallengeStatusTrueAndProgressNotStart();
         List<Challenge> challenges = records.stream().map(ChallengeRecord::getChallenge).collect(Collectors.toList());
-//        List<Long> challengeIdList = new ArrayList<>();
-//        List<ChallengeSourceResponseDto> sources = challenges
-//                .stream()
-//                .filter(c -> !challengeIdList.contains(c.getChallengeId()))
-//                .peek(c -> challengeIdList.add(c.getChallengeId()))
-//                .map(c -> new ChallengeSourceResponseDto(c, records))
-//                .collect(Collectors.toList());
 
-       return challenges
+        return challenges
                 .stream()
                 .distinct()
                 .map(c -> new ChallengeSourceResponseDto(c, records))
@@ -114,7 +108,7 @@ public class ChallengeService {
         ChallengeMainResponseDto responseDto = new ChallengeMainResponseDto();
         List<ChallengeRecord> records = challengeRecordQueryRepository.findAllByStatusTrue();
 
-        sliderUpdate(responseDto, email, records);
+        sliderUpdate(responseDto, records);
         popularUpdate(responseDto, email, records);
 
         categoryCollector(EXERCISE, records).forEach(responseDto::addExercise);
@@ -125,16 +119,18 @@ public class ChallengeService {
         return responseDto;
     }
 
-    private void sliderUpdate(ChallengeMainResponseDto responseDto, String email, List<ChallengeRecord> records) {
+    private void sliderUpdate(ChallengeMainResponseDto responseDto, List<ChallengeRecord> records) {
         List<Challenge> userChallengeList = records
                 .stream()
                 .filter(r -> r.getChallenge().getCategoryName().equals(OFFICIAL))
                 .map(ChallengeRecord::getChallenge)
                 .collect(Collectors.toList());
+
         List<ChallengeSourceResponseDto> sliderSourceList = userChallengeList
                 .stream()
                 .map(challenge -> new ChallengeSourceResponseDto(challenge, records))
                 .collect(Collectors.toList());
+
         responseDto.addSlider(sliderSourceList);
     }
 
@@ -154,10 +150,11 @@ public class ChallengeService {
                 .stream()
                 .filter(r -> !recordIdList.contains(r.getChallenge().getChallengeId()) &&
                         r.getChallenge().getCategoryName().equals(category) &&
-                        recordIdList.size() < CATEGORY_SIZE).forEach(r -> {
-            recordIdList.add(r.getChallenge().getChallengeId());
-            recordList.add(r);
-        });
+                        recordIdList.size() < CATEGORY_SIZE)
+                .forEach(r -> {
+                    recordIdList.add(r.getChallenge().getChallengeId());
+                    recordList.add(r);
+                });
 
         List<Challenge> list = recordList.stream().map(ChallengeRecord::getChallenge).collect(Collectors.toList());
         return list
@@ -210,7 +207,7 @@ public class ChallengeService {
     }
 
     private void createChallengeException(ChallengeRequestDto requestDto, Member member) {
-        List<ChallengeRecord> recordList = challengeRecordRepository.findAllByMember(member);
+        List<ChallengeRecord> recordList = challengeRecordQueryRepository.findAllByMember(member);
         if (recordList.stream().anyMatch(r -> r.getChallenge().getCategoryName().equals(requestDto.getCategoryName()))) {
             throw new ApiRequestException("이미 해당 카테고리에 챌린지를 생성한 유저입니다.");
         }
@@ -218,6 +215,24 @@ public class ChallengeService {
             if (!requestDto.getChallengePassword().equals("")) {
                 throw new ApiRequestException("비밀번호는 4자리 이상으로 설정해야합니다.");
             }
+        }
+        if(requestDto.getChallengeTitle() == null || requestDto.getChallengeTitle().isEmpty()){
+            throw new ApiRequestException("제목이 입력해주세요.");
+        }
+        if(!StringUtils.hasText(requestDto.getChallengeTitle())){
+            throw new ApiRequestException("제목이 입력해주세요.");
+        }
+        if(!StringUtils.hasText(requestDto.getChallengeContent())){
+            throw new ApiRequestException("내용이 비었습니다.");
+        }
+        if(!StringUtils.hasText(requestDto.getChallengeImgUrl())){
+            throw new ApiRequestException("챌린지 이미지가 비었습니다.");
+        }
+        if(!StringUtils.hasText(requestDto.getChallengeGood())){
+            throw new ApiRequestException("좋은예시가 비었습니다.");
+        }
+        if(!StringUtils.hasText(requestDto.getChallengeBad())){
+            throw new ApiRequestException("나쁜예시가 비었습니다.");
         }
     }
 }

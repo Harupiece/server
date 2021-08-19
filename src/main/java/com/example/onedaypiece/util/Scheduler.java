@@ -26,6 +26,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.Resource;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -50,13 +51,14 @@ public class Scheduler {
     private final SchedulerQueryRepository schedulerQueryRepository;
     private final ChatRoomRepository chatRoomRepository;
 
+    @Resource(name = "redisTemplate")
     private HashOperations<String, String, ChatRoom> hashOpsChatRoom;
     private static final String CHAT_ROOMS = "CHAT_ROOM";
 
     private final LocalDateTime today = LocalDate.now().atStartOfDay();
 
     //    01 00 00
-    @Scheduled(cron = "01 50 * * * *") // 초, 분, 시, 일, 월, 주 순서
+    @Scheduled(cron = "01 0 0 * * *") // 초, 분, 시, 일, 월, 주 순서
     @Transactional
     public void certificationKick() {
 
@@ -92,7 +94,7 @@ public class Scheduler {
         log.info("updateResult 벌크 연산 result: {} ", updateResult);
     }
 
-    @Scheduled(cron = "02 50 * * * *") // 초, 분, 시, 일, 월, 주 순서
+    @Scheduled(cron = "02 0 0 * * *") // 초, 분, 시, 일, 월, 주 순서
     @Transactional
     public void postingStatusUpdate() {
         List<Long> postingIdList = schedulerQueryRepository.findSchedulerUpdatePosting(today);
@@ -101,10 +103,16 @@ public class Scheduler {
         log.info("updateResult 벌크 연산 result: {} ", updateResult);
     }
 
-    @Scheduled(cron = "03 50 * * * *") // 초, 분, 시, 일, 월, 주 순서
+    @Scheduled(cron = "03 0 0 * * *") // 초, 분, 시, 일, 월, 주 순서
     @Transactional
     public void challengeStatusUpdate() {
-        List<Challenge> challengeList = challengeRepository.findAllByChallengeStatusTrueAndChallengeProgressLessThan(3L);
+        List<ChallengeRecord> recordList = challengeRecordQueryRepository.findAllByChallengeProgressLessThan(3L);
+
+        List<Challenge> challengeList = recordList
+                .stream()
+                .map(ChallengeRecord::getChallenge)
+                .distinct()
+                .collect(Collectors.toList());
 
         List<Challenge> startList = challengeList
                 .stream()
@@ -126,9 +134,13 @@ public class Scheduler {
         challengeEndPoint(endList);
     }
 
-    @Scheduled(cron = "04 50 * * * *")
+    @Scheduled(cron = "04 0 0 * * *")
+    @Transactional
     public void createOfficialChallenge() {
         Member member = memberRepository.findById(1L).orElseThrow(() -> new NullPointerException("없는 유저입니다."));
+
+        final int CREATE_DELAY = 7;
+        final int PROGRESS_PERIOD = 6;
 
         ChallengeRequestDto requestDto = null;
         int dayValue = today.getDayOfWeek().getValue();
@@ -141,8 +153,8 @@ public class Scheduler {
                             "3. 인증샷을 올리고 다른 분들의 인증 게시물도 구경하면서 인증버튼을 눌러주세요\uD83D\uDE04",
                     "",
                     OFFICIAL,
-                    today.plusDays(7),
-                    today.plusDays(7 + 6),
+                    today.plusDays(CREATE_DELAY),
+                    today.plusDays(CREATE_DELAY + PROGRESS_PERIOD),
                     "https://cdn.pixabay.com/photo/2016/02/12/16/45/cat-1196374_960_720.jpg",
                     "https://cdn.pixabay.com/photo/2016/02/12/16/45/cat-1196374_960_720.jpg",
                     "https://cdn.pixabay.com/photo/2016/02/12/16/45/cat-1196374_960_720.jpg",
@@ -156,8 +168,8 @@ public class Scheduler {
                             "3. 인증샷을 올리고 다른 분들의 인증 게시물도 구경하면서 인증버튼을 꼭 눌러주세요\uD83D\uDE04",
                     "",
                     OFFICIAL,
-                    today.plusDays(7),
-                    today.plusDays(7 + 6),
+                    today.plusDays(CREATE_DELAY),
+                    today.plusDays(CREATE_DELAY + PROGRESS_PERIOD),
                     "https://cdn.pixabay.com/photo/2016/02/12/16/45/cat-1196374_960_720.jpg",
                     "https://cdn.pixabay.com/photo/2016/02/12/16/45/cat-1196374_960_720.jpg",
                     "https://cdn.pixabay.com/photo/2016/02/12/16/45/cat-1196374_960_720.jpg",
@@ -171,8 +183,8 @@ public class Scheduler {
                             "3. 인증샷을 올리고 다른 분들의 인증 게시물도 구경하면서 인증버튼을 꼭 눌러주세요\uD83D\uDE04",
                     "",
                     OFFICIAL,
-                    today.plusDays(7),
-                    today.plusDays(7 + 6),
+                    today.plusDays(CREATE_DELAY),
+                    today.plusDays(CREATE_DELAY + PROGRESS_PERIOD),
                     "https://cdn.pixabay.com/photo/2016/02/12/16/45/cat-1196374_960_720.jpg",
                     "https://cdn.pixabay.com/photo/2016/02/12/16/45/cat-1196374_960_720.jpg",
                     "https://cdn.pixabay.com/photo/2016/02/12/16/45/cat-1196374_960_720.jpg",
@@ -188,6 +200,8 @@ public class Scheduler {
             ChatRoom chatRoom = new ChatRoom(challengeId);
             chatRoomRepository.save(chatRoom);
             hashOpsChatRoom.put(CHAT_ROOMS, chatRoom.getRoomId(), chatRoom);
+
+            log.info(challengeId + " OFFICIAL challenge start");
         }
     }
 
@@ -205,7 +219,6 @@ public class Scheduler {
     private void challengeEndPoint(List<Challenge> endList) {
         long result3 = endList
                 .stream()
-                .peek(c -> System.out.println("filteredChallenge : " + c.getChallengeId()))
                 .peek(this::getPointWhenChallengeEnd)
                 .count();
         log.info(today + " / " + result3 + " members get points");
@@ -219,6 +232,7 @@ public class Scheduler {
                 .map(ChallengeRecord::getMember)
                 .collect(Collectors.toList());
 
+        if (memberList.size() > 0) {
         long postingCount = postingRepository.findAllByChallengeAndMember(challenge, memberList.get(0)).size();
         Long resultPoint = postingCount * 500L * (challenge.getCategoryName().equals(OFFICIAL) ? 2L : 1L);
 
@@ -228,11 +242,12 @@ public class Scheduler {
                 .collect(Collectors.toList());
         pointHistoryRepository.saveAll(pointHistoryList);
 
-        List<Point> pointList = memberList
-                .stream()
-                .map(Member::getPoint)
-                .collect(Collectors.toList());
-        memberQueryRepository.updatePointAll(pointList, resultPoint);
+            List<Point> pointList = memberList
+                    .stream()
+                    .map(Member::getPoint)
+                    .collect(Collectors.toList());
+            memberQueryRepository.updatePointAll(pointList, resultPoint);
+        }
     }
 
     private boolean isChallengeTimeToStart(Challenge c) {
