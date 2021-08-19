@@ -38,10 +38,6 @@ public interface ChallengeRecordRepository extends JpaRepository<ChallengeRecord
             "where c.challenge in :challengeList")
     void updateChallengePoint(List<Challenge> challengeList);
 
-    @Query("select r " +
-            "from ChallengeRecord r " +
-            "where r.challenge = :challenge " +
-            "and r.member = :member")
     ChallengeRecord findByChallengeAndMember(Challenge challenge, Member member);
 
 //    @Query("select c from ChallengeRecord c inner join fetch c.challenge " +

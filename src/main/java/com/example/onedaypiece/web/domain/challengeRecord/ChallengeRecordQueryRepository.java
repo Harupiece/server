@@ -186,6 +186,7 @@ public class ChallengeRecordQueryRepository {
                 .fetch();
     }
 // 여기
+
     /**
      * @Query("select c " +
      * "from ChallengeRecord c " +
@@ -201,7 +202,6 @@ public class ChallengeRecordQueryRepository {
 //                        challengeRecord.challenge.challengeProgress.in(progress, expected))
 //                .fetch();
 //    }
-
     public List<ChallengeRecord> findAllByMemberAndStatus(Member member, Long challengeStatus) {
         return queryFactory
                 .selectFrom(challengeRecord)
@@ -212,8 +212,8 @@ public class ChallengeRecordQueryRepository {
     }
 
 
-
 // 여기
+
     /**
      * @Query("select c from ChallengeRecord c " +
      * "inner join c.challenge " +
