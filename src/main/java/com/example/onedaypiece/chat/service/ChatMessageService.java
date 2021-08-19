@@ -37,26 +37,25 @@ public class ChatMessageService {
             return null;
     }
 
-    // 채팅방에 알림 메세지 발송
+    // 채팅방에 메세지 발송
+    @Transactional
     public void pubTalkMessage(ChatMessageRequestDto requestDto) {
-        ChatMessage chatMessage = ChatMessage.createMessage(requestDto);
+        ChatMessage chatMessage = ChatMessage.createTALKMessage(requestDto);
         validatePubMessage(requestDto);
         pubMessage(chatMessage);
     }
 
     @Transactional
     public void pubEnterMessage(ChatMessageRequestDto requestDto) {
-        ChatMessage chatMessage = ChatMessage.createMessage(requestDto);
+        ChatMessage chatMessage = ChatMessage.createENTERMessage(requestDto);
         validatePubMessage(requestDto);
-        chatMessage.createENTER(requestDto.getNickname());
         pubMessage(chatMessage);
     }
 
     @Transactional
     public void pubQuitMessage(ChatMessageRequestDto requestDto) {
-        ChatMessage chatMessage = ChatMessage.createMessage(requestDto);
+        ChatMessage chatMessage = ChatMessage.createQUITMessage(requestDto);
         validatePubMessage(requestDto);
-        chatMessage.createQUIT(requestDto.getNickname());
         pubMessage(chatMessage);
     }
 
