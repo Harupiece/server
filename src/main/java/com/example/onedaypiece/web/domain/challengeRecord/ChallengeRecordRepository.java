@@ -11,6 +11,8 @@ import java.util.List;
 
 public interface ChallengeRecordRepository extends JpaRepository<ChallengeRecord, Long> {
 
+    ChallengeRecord findByChallengeAndMember(Challenge challenge, Member member);
+
     ChallengeRecord findByChallengeAndChallengeRecordStatusTrue(Challenge challenge);
 
     // 채팅방 입장할 때 사용
@@ -37,8 +39,6 @@ public interface ChallengeRecordRepository extends JpaRepository<ChallengeRecord
             "set c.challengePoint = true " +
             "where c.challenge in :challengeList")
     void updateChallengePoint(List<Challenge> challengeList);
-
-    ChallengeRecord findByChallengeAndMember(Challenge challenge, Member member);
 
 //    @Query("select c from ChallengeRecord c inner join fetch c.challenge " +
 //            "where c.challengeRecordStatus = true " +
