@@ -2,8 +2,6 @@ package com.example.onedaypiece.service;
 
 import com.example.onedaypiece.chat.model.ChatRoom;
 import com.example.onedaypiece.chat.repository.ChatRoomRepository;
-import com.example.onedaypiece.chat.repository.RedisRepository;
-import com.example.onedaypiece.chat.service.ChatRoomService;
 import com.example.onedaypiece.exception.ApiRequestException;
 import com.example.onedaypiece.web.domain.challenge.CategoryName;
 import com.example.onedaypiece.web.domain.challenge.Challenge;
@@ -116,7 +114,7 @@ public class ChallengeService {
         ChallengeMainResponseDto responseDto = new ChallengeMainResponseDto();
         List<ChallengeRecord> records = challengeRecordQueryRepository.findAllByStatusTrue();
 
-        userSliderUpdate(responseDto, email, records);
+        sliderUpdate(responseDto, email, records);
         popularUpdate(responseDto, email, records);
 
         categoryCollector(EXERCISE, records).forEach(responseDto::addExercise);
@@ -127,10 +125,10 @@ public class ChallengeService {
         return responseDto;
     }
 
-    private void userSliderUpdate(ChallengeMainResponseDto responseDto, String email, List<ChallengeRecord> records) {
+    private void sliderUpdate(ChallengeMainResponseDto responseDto, String email, List<ChallengeRecord> records) {
         List<Challenge> userChallengeList = records
                 .stream()
-                .filter(r -> r.getMember().getEmail().equals(email))
+                .filter(r -> r.getChallenge().getCategoryName().equals(OFFICIAL))
                 .map(ChallengeRecord::getChallenge)
                 .collect(Collectors.toList());
         List<ChallengeSourceResponseDto> sliderSourceList = userChallengeList
@@ -141,13 +139,13 @@ public class ChallengeService {
     }
 
     private void popularUpdate(ChallengeMainResponseDto responseDto, String email, List<ChallengeRecord> records) {
-        final int popularSize = 4;
-        List<ChallengeRecord> popularRecords = challengeRecordQueryRepository.findPopular(email, PageRequest.of(0, popularSize));
+        final int POPULAR_SIZE = 4;
+        List<ChallengeRecord> popularRecords = challengeRecordQueryRepository.findPopular(email, PageRequest.of(0, POPULAR_SIZE));
         responseDto.addPopular(popularRecords, records);
     }
 
     private List<ChallengeSourceResponseDto> categoryCollector(CategoryName category, List<ChallengeRecord> records) {
-        final int categorySize = 3;
+        final int CATEGORY_SIZE = 3;
 
         Set<Long> recordIdList = new HashSet<>();
         List<ChallengeRecord> recordList = new ArrayList<>();
@@ -156,7 +154,7 @@ public class ChallengeService {
                 .stream()
                 .filter(r -> !recordIdList.contains(r.getChallenge().getChallengeId()) &&
                         r.getChallenge().getCategoryName().equals(category) &&
-                        recordIdList.size() < categorySize).forEach(r -> {
+                        recordIdList.size() < CATEGORY_SIZE).forEach(r -> {
             recordIdList.add(r.getChallenge().getChallengeId());
             recordList.add(r);
         });

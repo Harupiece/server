@@ -3,6 +3,7 @@ package com.example.onedaypiece.web.dto.request.challenge;
 import com.example.onedaypiece.exception.ApiRequestException;
 import com.example.onedaypiece.web.domain.challenge.CategoryName;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
