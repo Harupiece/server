@@ -56,7 +56,7 @@ public class Scheduler {
     private final LocalDateTime today = LocalDate.now().atStartOfDay();
 
     //    01 00 00
-    @Scheduled(cron = "01 0 0 * * *") // 초, 분, 시, 일, 월, 주 순서
+    @Scheduled(cron = "01 50 * * * *") // 초, 분, 시, 일, 월, 주 순서
     @Transactional
     public void certificationKick() {
 
@@ -92,7 +92,7 @@ public class Scheduler {
         log.info("updateResult 벌크 연산 result: {} ", updateResult);
     }
 
-    @Scheduled(cron = "02 0 0 * * *") // 초, 분, 시, 일, 월, 주 순서
+    @Scheduled(cron = "02 50 * * * *") // 초, 분, 시, 일, 월, 주 순서
     @Transactional
     public void postingStatusUpdate() {
         List<Long> postingIdList = schedulerQueryRepository.findSchedulerUpdatePosting(today);
@@ -101,7 +101,7 @@ public class Scheduler {
         log.info("updateResult 벌크 연산 result: {} ", updateResult);
     }
 
-    @Scheduled(cron = "03 0 0 * * *") // 초, 분, 시, 일, 월, 주 순서
+    @Scheduled(cron = "03 50 * * * *") // 초, 분, 시, 일, 월, 주 순서
     @Transactional
     public void challengeStatusUpdate() {
         List<Challenge> challengeList = challengeRepository.findAllByChallengeStatusTrueAndChallengeProgressLessThan(3L);
@@ -126,7 +126,7 @@ public class Scheduler {
         challengeEndPoint(endList);
     }
 
-    @Scheduled(cron = "04 0 0 * * *")
+    @Scheduled(cron = "04 50 * * * *")
     public void createOfficialChallenge() {
         Member member = memberRepository.findById(1L).orElseThrow(() -> new NullPointerException("없는 유저입니다."));
 
