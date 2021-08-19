@@ -5,6 +5,7 @@ import com.example.onedaypiece.web.domain.point.Point;
 import com.example.onedaypiece.web.dto.request.mypage.ProfileUpdateRequestDto;
 import com.example.onedaypiece.web.dto.request.mypage.PwUpdateRequestDto;
 import com.example.onedaypiece.web.dto.request.signup.SignupRequestDto;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -48,6 +49,18 @@ public class Member extends Timestamped implements Serializable {
     @JoinColumn(name = "POINT_ID")
     private Point point;
 
+    @Builder
+    public Member(Long memberId, String email, String password, String nickname, MemberRole role, String profileImg, Long memberStatus, Point point) {
+        this.memberId = memberId;
+        this.email = email;
+        this.password = password;
+        this.nickname = nickname;
+        this.role = role;
+        this.profileImg = profileImg;
+        this.memberStatus = memberStatus;
+        this.point = point;
+    }
+
     public Member(SignupRequestDto requestDto, Point point){
         this.email = requestDto.getEmail();
         this.password = requestDto.getPassword();
@@ -58,14 +71,6 @@ public class Member extends Timestamped implements Serializable {
         this.point = point;
     }
 
-    public Member(String email, String password, String nickname, String profileImg){
-        this.email = email;
-        this.password = password;
-        this.nickname = nickname;
-        this.profileImg = profileImg;
-        this.memberStatus = 1L;
-        this.role = MemberRole.MEMBER;
-    }
 
 
 
