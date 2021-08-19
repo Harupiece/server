@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 
 @Getter
 @Entity
@@ -61,27 +62,36 @@ public class Challenge extends Timestamped implements Serializable {
     @Column
     private String challengeHoliday;
 
+    @Column
+    private String tag;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="member_id")
     private Member member;
 
-
-    @Builder
-    public Challenge(Long challengeId, String challengeTitle, String challengeContent, CategoryName categoryName, String challengePassword, LocalDateTime challengeStartDate, LocalDateTime challengeEndDate, boolean challengeStatus, Long challengeProgress, String challengeImgUrl, String challengeGood, String challengeBad, String challengeHoliday, Member member) {
-        this.challengeId = challengeId;
-        this.challengeTitle = challengeTitle;
-        this.challengeContent = challengeContent;
-        this.categoryName = categoryName;
-        this.challengePassword = challengePassword;
-        this.challengeStartDate = challengeStartDate;
-        this.challengeEndDate = challengeEndDate;
-        this.challengeStatus = challengeStatus;
-        this.challengeProgress = challengeProgress;
-        this.challengeImgUrl = challengeImgUrl;
-        this.challengeGood = challengeGood;
-        this.challengeBad = challengeBad;
-        this.challengeHoliday = challengeHoliday;
+    public Challenge(ChallengeRequestDto requestDto, Member member) {
+        this.challengeTitle = requestDto.getChallengeTitle();
+        this.challengeContent = requestDto.getChallengeContent();
+        this.categoryName = requestDto.getCategoryName();
+        this.challengePassword = requestDto.getChallengePassword();
+        this.challengeStartDate = requestDto.getChallengeStartDate();
+        this.challengeEndDate = requestDto.getChallengeEndDate();
+        this.challengeStatus = true;
+        this.challengeProgress = 1L;
+        this.challengeImgUrl = requestDto.getChallengeImgUrl();
+        this.challengeGood = requestDto.getChallengeGood();
+        this.challengeBad = requestDto.getChallengeBad();
+        this.challengeHoliday = requestDto.getChallengeHoliday();
         this.member = member;
+        if (ChronoUnit.DAYS.between(requestDto.getChallengeStartDate(), requestDto.getChallengeEndDate()) <= 7) {
+            this.tag = "#1주";
+        } else if (ChronoUnit.DAYS.between(requestDto.getChallengeStartDate(), requestDto.getChallengeEndDate()) <= 14) {
+            this.tag = "#2주";
+        } else if (ChronoUnit.DAYS.between(requestDto.getChallengeStartDate(), requestDto.getChallengeEndDate()) <= 21) {
+            this.tag = "#3주";
+        } else {
+            this.tag = "#4주 이상";
+        }
     }
 
     public void setChallengeStatusFalse() {
@@ -102,21 +112,15 @@ public class Challenge extends Timestamped implements Serializable {
         this.challengeGood = requestDto.getChallengeGood();
         this.challengeBad = requestDto.getChallengeBad();
         this.challengeHoliday = requestDto.getChallengeHoliday();
+        if (ChronoUnit.DAYS.between(requestDto.getChallengeStartDate(), requestDto.getChallengeEndDate()) <= 7) {
+            this.tag = "#1주";
+        } else if (ChronoUnit.DAYS.between(requestDto.getChallengeStartDate(), requestDto.getChallengeEndDate()) <= 14) {
+            this.tag = "#2주";
+        } else if (ChronoUnit.DAYS.between(requestDto.getChallengeStartDate(), requestDto.getChallengeEndDate()) <= 21) {
+            this.tag = "#3주";
+        } else {
+            this.tag = "#4주 이상";
+        }
     }
 
-    public Challenge(ChallengeRequestDto requestDto, Member member) {
-        this.challengeTitle = requestDto.getChallengeTitle();
-        this.challengeContent = requestDto.getChallengeContent();
-        this.categoryName = requestDto.getCategoryName();
-        this.challengePassword = requestDto.getChallengePassword();
-        this.challengeStartDate = requestDto.getChallengeStartDate();
-        this.challengeEndDate = requestDto.getChallengeEndDate();
-        this.challengeStatus = true;
-        this.challengeProgress = 1L;
-        this.challengeImgUrl = requestDto.getChallengeImgUrl();
-        this.challengeGood = requestDto.getChallengeGood();
-        this.challengeBad = requestDto.getChallengeBad();
-        this.challengeHoliday = requestDto.getChallengeHoliday();
-        this.member = member;
-    }
 }
