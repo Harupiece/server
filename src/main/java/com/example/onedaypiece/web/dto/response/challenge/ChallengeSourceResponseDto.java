@@ -49,14 +49,5 @@ public class ChallengeSourceResponseDto {
         } else {
             tagList.add("#4주 이상");
         }
-        if (challengeMember.size() >= 5) {
-            tagList.add("#HOT챌린지");
-        }
-        if (ChronoUnit.DAYS.between(LocalDateTime.now(), challenge.getChallengeStartDate()) <= 2) {
-            tagList.add("#시작임박");
-        }
-        if (categoryName == CategoryName.OFFICIAL) {
-            tagList.add("#공식챌린지");
-        }
     }
 }
