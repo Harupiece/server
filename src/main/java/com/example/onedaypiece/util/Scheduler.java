@@ -200,6 +200,8 @@ public class Scheduler {
             ChatRoom chatRoom = new ChatRoom(challengeId);
             chatRoomRepository.save(chatRoom);
             hashOpsChatRoom.put(CHAT_ROOMS, chatRoom.getRoomId(), chatRoom);
+
+            log.info(challengeId + " OFFICIAL challenge start");
         }
     }
 
@@ -217,7 +219,6 @@ public class Scheduler {
     private void challengeEndPoint(List<Challenge> endList) {
         long result3 = endList
                 .stream()
-                .peek(c -> System.out.println("filteredChallenge : " + c.getChallengeId()))
                 .peek(this::getPointWhenChallengeEnd)
                 .count();
         log.info(today + " / " + result3 + " members get points");

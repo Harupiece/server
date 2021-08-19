@@ -23,8 +23,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ChallengeSearchService {
 
-    private final ChallengeRepository challengeRepository;
-    private final ChallengeRecordRepository challengeRecordRepository;
     private final ChallengeRecordQueryRepository challengeRecordQueryRepository;
     private final ChallengeQueryRepository challengeQueryRepository;
 

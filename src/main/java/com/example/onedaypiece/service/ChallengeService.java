@@ -95,13 +95,6 @@ public class ChallengeService {
     public List<ChallengeSourceResponseDto> getAllChallenge(int page) {
         List<ChallengeRecord> records = challengeRecordQueryRepository.findAllByChallengeStatusTrueAndProgressNotStart();
         List<Challenge> challenges = records.stream().map(ChallengeRecord::getChallenge).collect(Collectors.toList());
-//        List<Long> challengeIdList = new ArrayList<>();
-//        List<ChallengeSourceResponseDto> sources = challenges
-//                .stream()
-//                .filter(c -> !challengeIdList.contains(c.getChallengeId()))
-//                .peek(c -> challengeIdList.add(c.getChallengeId()))
-//                .map(c -> new ChallengeSourceResponseDto(c, records))
-//                .collect(Collectors.toList());
 
         return challenges
                 .stream()
