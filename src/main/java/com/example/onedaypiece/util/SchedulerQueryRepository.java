@@ -2,18 +2,14 @@ package com.example.onedaypiece.util;
 
 import com.example.onedaypiece.web.domain.challenge.Challenge;
 import com.example.onedaypiece.web.domain.challengeRecord.ChallengeRecord;
-import com.example.onedaypiece.web.domain.challengeRecord.QChallengeRecord;
 import com.example.onedaypiece.web.domain.member.Member;
 import com.example.onedaypiece.web.domain.point.Point;
-import com.example.onedaypiece.web.domain.posting.QPosting;
 import com.example.onedaypiece.web.dto.query.posting.QSchedulerIdListDto;
 import com.example.onedaypiece.web.dto.query.posting.SchedulerIdListDto;
 import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,7 +20,6 @@ import static com.example.onedaypiece.web.domain.challenge.QChallenge.challenge;
 import static com.example.onedaypiece.web.domain.challengeRecord.QChallengeRecord.*;
 import static com.example.onedaypiece.web.domain.point.QPoint.point;
 import static com.example.onedaypiece.web.domain.posting.QPosting.*;
-import static com.querydsl.jpa.JPAExpressions.*;
 
 @Repository
 @RequiredArgsConstructor
@@ -32,7 +27,6 @@ import static com.querydsl.jpa.JPAExpressions.*;
 public class SchedulerQueryRepository {
 
     private final JPAQueryFactory queryFactory;
-
 
     /**
      *진행중인 챌린지
@@ -166,6 +160,9 @@ public class SchedulerQueryRepository {
 
     }
 
+    /**
+     * 챌린지 완수 포인트 벌크 업데이트
+     */
     @Modifying
     public void updatePointAll(List<Point> pointList, Long getPoint) {
         queryFactory
@@ -175,7 +172,9 @@ public class SchedulerQueryRepository {
                 .execute();
     }
 
-
+    /**
+     * 진행 상태 업데이트할 챌린지 목록 찾기
+     */
     public List<ChallengeRecord> findAllByChallengeProgressLessThan(Long progress) {
         return queryFactory
                 .selectFrom(challengeRecord)
