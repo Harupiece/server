@@ -17,8 +17,6 @@ public class MemberResponseDto {
     private int challengeCount; // 자기가 참여한 챌린지 개수
     private int completeChallengeCount; // 완료한 챌린지 개수
 
-
-
     public MemberResponseDto(Member member, int challengeCount, int completeChallengeCount){
         this.memberId = member.getMemberId();
         this.nickname = member.getNickname();
@@ -30,13 +28,13 @@ public class MemberResponseDto {
         this.completeChallengeCount = completeChallengeCount;
     }
 
-
     public MemberResponseDto(MemberHistoryDto responseDto) {
         this.nickname = responseDto.getNickname();
         this.memberId = responseDto.getMemberId();
         this.profileImg = responseDto.getProfileImg();
         this.point = responseDto.getAcquiredPoint();
     }
+
     // 획득한게 없을경우
     public MemberResponseDto(Member member){
         this.nickname = member.getNickname();
