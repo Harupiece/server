@@ -69,6 +69,25 @@ public class Challenge extends Timestamped implements Serializable {
     @JoinColumn(name="member_id")
     private Member member;
 
+    @Builder
+    public Challenge(Long challengeId, String challengeTitle, String challengeContent, CategoryName categoryName, String challengePassword, LocalDateTime challengeStartDate, LocalDateTime challengeEndDate, boolean challengeStatus, Long challengeProgress, String challengeImgUrl, String challengeGood, String challengeBad, String challengeHoliday, String tag, Member member) {
+        this.challengeId = challengeId;
+        this.challengeTitle = challengeTitle;
+        this.challengeContent = challengeContent;
+        this.categoryName = categoryName;
+        this.challengePassword = challengePassword;
+        this.challengeStartDate = challengeStartDate;
+        this.challengeEndDate = challengeEndDate;
+        this.challengeStatus = challengeStatus;
+        this.challengeProgress = challengeProgress;
+        this.challengeImgUrl = challengeImgUrl;
+        this.challengeGood = challengeGood;
+        this.challengeBad = challengeBad;
+        this.challengeHoliday = challengeHoliday;
+        this.tag = tag;
+        this.member = member;
+    }
+
     public Challenge(ChallengeRequestDto requestDto, Member member) {
         this.challengeTitle = requestDto.getChallengeTitle();
         this.challengeContent = requestDto.getChallengeContent();
