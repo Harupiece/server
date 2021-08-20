@@ -40,7 +40,7 @@ public class CertificationService {
 
         certificationRepository.save(certification);
 
-        //50% 이상
+        //50% 이상 여기에 pointHistory추가되는거임
         checkMemberCountAndAddPoint(posting, memberCount);
 
 
@@ -51,12 +51,15 @@ public class CertificationService {
     // 인증 인원 50% 넘으면 승인
     private void checkMemberCountAndAddPoint (Posting posting, Long memberCount) {
 
+
         if(memberCount /2 <= posting.getPostingCount()){
-            PointHistory pointHistory = new PointHistory(1L, posting); // 몇점받는지 첫번쨰 파라미터로 들어가야함
-            pointHistoryRepository.save(pointHistory);
-            posting.getMember().updatePoint(1L);
-            posting.updateApproval();
-            posting.updatePoint();
+            if(!posting.isPostingApproval()){
+                PointHistory pointHistory = new PointHistory(1L, posting); // 몇점받는지 첫번쨰 파라미터로 들어가야함
+                pointHistoryRepository.save(pointHistory);
+                posting.getMember().updatePoint(1L);
+                posting.updateApproval();
+                posting.updatePoint();
+            }
         }
     }
     private void duplicateCertification(Posting posting, Member member){

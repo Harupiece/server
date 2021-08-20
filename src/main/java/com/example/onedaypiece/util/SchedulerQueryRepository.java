@@ -8,6 +8,7 @@ import com.example.onedaypiece.web.domain.point.Point;
 import com.example.onedaypiece.web.domain.posting.QPosting;
 import com.example.onedaypiece.web.dto.query.posting.QSchedulerIdListDto;
 import com.example.onedaypiece.web.dto.query.posting.SchedulerIdListDto;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -34,26 +35,35 @@ public class SchedulerQueryRepository {
 
 
     /**
-     * 진행중인 챌린지
+     *진행중인 챌린지
+     *
      */
-    public List<ChallengeRecord> findAllByChallenge() {
+    public List<ChallengeRecord> findAllByChallenge(int week) {
         return queryFactory
                 .selectFrom(challengeRecord)
                 .innerJoin(challengeRecord.challenge)
-                .where(challengeRecord.challengeRecordStatus.isTrue(),
+                .where(getEmpty(week),
+                        challengeRecord.challengeRecordStatus.isTrue(),
                         challengeRecord.challenge.challengeProgress.eq(2L))
                 .fetch();
     }
 
+    private BooleanExpression getEmpty(int week) {
+        BooleanExpression notEmpty = challengeRecord.challenge.challengeHoliday.isNotEmpty();
+        BooleanExpression empty = challengeRecord.challenge.challengeHoliday.eq("");
+        return week == 6 || week ==7 ? notEmpty:empty ;
+    }
+
     /**
-     * 인증받지 못한자
+     *인증받지 못한자
      */
-    public List<SchedulerIdListDto> findUncertifiedList(List<Long> challengeId, List<Long> memberId, LocalDateTime today) {
+    public List<SchedulerIdListDto> findUncertifiedList(List<Long> challengeId, List<Long> memberId, LocalDateTime today){
 
         return queryFactory.select(new QSchedulerIdListDto(
                 posting.challenge.challengeId,
                 posting.member.memberId))
                 .from(posting)
+
                 .where(posting.postingStatus.isTrue(),
                         posting.challenge.challengeId.in(challengeId),
                         posting.member.memberId.in(memberId),
@@ -61,11 +71,10 @@ public class SchedulerQueryRepository {
                         posting.postingCount.eq(1L))
                 .fetch();
     }
-
     /**
-     * 글 쓰지 않은 자
+     *글 쓰지 않은 자
      */
-    public List<SchedulerIdListDto> findNotWrittenList(List<Long> challengeId) {
+    public List<SchedulerIdListDto> findNotWrittenList(List<Long> challengeId){
 
         return queryFactory.select(new QSchedulerIdListDto(
                 challengeRecord.challenge.challengeId,

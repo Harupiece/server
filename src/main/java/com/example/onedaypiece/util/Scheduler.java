@@ -54,7 +54,10 @@ public class Scheduler {
     @Transactional
     public void certificationKick() {
 
-        List<ChallengeRecord> challengeMember = schedulerQueryRepository.findAllByChallenge();
+        int week = today.getDayOfWeek().getValue();
+
+        List<ChallengeRecord> challengeMember = schedulerQueryRepository.findAllByChallenge(week);
+
 
         //진행중인 챌린지 리스트
         List<Long> challengeId = challengeMember.stream()

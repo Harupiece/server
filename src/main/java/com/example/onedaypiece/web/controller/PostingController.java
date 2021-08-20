@@ -36,7 +36,6 @@ public class PostingController {
     @GetMapping("/{page}/{challengeId}")
     public ResponseEntity<PostingListDto> getPosting (@PathVariable int page,
                                                       @PathVariable Long challengeId){
-
         log.info("getPosting 전체 포스트 리스트 : {} ",challengeId);
         return ResponseEntity.ok().body(postingService.getPosting(page,challengeId));
     }
