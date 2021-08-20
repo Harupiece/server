@@ -50,7 +50,7 @@ public class ChallengeService {
     private final LocalDateTime currentLocalDateTime = LocalDateTime.now();
 
     public ChallengeResponseDto getChallengeDetail(Long challengeId) {
-        Challenge challenge = ChallengeChecker(challengeId);
+        Challenge challenge = challengeChecker(challengeId);
         List<Long> memberList = challengeRecordQueryRepository.findAllByChallengeId(challengeId)
                 .stream()
                 .map(c -> c.getMember().getMemberId())
@@ -60,7 +60,7 @@ public class ChallengeService {
 
     @Transactional
     public void deleteChallenge(Long challengeId, String username) {
-        Challenge challenge = ChallengeChecker(challengeId);
+        Challenge challenge = challengeChecker(challengeId);
         deleteChallengeException(username, challenge);
 
         List<ChallengeRecord> recordList = challengeRecordRepository.findAllByChallengeAndChallengeRecordStatusTrue(challenge);
@@ -87,7 +87,7 @@ public class ChallengeService {
     @Transactional
     public void putChallenge(PutChallengeRequestDto requestDto, String email) {
         Member member = memberChecker(email);
-        Challenge challenge = ChallengeChecker(requestDto.getChallengeId());
+        Challenge challenge = challengeChecker(requestDto.getChallengeId());
         putChallengeException(member, challenge);
         challenge.putChallenge(requestDto);
     }
@@ -101,7 +101,6 @@ public class ChallengeService {
                 .distinct()
                 .map(c -> new ChallengeSourceResponseDto(c, records))
                 .collect(Collectors.toList());
-//        return listToPage(page, sources);
     }
 
     public ChallengeMainResponseDto getMainPage(String email) {
@@ -115,7 +114,6 @@ public class ChallengeService {
         categoryCollector(LIVINGHABITS, records).forEach(responseDto::addLivingHabits);
         categoryCollector(NODRINKNOSMOKE, records).forEach(responseDto::addNoDrinkNoSmoke);
 
-//        responseDto.setHistoryCount(userHistoryRepository.countAllByStatusFalseAndMemberEmail(email));
         return responseDto;
     }
 
@@ -124,6 +122,7 @@ public class ChallengeService {
                 .stream()
                 .filter(r -> r.getChallenge().getCategoryName().equals(OFFICIAL))
                 .map(ChallengeRecord::getChallenge)
+                .distinct()
                 .collect(Collectors.toList());
 
         List<ChallengeSourceResponseDto> sliderSourceList = userChallengeList
@@ -136,28 +135,23 @@ public class ChallengeService {
 
     private void popularUpdate(ChallengeMainResponseDto responseDto, String email, List<ChallengeRecord> records) {
         final int POPULAR_SIZE = 4;
-        List<ChallengeRecord> popularRecords = challengeRecordQueryRepository.findPopular(email, PageRequest.of(0, POPULAR_SIZE));
+
+        List<ChallengeRecord> popularRecords = challengeRecordQueryRepository.findAllPopular(email, PageRequest.of(0, POPULAR_SIZE));
         responseDto.addPopular(popularRecords, records);
     }
 
     private List<ChallengeSourceResponseDto> categoryCollector(CategoryName category, List<ChallengeRecord> records) {
         final int CATEGORY_SIZE = 3;
 
-        Set<Long> recordIdList = new HashSet<>();
-        List<ChallengeRecord> recordList = new ArrayList<>();
-
-        records
+        List<Challenge> challenges = records
                 .stream()
-                .filter(r -> !recordIdList.contains(r.getChallenge().getChallengeId()) &&
-                        r.getChallenge().getCategoryName().equals(category) &&
-                        recordIdList.size() < CATEGORY_SIZE)
-                .forEach(r -> {
-                    recordIdList.add(r.getChallenge().getChallengeId());
-                    recordList.add(r);
-                });
+                .filter(r -> r.getChallenge().getCategoryName().equals(category))
+                .map(ChallengeRecord::getChallenge)
+                .distinct()
+                .limit(CATEGORY_SIZE)
+                .collect(Collectors.toList());
 
-        List<Challenge> list = recordList.stream().map(ChallengeRecord::getChallenge).collect(Collectors.toList());
-        return list
+        return challenges
                 .stream()
                 .map(c -> new ChallengeSourceResponseDto(c, records))
                 .collect(Collectors.toList());
@@ -172,7 +166,7 @@ public class ChallengeService {
         return new PageImpl<>(sources.subList(start, end), paging, sources.size());
     }
 
-    private Challenge ChallengeChecker(Long challengeId) {
+    private Challenge challengeChecker(Long challengeId) {
         return challengeRepository.findById(challengeId)
                 .orElseThrow(() -> new ApiRequestException("존재하지 않는 챌린지입니다"));
     }
@@ -208,7 +202,8 @@ public class ChallengeService {
 
     private void createChallengeException(ChallengeRequestDto requestDto, Member member) {
         List<ChallengeRecord> recordList = challengeRecordQueryRepository.findAllByMember(member);
-        if (recordList.stream().anyMatch(r -> r.getChallenge().getCategoryName().equals(requestDto.getCategoryName()))) {
+        if (recordList.stream().anyMatch(r -> r.getChallenge().getCategoryName().equals(requestDto.getCategoryName())) &&
+                !member.getMemberId().equals(1L)) {
             throw new ApiRequestException("이미 해당 카테고리에 챌린지를 생성한 유저입니다.");
         }
         if (requestDto.getChallengePassword().length() < 4) {
@@ -216,19 +211,19 @@ public class ChallengeService {
                 throw new ApiRequestException("비밀번호는 4자리 이상으로 설정해야합니다.");
             }
         }
-        if(!StringUtils.hasText(requestDto.getChallengeTitle())){
-            throw new ApiRequestException("제목 없습니다.");
+        if (!StringUtils.hasText(requestDto.getChallengeTitle())) {
+            throw new ApiRequestException("제목이 없습니다.");
         }
-        if(!StringUtils.hasText(requestDto.getChallengeContent())){
+        if (!StringUtils.hasText(requestDto.getChallengeContent())) {
             throw new ApiRequestException("내용이 없습니다.");
         }
-        if(!StringUtils.hasText(requestDto.getChallengeImgUrl())){
+        if (!StringUtils.hasText(requestDto.getChallengeImgUrl())) {
             throw new ApiRequestException("챌린지 이미지가 없습니다.");
         }
-        if(!StringUtils.hasText(requestDto.getChallengeGood())){
+        if (!StringUtils.hasText(requestDto.getChallengeGood())) {
             throw new ApiRequestException("좋은 예시가 없습니다.");
         }
-        if(!StringUtils.hasText(requestDto.getChallengeBad())){
+        if (!StringUtils.hasText(requestDto.getChallengeBad())) {
             throw new ApiRequestException("나쁜 예시가 없습니다.");
         }
     }

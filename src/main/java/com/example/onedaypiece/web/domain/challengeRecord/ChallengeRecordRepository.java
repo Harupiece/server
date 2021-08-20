@@ -33,12 +33,6 @@ public interface ChallengeRecordRepository extends JpaRepository<ChallengeRecord
             "and c.challenge.challengeId in :kickChallenge")
     int kickMemberOnChallenge(List<Long> kickMember, List<Long> kickChallenge);
 
-    @Modifying(clearAutomatically = true)
-    @Query("update ChallengeRecord c " +
-            "set c.challengePoint = true " +
-            "where c.challenge in :challengeList")
-    void updateChallengePoint(List<Challenge> challengeList);
-
 //    @Query("select c from ChallengeRecord c inner join fetch c.challenge " +
 //            "where c.challengeRecordStatus = true " +
 //            "and c.challenge.challengeStatus = true " +

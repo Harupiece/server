@@ -25,7 +25,5 @@ public class CertificationQueryRepository {
                 .join(certification.posting)
                 .where(certification.posting.challenge.challengeId.eq(challengeId))
                 .fetch();
-
     }
-
 }

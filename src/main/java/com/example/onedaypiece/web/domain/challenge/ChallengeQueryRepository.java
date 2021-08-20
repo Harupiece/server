@@ -5,10 +5,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 
 import static com.example.onedaypiece.web.domain.challenge.QChallenge.challenge;
+import static org.springframework.util.CollectionUtils.isEmpty;
 
 @Repository
 @RequiredArgsConstructor
@@ -62,17 +64,5 @@ public class ChallengeQueryRepository {
      * @Modifying(clearAutomatically = true)
      * @Query("update Challenge c set c.challengeProgress = :progress where c in :challengeList")
      * int updateChallengeProgress(Long progress, List<Challenge> challengeList);
-     **/
-    @Modifying
-    public Long updateChallengeProgress(Long progress, List<Challenge> challengeList) {
-        return queryFactory
-                .update(challenge)
-                .set(challenge.challengeProgress, progress)
-                .where(challenge.in(challengeList))
-                .execute();
-    }
-
-    /**
-     List<Challenge> findAllByChallengeStatusTrueAndChallengeProgressLessThan(Long challengeProgress);
      **/
 }

@@ -1,7 +1,10 @@
 package com.example.onedaypiece.util;
 
+import com.example.onedaypiece.web.domain.challenge.Challenge;
 import com.example.onedaypiece.web.domain.challengeRecord.ChallengeRecord;
 import com.example.onedaypiece.web.domain.challengeRecord.QChallengeRecord;
+import com.example.onedaypiece.web.domain.member.Member;
+import com.example.onedaypiece.web.domain.point.Point;
 import com.example.onedaypiece.web.domain.posting.QPosting;
 import com.example.onedaypiece.web.dto.query.posting.QSchedulerIdListDto;
 import com.example.onedaypiece.web.dto.query.posting.SchedulerIdListDto;
@@ -9,6 +12,7 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,7 +20,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static com.example.onedaypiece.web.domain.challenge.QChallenge.challenge;
 import static com.example.onedaypiece.web.domain.challengeRecord.QChallengeRecord.*;
+import static com.example.onedaypiece.web.domain.point.QPoint.point;
 import static com.example.onedaypiece.web.domain.posting.QPosting.*;
 import static com.querydsl.jpa.JPAExpressions.*;
 
@@ -29,7 +35,7 @@ public class SchedulerQueryRepository {
 
 
     /**
-    *진행중인 챌린지
+     *진행중인 챌린지
      *
      */
     public List<ChallengeRecord> findAllByChallenge(int week) {
@@ -82,6 +88,7 @@ public class SchedulerQueryRepository {
                         posting.isNull())
                 .fetch();
     }
+
     /**
      * 수정 가능 여부 (당일만 가능)
      */
@@ -95,4 +102,88 @@ public class SchedulerQueryRepository {
                 .fetch();
     }
 
+    /**
+     * 공식 챌린지 존재 여부
+     */
+    public Boolean findAllByOfficialAndChallengeTitle(String title) {
+        return queryFactory
+                .select(challenge.challengeId)
+                .from(challenge)
+                .where(challenge.challengeStatus.eq(true),
+                        challenge.challengeProgress.eq(1L),
+                        challenge.challengeTitle.eq(title))
+                .fetchFirst() == null;
+    }
+
+    /**
+     * 챌린지 진행 상태 업데이트
+     */
+    @Modifying
+    public Long updateChallengeProgress(Long progress, List<Challenge> challengeList) {
+        return queryFactory
+                .update(challenge)
+                .set(challenge.challengeProgress, progress)
+                .where(challenge.in(challengeList))
+                .execute();
+    }
+
+    /**
+     * 포인트 업데이트
+     */
+    @Modifying
+    public Long updateChallengePoint(List<Challenge> challengeList) {
+        return queryFactory
+                .update(challengeRecord)
+                .set(challengeRecord.challengePoint, true)
+                .where(challengeRecord.challenge.in(challengeList))
+                .execute();
+    }
+
+    /**
+     * 챌린지 완료 포인트 지급
+     */
+    public List<ChallengeRecord> findAllByChallengeOnScheduler(Challenge challenge) {
+        return queryFactory
+                .select(challengeRecord)
+                .from(challengeRecord)
+                .join(challengeRecord.member).fetchJoin()
+                .where(challengeRecord.challengeRecordStatus.eq(true),
+                        challengeRecord.challenge.eq(challenge))
+                .fetch();
+    }
+
+    /**
+     * 포스팅 갯수 구하기
+     */
+    public Long findAllByChallengeAndFirstMember(Challenge challenge, Member member) {
+        return queryFactory
+                .select(posting.challenge.challengeId)
+                .from(posting)
+                .where(posting.challenge.challengeStatus.isTrue(),
+                        posting.challenge.eq(challenge),
+                        posting.member.eq(member))
+                .fetchCount();
+
+    }
+
+    @Modifying
+    public void updatePointAll(List<Point> pointList, Long getPoint) {
+        queryFactory
+                .update(point)
+                .set(point.acquiredPoint, point.acquiredPoint.add(getPoint))
+                .where(point.in(pointList))
+                .execute();
+    }
+
+
+    public List<ChallengeRecord> findAllByChallengeProgressLessThan(Long progress) {
+        return queryFactory
+                .selectFrom(challengeRecord)
+                .innerJoin(challengeRecord.challenge).fetchJoin()
+                .where(challengeRecord.challengeRecordStatus.eq(true),
+                        challengeRecord.challenge.challengeStatus.eq(true),
+                        challengeRecord.challenge.challengeProgress.lt(progress))
+                .fetch();
+    }
 }
+

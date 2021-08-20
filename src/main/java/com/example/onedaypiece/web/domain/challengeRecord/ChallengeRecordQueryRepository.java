@@ -56,23 +56,6 @@ public class ChallengeRecordQueryRepository {
     }
 
     /**
-     * @Query("select r from ChallengeRecord r " +
-     * "inner join fetch r.member " +
-     * "Where r.challengeRecordStatus = true and r.challenge = :challenge")
-     * Optional<List<ChallengeRecord>> optionalFindAllByChallenge(Challenge challenge);
-     */
-    public List<ChallengeRecord> findAllByChallengeOnScheduler(Challenge challenge) {
-        System.out.println("query id : " + challenge.getChallengeId());
-        return queryFactory
-                .select(challengeRecord)
-                .from(challengeRecord)
-                .join(challengeRecord.member).fetchJoin()
-                .where(challengeRecord.challengeRecordStatus.eq(true),
-                        challengeRecord.challenge.eq(challenge))
-                .fetch();
-    }
-
-    /**
      * @Query("select c from ChallengeRecord c " +
      * "inner join fetch c.challenge " +
      * "inner join fetch c.member " +
@@ -118,7 +101,7 @@ public class ChallengeRecordQueryRepository {
      * "order by count(c.challenge.challengeId) desc")
      * List<ChallengeRecord> findPopularOrderByDesc(String email, Pageable pageable);
      */
-    public List<ChallengeRecord> findPopular(String email, Pageable page) {
+    public List<ChallengeRecord> findAllPopular(String email, Pageable page) {
         return queryFactory
                 .select(challengeRecord)
                 .from(challengeRecord)
@@ -148,6 +131,7 @@ public class ChallengeRecordQueryRepository {
                 .join(challengeRecord.challenge).fetchJoin()
                 .join(challengeRecord.member).fetchJoin()
                 .where(challengeRecord.challengeRecordStatus.eq(true),
+                        challengeRecord.challenge.challengeStatus.eq(true),
                         challengeRecord.challenge.challengeProgress.eq(1L))
                 .orderBy(challengeRecord.modifiedAt.desc())
                 .fetch();
@@ -224,18 +208,9 @@ public class ChallengeRecordQueryRepository {
     public List<ChallengeRecord> findAllByChallenge() {
         return queryFactory
                 .selectFrom(challengeRecord)
-                .innerJoin(challengeRecord.challenge)
+                .innerJoin(challengeRecord.challenge).fetchJoin()
                 .where(challengeRecord.challengeRecordStatus.isTrue(),
                         challengeRecord.challenge.challengeProgress.eq(2L))
-                .fetch();
-    }
-
-    public List<ChallengeRecord> findAllByChallengeProgressLessThan(Long progress) {
-        return queryFactory
-                .selectFrom(challengeRecord)
-                .where(challengeRecord.challengeRecordStatus.eq(true),
-                        challengeRecord.challenge.challengeStatus.eq(true),
-                        challengeRecord.challenge.challengeProgress.lt(progress))
                 .fetch();
     }
 

@@ -3,19 +3,14 @@ package com.example.onedaypiece.service;
 import com.example.onedaypiece.web.domain.challenge.CategoryName;
 import com.example.onedaypiece.web.domain.challenge.Challenge;
 import com.example.onedaypiece.web.domain.challenge.ChallengeQueryRepository;
-import com.example.onedaypiece.web.domain.challenge.ChallengeRepository;
 import com.example.onedaypiece.web.domain.challengeRecord.ChallengeRecord;
 import com.example.onedaypiece.web.domain.challengeRecord.ChallengeRecordQueryRepository;
-import com.example.onedaypiece.web.domain.challengeRecord.ChallengeRecordRepository;
 import com.example.onedaypiece.web.dto.response.challenge.ChallengeListResponseDto;
 import com.example.onedaypiece.web.dto.response.challenge.ChallengeResponseDto;
-import com.example.onedaypiece.web.dto.response.search.ChallengeTitleSearchResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,18 +21,18 @@ public class ChallengeSearchService {
     private final ChallengeRecordQueryRepository challengeRecordQueryRepository;
     private final ChallengeQueryRepository challengeQueryRepository;
 
-    final int pageSize = 999;
+    final int PAGE_SIZE = 999;
 
     public ChallengeListResponseDto getChallengeByCategoryName(CategoryName categoryName, int page) {
         List<Challenge> challengeList = challengeQueryRepository.
-                findAllByCategoryName(categoryName, PageRequest.of(page - 1, pageSize));
+                findAllByCategoryName(categoryName, PageRequest.of(page - 1, PAGE_SIZE));
         return listResponseDtoSource(challengeList);
     }
 
     public ChallengeListResponseDto getChallengeSearchResult(String searchWords, int page) {
         List<Challenge> challengeList = challengeQueryRepository.
                 findAllByWords(
-                        searchWords.trim(), PageRequest.of(page - 1, pageSize));
+                        searchWords.trim(), PageRequest.of(page - 1, PAGE_SIZE));
         return listResponseDtoSource(challengeList);
     }
 
