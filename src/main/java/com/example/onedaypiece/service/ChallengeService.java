@@ -63,8 +63,8 @@ public class ChallengeService {
         Challenge challenge = ChallengeChecker(challengeId);
         deleteChallengeException(username, challenge);
 
-        ChallengeRecord record = challengeRecordRepository.findByChallengeAndChallengeRecordStatusTrue(challenge);
-        record.setStatusFalse();
+        List<ChallengeRecord> recordList = challengeRecordRepository.findAllByChallengeAndChallengeRecordStatusTrue(challenge);
+        recordList.forEach(ChallengeRecord::setStatusFalse);
     }
 
     @Transactional
