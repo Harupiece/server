@@ -17,10 +17,9 @@ public class MemberResponseDto {
     private int challengeCount; // 자기가 참여한 챌린지 개수
     private int completeChallengeCount; // 완료한 챌린지 개수
 
-    //랭크
-    private int rank;
 
-    public MemberResponseDto(Member member, int challengeCount, int completeChallengeCount, int rank){
+
+    public MemberResponseDto(Member member, int challengeCount, int completeChallengeCount){
         this.memberId = member.getMemberId();
         this.nickname = member.getNickname();
         this.profileImg = member.getProfileImg();
@@ -29,8 +28,6 @@ public class MemberResponseDto {
 
         this.challengeCount = challengeCount;
         this.completeChallengeCount = completeChallengeCount;
-
-        this.rank = rank;
     }
 
 
