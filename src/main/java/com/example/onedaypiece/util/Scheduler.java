@@ -58,7 +58,7 @@ public class Scheduler {
     private final LocalDateTime today = LocalDate.now().atStartOfDay();
 
     //    01 00 00
-    @Scheduled(cron = "01 0/1 * * * *") // 초, 분, 시, 일, 월, 주 순서
+    @Scheduled(cron = "01 0 0 * * *") // 초, 분, 시, 일, 월, 주 순서
     @Transactional
     public void certificationKick() {
 
