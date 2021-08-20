@@ -41,10 +41,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -94,20 +91,6 @@ public class MemberService {
     // 로그인
     @Transactional
     public MemberTokenResponseDto loginMember(LoginRequestDto requestDto){
-        // 포인트 번호
-        int rank = 1;
-
-        // 포인트 순위
-        List<Point> pointList = pointRepository.findAllByOrderByAcquiredPointDesc();
-
-        for (int i = 0; i < pointList.size(); i++) {
-            for (int j = 0; j < pointList.size(); j++) {
-                if (pointList.get(i).getAcquiredPoint() < pointList.get(j).getAcquiredPoint()) {
-                    rank++;
-                }
-            }
-        }
-
         // 1. Login ID/PW 를 기반으로 AuthenticationToken 생성
         UsernamePasswordAuthenticationToken authenticationToken = requestDto.toAuthentication();
 
@@ -134,26 +117,12 @@ public class MemberService {
         // 완료된 챌린지 리스트
         List<ChallengeRecord> completeList = challengeRecordQueryRepository.findAllByMemberAndProgress(member,3L);
 
-        return new MemberTokenResponseDto(tokenDto, member, targetList1.size() + targetList2.size(), completeList.size(), rank);
+        return new MemberTokenResponseDto(tokenDto, member, targetList1.size() + targetList2.size(), completeList.size());
     }
 
     // 새로고침
     @Transactional(readOnly = true)
     public ReloadResponseDto reload(String email){
-        // 포인트 번호
-        int rank = 1;
-
-        // 포인트 순위
-        List<Point> pointList = pointRepository.findAllByOrderByAcquiredPointDesc();
-
-        for (int i = 0; i < pointList.size(); i++) {
-            for (int j = 0; j < pointList.size(); j++) {
-                if (pointList.get(i).getAcquiredPoint() < pointList.get(j).getAcquiredPoint()) {
-                    rank++;
-                }
-            }
-        }
-
         Member member = getMemberByEmail(email);
 
         // 자기가 참여한 챌린지에서 현재 진행중인리스트
@@ -164,27 +133,13 @@ public class MemberService {
         // 완료된 챌린지 리스트
         List<ChallengeRecord> completeList = challengeRecordQueryRepository.findAllByMemberAndProgress(member,3L);
 
-        return new ReloadResponseDto(member, targetList1.size() + targetList2.size(), completeList.size(), rank);
+        return new ReloadResponseDto(member, targetList1.size() + targetList2.size(), completeList.size());
     }
 
 
     // 토큰 재발급
     @Transactional
     public MemberTokenResponseDto reissue(TokenRequestDto tokenRequestDto) {
-        // 포인트 번호
-        int rank = 1;
-
-        // 포인트 순위
-        List<Point> pointList = pointRepository.findAllByOrderByAcquiredPointDesc();
-
-        for (int i = 0; i < pointList.size(); i++) {
-            for (int j = 0; j < pointList.size(); j++) {
-                if (pointList.get(i).getAcquiredPoint() < pointList.get(j).getAcquiredPoint()) {
-                    rank++;
-                }
-            }
-        }
-
         // 1. Refresh Token 검증
         if (!tokenProvider.validateToken(tokenRequestDto.getRefreshToken())) {
             throw new ApiRequestException("리프레시 토큰 오류");
@@ -219,7 +174,7 @@ public class MemberService {
         List<ChallengeRecord> completeList = challengeRecordQueryRepository.findAllByMemberAndProgress(member,3L);
 
         // 토큰 발급
-        return new MemberTokenResponseDto(tokenDto, member, targetList1.size() + targetList2.size(), completeList.size(), rank);
+        return new MemberTokenResponseDto(tokenDto, member, targetList1.size() + targetList2.size(), completeList.size());
     }
 
     // 마이 페이지 히스토리
@@ -231,14 +186,16 @@ public class MemberService {
         // 포인트 순위
         List<Point> pointList = pointRepository.findAllByOrderByAcquiredPointDesc();
 
-        for (int i = 0; i < pointList.size(); i++) {
-            for (int j = 0; j < pointList.size(); j++) {
-                if (pointList.get(i).getAcquiredPoint() < pointList.get(j).getAcquiredPoint()) {
-                    rank++;
-                }
+        Member member = getMemberByEmail(email);
+
+        for(int i = 0 ; i< pointList.size(); i++){
+            System.out.println("순위: "+ pointList.get(i).getAcquiredPoint()+ "아이디번호: "+ pointList.get(i).getPointId());
+            if(member.getMemberId() == pointList.get(i).getPointId() && member.getPoint().getAcquiredPoint() == pointList.get(i).getAcquiredPoint()){
+                break;
+            } else{
+                rank++;
             }
         }
-
 
         MemberResponseDto memberResponseDto;
 
@@ -246,12 +203,12 @@ public class MemberService {
         List<MemberHistoryDto> memberHistoryListPosting = pointHistoryRepository.findHistoryPosting(email);
         List<MemberHistoryDto> memberHistoryListChallenge = pointHistoryRepository.findHistoryChallenge(email);
 
-        if(memberHistoryListPosting.size() == 0){
-            Member member = getMemberByEmail(email);
-            memberResponseDto = new MemberResponseDto(member);
-        } else{
-            memberResponseDto = new MemberResponseDto(memberHistoryListPosting.get(0));
-        }
+        memberResponseDto = new MemberResponseDto(member);
+//        if(memberHistoryListPosting.size() == 0){
+//            memberResponseDto = new MemberResponseDto(member);
+//        } else{
+//            memberResponseDto = new MemberResponseDto(memberHistoryListPosting.get(0));
+//        }
 
         // 2. 포인트에 관한것만 빼기 원하는정보만 빼기 히스토리에관한것만 따로뺴고
         List<PointHistoryDto> pointHistoryListP = memberHistoryListPosting.stream()
@@ -263,7 +220,7 @@ public class MemberService {
                 .collect(Collectors.toList());
 
 
-        return new MemberHistoryResponseDto(memberResponseDto, pointHistoryListP, pointHistoryListC);
+        return new MemberHistoryResponseDto(memberResponseDto, pointHistoryListP, pointHistoryListC, rank);
     }
 
     // 마이 페이지 비밀번호 수정
