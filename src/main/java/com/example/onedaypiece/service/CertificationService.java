@@ -50,16 +50,16 @@ public class CertificationService {
 
     // 인증 인원 50% 넘으면 승인
     private void checkMemberCountAndAddPoint (Posting posting, Long memberCount) {
-        if(posting.isPostingApproval()){
-            throw new ApiRequestException("이미 인증된 게시글입니다!");
-        }
+
 
         if(memberCount /2 <= posting.getPostingCount()){
-            PointHistory pointHistory = new PointHistory(1L, posting); // 몇점받는지 첫번쨰 파라미터로 들어가야함
-            pointHistoryRepository.save(pointHistory);
-            posting.getMember().updatePoint(1L);
-            posting.updateApproval();
-            posting.updatePoint();
+            if(!posting.isPostingApproval()){
+                PointHistory pointHistory = new PointHistory(1L, posting); // 몇점받는지 첫번쨰 파라미터로 들어가야함
+                pointHistoryRepository.save(pointHistory);
+                posting.getMember().updatePoint(1L);
+                posting.updateApproval();
+                posting.updatePoint();
+            }
         }
     }
     private void duplicateCertification(Posting posting, Member member){
