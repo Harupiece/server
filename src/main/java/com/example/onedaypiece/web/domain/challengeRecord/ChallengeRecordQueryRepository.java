@@ -118,7 +118,7 @@ public class ChallengeRecordQueryRepository {
      * "order by count(c.challenge.challengeId) desc")
      * List<ChallengeRecord> findPopularOrderByDesc(String email, Pageable pageable);
      */
-    public List<ChallengeRecord> findPopular(String email, Pageable page) {
+    public List<ChallengeRecord> findAllPopular(String email, Pageable page) {
         return queryFactory
                 .select(challengeRecord)
                 .from(challengeRecord)
@@ -148,6 +148,7 @@ public class ChallengeRecordQueryRepository {
                 .join(challengeRecord.challenge).fetchJoin()
                 .join(challengeRecord.member).fetchJoin()
                 .where(challengeRecord.challengeRecordStatus.eq(true),
+                        challengeRecord.challenge.challengeStatus.eq(true),
                         challengeRecord.challenge.challengeProgress.eq(1L))
                 .orderBy(challengeRecord.modifiedAt.desc())
                 .fetch();
