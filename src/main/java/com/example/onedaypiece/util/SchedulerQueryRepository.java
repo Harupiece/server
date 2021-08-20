@@ -5,6 +5,7 @@ import com.example.onedaypiece.web.domain.challengeRecord.QChallengeRecord;
 import com.example.onedaypiece.web.domain.posting.QPosting;
 import com.example.onedaypiece.web.dto.query.posting.QSchedulerIdListDto;
 import com.example.onedaypiece.web.dto.query.posting.SchedulerIdListDto;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -29,15 +30,24 @@ public class SchedulerQueryRepository {
 
     /**
     *진행중인 챌린지
-      */
-    public List<ChallengeRecord> findAllByChallenge() {
+     *
+     */
+    public List<ChallengeRecord> findAllByChallenge(int week) {
         return queryFactory
                 .selectFrom(challengeRecord)
                 .innerJoin(challengeRecord.challenge)
-                .where(challengeRecord.challengeRecordStatus.isTrue(),
+                .where(getEmpty(week),
+                        challengeRecord.challengeRecordStatus.isTrue(),
                         challengeRecord.challenge.challengeProgress.eq(2L))
                 .fetch();
     }
+
+    private BooleanExpression getEmpty(int week) {
+        BooleanExpression notEmpty = challengeRecord.challenge.challengeHoliday.isNotEmpty();
+        BooleanExpression empty = challengeRecord.challenge.challengeHoliday.eq("");
+        return week == 6 || week ==7 ? notEmpty:empty ;
+    }
+
     /**
      *인증받지 못한자
      */
@@ -47,6 +57,7 @@ public class SchedulerQueryRepository {
                 posting.challenge.challengeId,
                 posting.member.memberId))
                 .from(posting)
+
                 .where(posting.postingStatus.isTrue(),
                         posting.challenge.challengeId.in(challengeId),
                         posting.member.memberId.in(memberId),

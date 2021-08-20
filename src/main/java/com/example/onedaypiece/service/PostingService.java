@@ -150,6 +150,15 @@ public class PostingService {
 
         LocalDateTime now = LocalDate.now().atStartOfDay();
 
+        boolean sat = 6 == now.getDayOfWeek().getValue();
+        boolean sun = 7 == now.getDayOfWeek().getValue();
+
+        if ( sat || sun){
+            if (challenge.getChallengeHoliday().equals("") ){
+                throw new ApiRequestException("주말에 작성 불가능한 챌린지 입니다!");
+            }
+        }
+
         boolean posting = postingQueryRepository.existsTodayPosting(now,member.getMemberId(),challenge.getChallengeId());
 
         if(posting){
