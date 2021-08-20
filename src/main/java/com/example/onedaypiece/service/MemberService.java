@@ -41,8 +41,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -178,6 +177,52 @@ public class MemberService {
         return new MemberTokenResponseDto(tokenDto, member, targetList1.size() + targetList2.size(), completeList.size());
     }
 
+    // 마이 페이지 히스토리
+    @Transactional(readOnly = true)
+    public MemberHistoryResponseDto getHistory(String email){
+        // 포인트 번호
+        int rank = 1;
+
+        // 포인트 순위
+        List<Point> pointList = pointRepository.findAllByOrderByAcquiredPointDesc();
+
+        Member member = getMemberByEmail(email);
+
+        for(int i = 0 ; i< pointList.size(); i++){
+            System.out.println("순위: "+ pointList.get(i).getAcquiredPoint()+ "아이디번호: "+ pointList.get(i).getPointId());
+            if(member.getMemberId() == pointList.get(i).getPointId() && member.getPoint().getAcquiredPoint() == pointList.get(i).getAcquiredPoint()){
+                break;
+            } else{
+                rank++;
+            }
+        }
+
+        MemberResponseDto memberResponseDto;
+
+        // 1. 자기가 얻은 포인트 가져오기
+        List<MemberHistoryDto> memberHistoryListPosting = pointHistoryRepository.findHistoryPosting(email);
+        List<MemberHistoryDto> memberHistoryListChallenge = pointHistoryRepository.findHistoryChallenge(email);
+
+        memberResponseDto = new MemberResponseDto(member);
+//        if(memberHistoryListPosting.size() == 0){
+//            memberResponseDto = new MemberResponseDto(member);
+//        } else{
+//            memberResponseDto = new MemberResponseDto(memberHistoryListPosting.get(0));
+//        }
+
+        // 2. 포인트에 관한것만 빼기 원하는정보만 빼기 히스토리에관한것만 따로뺴고
+        List<PointHistoryDto> pointHistoryListP = memberHistoryListPosting.stream()
+                .map(memberHistory -> new PointHistoryDto(memberHistory))
+                .collect(Collectors.toList());
+
+        List<PointHistoryDto> pointHistoryListC = memberHistoryListChallenge.stream()
+                .map(memberHistory -> new PointHistoryDto(memberHistory))
+                .collect(Collectors.toList());
+
+
+        return new MemberHistoryResponseDto(memberResponseDto, pointHistoryListP, pointHistoryListC, rank);
+    }
+
     // 마이 페이지 비밀번호 수정
     @Transactional
     public void updatePassword(PwUpdateRequestDto requestDto, String email){
@@ -261,35 +306,6 @@ public class MemberService {
                 .collect(Collectors.toList());
 
         return new MyPageEndResponseDto(member, endList);
-    }
-
-    // 마이 페이지 히스토리
-    @Transactional(readOnly = true)
-    public MemberHistoryResponseDto getHistory(String email){
-        MemberResponseDto memberResponseDto;
-
-        // 1. 자기가 얻은 포인트 가져오기
-        List<MemberHistoryDto> memberHistoryListPosting = pointHistoryRepository.findHistoryPosting(email);
-        List<MemberHistoryDto> memberHistoryListChallenge = pointHistoryRepository.findHistoryChallenge(email);
-
-        if(memberHistoryListPosting.size() == 0){
-            Member member = getMemberByEmail(email);
-            memberResponseDto = new MemberResponseDto(member);
-        } else{
-            memberResponseDto = new MemberResponseDto(memberHistoryListPosting.get(0));
-        }
-
-        // 2. 포인트에 관한것만 빼기 원하는정보만 빼기 히스토리에관한것만 따로뺴고
-        List<PointHistoryDto> pointHistoryListP = memberHistoryListPosting.stream()
-                .map(memberHistory -> new PointHistoryDto(memberHistory))
-                .collect(Collectors.toList());
-
-        List<PointHistoryDto> pointHistoryListC = memberHistoryListChallenge.stream()
-                .map(memberHistory -> new PointHistoryDto(memberHistory))
-                .collect(Collectors.toList());
-
-
-        return new MemberHistoryResponseDto(memberResponseDto, pointHistoryListP, pointHistoryListC);
     }
 
     // 닉네임 중복확인

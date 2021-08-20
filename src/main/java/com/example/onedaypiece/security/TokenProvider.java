@@ -29,7 +29,6 @@ public class TokenProvider {
     private static final long ACCESS_TOKEN_EXPIRE_TIME = 1000 * 60 * 30;       // 30분 = 1000 * 60 * 30 -> 프론트 테스트 때문에 300분으로 해놓음!
     private static final long REFRESH_TOKEN_EXPIRE_TIME = 1000 * 60 * 60 * 24 * 1;  // 7일 -> 내가1일로수정함
 
-
     private final Key key;
 
     public TokenProvider(@Value("${jwt.secret}") String secretKey) {
