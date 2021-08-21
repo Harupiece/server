@@ -158,7 +158,7 @@ public class Scheduler {
                     ""
             );
         } else if (dayValue == 3) {
-            title = "매일 담배 대신 한 것 인증하기";
+            title = "작심육일 금연!";
             requestDto = new ChallengeRequestDto(
                     title,
                     "1. 하루에 한번 담배 대신 자기가 한 일에 대한 사진을 올려주세요! 사탕이나 초콜릿 , 젤리처럼 간단하면서도 달콤한 간식으로 담배를 이겨낸 걸 뿌듯한 마음으로 인증하는 것도 가능하겠죠? \n" +
@@ -201,10 +201,10 @@ public class Scheduler {
             chatRoomRepository.save(chatRoom);
             hashOpsChatRoom.put(CHAT_ROOMS, chatRoom.getRoomId(), chatRoom);
 
-            log.info(challengeId + " OFFICIAL challenge start");
-        }
+            log.info(challengeId + " OFFICIAL challenge start / day value = " + dayValue);
 
-        System.out.println("dayValue = " + dayValue);
+            challengeRecordRepository.deleteByMember(member);
+        }
     }
 
     private void challengeStart(List<Challenge> startList) {
