@@ -41,6 +41,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.Cookie;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -117,7 +118,19 @@ public class MemberService {
         // 완료된 챌린지 리스트
         List<ChallengeRecord> completeList = challengeRecordQueryRepository.findAllByMemberAndProgress(member,3L);
 
-        return new MemberTokenResponseDto(tokenDto, member, targetList1.size() + targetList2.size(), completeList.size());
+        Cookie acCookie = new Cookie("accessToken", tokenDto.getAccessToken());
+        acCookie.setHttpOnly(true);
+        acCookie.setSecure(true);
+        acCookie.setMaxAge(60*30);
+
+        Cookie reCookie = new Cookie("refreshToken", tokenDto.getRefreshToken());
+        reCookie.setHttpOnly(true);
+        reCookie.setSecure(true);
+        reCookie.setMaxAge(60*60*24);
+
+
+        return new MemberTokenResponseDto(tokenDto, member, targetList1.size() + targetList2.size(), completeList.size(),
+                acCookie, reCookie);
     }
 
     // 새로고침
@@ -173,8 +186,20 @@ public class MemberService {
         // 완료된 챌린지 리스트
         List<ChallengeRecord> completeList = challengeRecordQueryRepository.findAllByMemberAndProgress(member,3L);
 
+
+        Cookie acCookie = new Cookie("accessToken", tokenDto.getAccessToken());
+        acCookie.setHttpOnly(true);
+        acCookie.setSecure(true);
+        acCookie.setMaxAge(60*30);
+
+        Cookie reCookie = new Cookie("refreshToken", tokenDto.getRefreshToken());
+        reCookie.setHttpOnly(true);
+        reCookie.setSecure(true);
+        reCookie.setMaxAge(60*60*24);
+
         // 토큰 발급
-        return new MemberTokenResponseDto(tokenDto, member, targetList1.size() + targetList2.size(), completeList.size());
+        return new MemberTokenResponseDto(tokenDto, member, targetList1.size() + targetList2.size(), completeList.size()
+        , acCookie, reCookie);
     }
 
     // 마이 페이지 히스토리
