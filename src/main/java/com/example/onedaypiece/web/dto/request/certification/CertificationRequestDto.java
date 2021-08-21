@@ -1,10 +1,7 @@
 package com.example.onedaypiece.web.dto.request.certification;
 
 
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 
 @Getter
 @ToString
@@ -14,4 +11,9 @@ public class CertificationRequestDto {
     private Long postingId;
     private Long totalNumber;
 
+    @Builder
+    public CertificationRequestDto(Long postingId, Long totalNumber) {
+        this.postingId = postingId;
+        this.totalNumber = totalNumber;
+    }
 }

@@ -1,6 +1,5 @@
 //package com.example.onedaypiece.service;
 //
-//import com.example.onedaypiece.exception.ApiRequestException;
 //import com.example.onedaypiece.web.domain.certification.Certification;
 //import com.example.onedaypiece.web.domain.certification.CertificationRepository;
 //import com.example.onedaypiece.web.domain.challenge.CategoryName;
@@ -13,36 +12,34 @@
 //import com.example.onedaypiece.web.domain.posting.Posting;
 //import com.example.onedaypiece.web.domain.posting.PostingRepository;
 //import com.example.onedaypiece.web.dto.request.posting.PostingCreateRequestDto;
-//import org.junit.jupiter.api.Assertions;
 //import org.junit.jupiter.api.BeforeEach;
 //import org.junit.jupiter.api.DisplayName;
 //import org.junit.jupiter.api.Test;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.boot.test.context.SpringBootTest;
-//import org.springframework.test.context.ActiveProfiles;
-//import org.springframework.transaction.annotation.Transactional;
+//import org.junit.jupiter.api.extension.ExtendWith;
+//import org.mockito.InjectMocks;
+//import org.mockito.Mock;
+//import org.mockito.junit.jupiter.MockitoExtension;
 //
 //import java.util.ArrayList;
 //import java.util.List;
 //
-//@SpringBootTest
-//@Transactional
-//public class PostingServiceTest {
+//@ExtendWith(MockitoExtension.class)
+//public class PostingServiceTest2 {
 //
-//    @Autowired
+//    @InjectMocks
+//    private PostingService postingService;
+//
+//    @Mock
 //    PostingRepository postingRepository;
-//
-//    @Autowired
-//    CertificationRepository certificationRepository;
-//
-//    @Autowired
+//    @Mock
 //    MemberRepository memberRepository;
-//
-//    @Autowired
+//    @Mock
+//    CertificationRepository certificationRepository;
+//    @Mock
 //    ChallengeRepository challengeRepository;
 //
-//    @Autowired
-//    PostingService postingService;
+//    Member member;
+//    Challenge challenge;
 //
 //
 //    @BeforeEach
@@ -60,7 +57,7 @@
 //                    .pointId(i)
 //                    .acquiredPoint(0L)
 //                    .build();
-//            Member member = Member.builder()
+//            member = Member.builder()
 //                    .memberId(i)
 //                    .email("qwer@qwer.com")
 //                    .profileImg("test.jpg")
@@ -70,7 +67,7 @@
 //                    .point(point)
 //                    .role(MemberRole.MEMBER)
 //                    .build();
-//            Challenge challenge = Challenge.builder()
+//             challenge = Challenge.builder()
 //                    .challengeId(i)
 //                    .challengeTitle("테스트 챌린지 타이틀")
 //                    .challengeContent("테스트 챌린지 콘텐츠")
@@ -86,7 +83,6 @@
 //            postingRepository.saveAll(postingList);
 //    }
 //
-//
 //    @DisplayName("포스팅 작성 성공")
 //    @Test
 //    void createPosting (){
@@ -97,55 +93,11 @@
 //                .challengeId(1L)
 //                .build();
 //
-//        Member member = memberRepository.findById(1L).get();
-//        Challenge challenge = challengeRepository.findById(dto.getChallengeId()).get();
-//
 //        Posting posting = Posting.createPosting(dto, member, challenge);
 //        Certification certification = Certification.createCertification(member,posting);
-//
-//        postingRepository.save(posting);
-//        certificationRepository.save(certification);
-//
-//        Certification certificationResult = certificationRepository.findById(certification.getCertificationId()).orElseThrow(()->new ApiRequestException("no certification"));
-//        Posting postingResult = postingRepository.findById(posting.getPostingId()).get();
-//
-//        Assertions.assertEquals(posting.getChallenge(),challenge);
-//        Assertions.assertEquals(posting,postingResult);
-//        Assertions.assertEquals(certificationResult.getPosting(),posting);
-//    }
+//        Long memberId = posting.getMember().getMemberId();
 //
 //
-//    @DisplayName("포스팅 작성 실패")
-//    @Test
-//    public void createPosting_fail(){
-//        //given
-//        PostingCreateRequestDto dto = PostingCreateRequestDto.builder()
-//                .postingImg("테스트이미지")
-//                .postingContent("")
-//                .challengeId(1L)
-//                .build();
-//
-//        Member member = memberRepository.findById(1L).get();
-//        Challenge challenge = challengeRepository.findById(dto.getChallengeId()).get();
-//
-//        Posting posting = Posting.createPosting(dto, member, challenge);
-//        Certification certification = Certification.createCertification(member,posting);
-//
-//        postingRepository.save(posting);
-//        certificationRepository.save(certification);
-//
-//        Posting posting2 = Posting.createPosting(dto, member, challenge);
-//
-//        postingRepository.save(posting2);
-//
-//        //when
-//        Certification certificationResult = certificationRepository.findById(certification.getCertificationId()).get();
-//        Posting postingResult = postingRepository.findById(posting.getPostingId()).get();
-//
-//        //then
-//        Assertions.assertEquals(posting.getChallenge(),challenge);
-//        Assertions.assertEquals(posting,postingResult);
-//        Assertions.assertEquals(certificationResult.getPosting(),posting);
 //    }
 //
 //}
