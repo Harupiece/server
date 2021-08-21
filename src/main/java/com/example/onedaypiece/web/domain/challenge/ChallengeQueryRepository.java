@@ -3,14 +3,11 @@ package com.example.onedaypiece.web.domain.challenge;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Repository;
-import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 
 import static com.example.onedaypiece.web.domain.challenge.QChallenge.challenge;
-import static org.springframework.util.CollectionUtils.isEmpty;
 
 @Repository
 @RequiredArgsConstructor
@@ -49,7 +46,7 @@ public class ChallengeQueryRepository {
 //        List<Challenge> challengeList =
         return queryFactory
                 .selectFrom(challenge)
-                .where(challenge.challengeStatus.eq(true),
+                .where(challenge.challengeStatus.isTrue(),
                         challenge.challengeProgress.eq(1L),
                         challenge.challengeTitle.contains(words))
                 .orderBy(challenge.modifiedAt.asc())
@@ -60,9 +57,12 @@ public class ChallengeQueryRepository {
 //        return RepositoryHelper.toSlice(challengeList, page);
     }
 
-    /**
-     * @Modifying(clearAutomatically = true)
-     * @Query("update Challenge c set c.challengeProgress = :progress where c in :challengeList")
-     * int updateChallengeProgress(Long progress, List<Challenge> challengeList);
-     **/
+    public List<Challenge> findAllByOfficialChallenge() {
+        return queryFactory
+                .selectFrom(challenge)
+                .where(challenge.challengeStatus.isTrue(),
+                        challenge.challengeProgress.eq(1L),
+                        challenge.categoryName.eq(CategoryName.OFFICIAL))
+                .fetch();
+    }
 }

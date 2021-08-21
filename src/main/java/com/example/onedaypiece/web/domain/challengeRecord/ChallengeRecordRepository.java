@@ -114,4 +114,6 @@ public interface ChallengeRecordRepository extends JpaRepository<ChallengeRecord
             "and c.member = :member " +
             "and c.challenge.challengeProgress in (:progress, :expected) ")
     boolean existsByChallengeIdAndAndMember(Long challengeId, Member member, Long progress, Long expected);
+
+    void deleteByMember(Member member);
 }
