@@ -1,5 +1,6 @@
 package com.example.onedaypiece.web.domain.challengeRecord;
 
+import com.example.onedaypiece.web.domain.challenge.CategoryName;
 import com.example.onedaypiece.web.domain.challenge.Challenge;
 import com.example.onedaypiece.web.domain.member.Member;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -108,7 +109,8 @@ public class ChallengeRecordQueryRepository {
                 .join(challengeRecord.challenge).fetchJoin()
                 .where(challengeRecord.challenge.challengeStatus.eq(true),
                         challengeRecord.challenge.challengeProgress.eq(1L),
-                        challengeRecord.member.email.ne(email))
+                        challengeRecord.member.email.ne(email),
+                        challengeRecord.challenge.categoryName.ne(CategoryName.OFFICIAL))
                 .groupBy(challengeRecord.challenge.challengeId)
                 .orderBy(challengeRecord.challenge.challengeId.count().desc())
                 .offset(page.getOffset())

@@ -1,6 +1,7 @@
 package com.example.onedaypiece.web.controller;
 
 import com.example.onedaypiece.service.ChallengeService;
+import com.example.onedaypiece.util.Scheduler;
 import com.example.onedaypiece.web.dto.request.challenge.ChallengeRequestDto;
 import com.example.onedaypiece.web.dto.request.challenge.PutChallengeRequestDto;
 import com.example.onedaypiece.web.dto.response.challenge.ChallengeMainResponseDto;
@@ -21,7 +22,7 @@ import java.util.List;
 public class ChallengeController {
 
     private final ChallengeService challengeService;
-
+    private final Scheduler scheduler;
 
     @GetMapping("/api/guest/main") // 비로그인 메인 페이지
     public ResponseEntity<ChallengeMainResponseDto> getGuestMainChallengeDetail() {
@@ -57,6 +58,12 @@ public class ChallengeController {
     @DeleteMapping("/api/member/challenge/{challengeId}") // 챌린지 취소 (유저에겐 삭제, 관리자 입장에선 상태 true->false)
     public ResponseEntity<Void> deleteChallenge(@PathVariable Long challengeId, @AuthenticationPrincipal UserDetails userDetails) {
         challengeService.deleteChallenge(challengeId, userDetails.getUsername());
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/api/member/challenge/official") // 챌린지 등록
+    public ResponseEntity<Void> createOfficialChallenge() {
+        scheduler.createOfficialChallenge();
         return ResponseEntity.ok().build();
     }
 }
