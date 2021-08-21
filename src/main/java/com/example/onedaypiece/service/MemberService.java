@@ -41,7 +41,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.servlet.http.Cookie;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -118,19 +117,7 @@ public class MemberService {
         // 완료된 챌린지 리스트
         List<ChallengeRecord> completeList = challengeRecordQueryRepository.findAllByMemberAndProgress(member,3L);
 
-        Cookie acCookie = new Cookie("accessToken", tokenDto.getAccessToken());
-        acCookie.setHttpOnly(true);
-        acCookie.setSecure(true);
-        acCookie.setMaxAge(60*30);
-
-        Cookie reCookie = new Cookie("refreshToken", tokenDto.getRefreshToken());
-        reCookie.setHttpOnly(true);
-        reCookie.setSecure(true);
-        reCookie.setMaxAge(60*60*24);
-
-
-        return new MemberTokenResponseDto(tokenDto, member, targetList1.size() + targetList2.size(), completeList.size(),
-                acCookie, reCookie);
+        return new MemberTokenResponseDto(tokenDto, member, targetList1.size() + targetList2.size(), completeList.size());
     }
 
     // 새로고침
@@ -186,20 +173,8 @@ public class MemberService {
         // 완료된 챌린지 리스트
         List<ChallengeRecord> completeList = challengeRecordQueryRepository.findAllByMemberAndProgress(member,3L);
 
-
-        Cookie acCookie = new Cookie("accessToken", tokenDto.getAccessToken());
-        acCookie.setHttpOnly(true);
-        acCookie.setSecure(true);
-        acCookie.setMaxAge(60*30);
-
-        Cookie reCookie = new Cookie("refreshToken", tokenDto.getRefreshToken());
-        reCookie.setHttpOnly(true);
-        reCookie.setSecure(true);
-        reCookie.setMaxAge(60*60*24);
-
-        // 토큰 발급
-        return new MemberTokenResponseDto(tokenDto, member, targetList1.size() + targetList2.size(), completeList.size()
-        , acCookie, reCookie);
+        // 토큰 발급 수정해버렸음 나중에 Cookie 실험할거임
+        return new MemberTokenResponseDto(tokenDto, member, targetList1.size() + targetList2.size(), completeList.size());
     }
 
     // 마이 페이지 히스토리
@@ -237,7 +212,7 @@ public class MemberService {
                 .map(memberHistory -> new PointHistoryDto(memberHistory))
                 .collect(Collectors.toList());
 
-    // 1파라미터 MemberResponseDto
+        // 1파라미터 MemberResponseDto
         return new MemberHistoryResponseDto(member, pointHistoryListP, pointHistoryListC, rank);
     }
 
@@ -342,4 +317,3 @@ public class MemberService {
 
 
 }
-
