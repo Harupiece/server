@@ -173,7 +173,7 @@ public class Scheduler {
                     "https://i.ibb.co/NpDZLYL/good.jpg",
                     ""
             );
-        } else if (dayValue == 5) {
+        } else if (dayValue == 6) {
             title = "매일 영양제 챙겨먹기";
             requestDto = new ChallengeRequestDto(
                     title,

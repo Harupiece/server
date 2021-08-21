@@ -5,6 +5,7 @@ import com.example.onedaypiece.chat.repository.ChatRoomRepository;
 import com.example.onedaypiece.exception.ApiRequestException;
 import com.example.onedaypiece.web.domain.challenge.CategoryName;
 import com.example.onedaypiece.web.domain.challenge.Challenge;
+import com.example.onedaypiece.web.domain.challenge.ChallengeQueryRepository;
 import com.example.onedaypiece.web.domain.challenge.ChallengeRepository;
 import com.example.onedaypiece.web.domain.challengeRecord.ChallengeRecord;
 import com.example.onedaypiece.web.domain.challengeRecord.ChallengeRecordQueryRepository;
@@ -37,6 +38,7 @@ import static java.lang.Math.min;
 public class ChallengeService {
 
     private final ChallengeRepository challengeRepository;
+    private final ChallengeQueryRepository challengeQueryRepository;
     private final ChallengeRecordRepository challengeRecordRepository;
     private final ChallengeRecordQueryRepository challengeRecordQueryRepository;
     private final MemberRepository memberRepository;
@@ -118,14 +120,9 @@ public class ChallengeService {
     }
 
     private void sliderUpdate(ChallengeMainResponseDto responseDto, List<ChallengeRecord> records) {
-        List<Challenge> userChallengeList = records
-                .stream()
-                .filter(r -> r.getChallenge().getCategoryName().equals(OFFICIAL))
-                .map(ChallengeRecord::getChallenge)
-                .distinct()
-                .collect(Collectors.toList());
+        List<Challenge> officialList = challengeQueryRepository.findAllByOfficialChallenge();
 
-        List<ChallengeSourceResponseDto> sliderSourceList = userChallengeList
+        List<ChallengeSourceResponseDto> sliderSourceList = officialList
                 .stream()
                 .map(challenge -> new ChallengeSourceResponseDto(challenge, records))
                 .collect(Collectors.toList());
