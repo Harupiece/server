@@ -152,9 +152,9 @@ public class Scheduler {
                     OFFICIAL,
                     today.plusDays(CREATE_DELAY),
                     today.plusDays(CREATE_DELAY + PROGRESS_PERIOD),
-                    "https://cdn.pixabay.com/photo/2016/02/12/16/45/cat-1196374_960_720.jpg",
-                    "https://cdn.pixabay.com/photo/2016/02/12/16/45/cat-1196374_960_720.jpg",
-                    "https://cdn.pixabay.com/photo/2016/02/12/16/45/cat-1196374_960_720.jpg",
+                    "https://i.ibb.co/YQCrYJR/banner-01.png",
+                    "https://i.ibb.co/Bg9T9JZ/image.jpg",
+                    "https://i.ibb.co/Y0GL0TP/badf.jpg",
                     ""
             );
         } else if (dayValue == 3) {
@@ -168,9 +168,9 @@ public class Scheduler {
                     OFFICIAL,
                     today.plusDays(CREATE_DELAY),
                     today.plusDays(CREATE_DELAY + PROGRESS_PERIOD),
-                    "https://cdn.pixabay.com/photo/2016/02/12/16/45/cat-1196374_960_720.jpg",
-                    "https://cdn.pixabay.com/photo/2016/02/12/16/45/cat-1196374_960_720.jpg",
-                    "https://cdn.pixabay.com/photo/2016/02/12/16/45/cat-1196374_960_720.jpg",
+                    "https://i.ibb.co/4WDR3nd/Kakao-Talk-20210821-171834310.jpg",
+                    "https://i.ibb.co/j8rmx81/bad.jpg",
+                    "https://i.ibb.co/NpDZLYL/good.jpg",
                     ""
             );
         } else if (dayValue == 5) {
@@ -184,9 +184,9 @@ public class Scheduler {
                     OFFICIAL,
                     today.plusDays(CREATE_DELAY),
                     today.plusDays(CREATE_DELAY + PROGRESS_PERIOD),
-                    "https://cdn.pixabay.com/photo/2016/02/12/16/45/cat-1196374_960_720.jpg",
-                    "https://cdn.pixabay.com/photo/2016/02/12/16/45/cat-1196374_960_720.jpg",
-                    "https://cdn.pixabay.com/photo/2016/02/12/16/45/cat-1196374_960_720.jpg",
+                    "https://i.ibb.co/5j6TNb1/Kakao-Talk-20210821-171849115.jpg",
+                    "https://i.ibb.co/88pwY4r/image.jpg",
+                    "https://i.ibb.co/y8p1LJx/bad.jpg",
                     ""
             );
         }
@@ -203,6 +203,8 @@ public class Scheduler {
 
             log.info(challengeId + " OFFICIAL challenge start");
         }
+
+        System.out.println("dayValue = " + dayValue);
     }
 
     private void challengeStart(List<Challenge> startList) {
