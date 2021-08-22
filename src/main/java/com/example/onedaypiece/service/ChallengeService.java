@@ -187,7 +187,7 @@ public class ChallengeService {
 
     private void deleteChallengeException(String username, Challenge challenge) {
         if (!challenge.getMember().getEmail().equals(username)) {
-            throw new IllegalArgumentException("작성자가 아닙니다.");
+            throw new ApiRequestException("작성자가 아닙니다.");
         }
         if (currentLocalDateTime.isBefore(challenge.getChallengeStartDate())) {
             challenge.setChallengeStatusFalse();
