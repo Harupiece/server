@@ -235,14 +235,14 @@ public class Scheduler {
                 .collect(Collectors.toList());
 
         if (memberList.size() > 0) {
-        Long postingCount = schedulerQueryRepository.findAllByChallengeAndFirstMember(challenge, memberList.get(0));
-        Long resultPoint = postingCount * 500L * (challenge.getCategoryName().equals(OFFICIAL) ? 2L : 1L);
+            Long postingCount = schedulerQueryRepository.findAllByChallengeAndFirstMember(challenge, memberList.get(0));
+            Long resultPoint = postingCount * 500L * (challenge.getCategoryName().equals(OFFICIAL) ? 2L : 1L);
 
-        List<PointHistory> pointHistoryList = recordList
-                .stream()
-                .map(r -> new PointHistory(resultPoint, r))
-                .collect(Collectors.toList());
-        pointHistoryRepository.saveAll(pointHistoryList);
+            List<PointHistory> pointHistoryList = recordList
+                    .stream()
+                    .map(r -> new PointHistory(resultPoint, r))
+                    .collect(Collectors.toList());
+            pointHistoryRepository.saveAll(pointHistoryList);
 
             List<Point> pointList = memberList
                     .stream()
