@@ -87,6 +87,7 @@ public class Scheduler {
         int updateResult = challengeRecordRepository.kickMemberOnChallenge(UncertifiedMember, UncertifiedChallenge);
         log.info("updateResult 벌크 연산 result: {} ", updateResult);
     }
+
     @Scheduled(cron = "08 0 0 * * *") // 초, 분, 시, 일, 월, 주 순서
     @Transactional
     public void postingStatusUpdate() {

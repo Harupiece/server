@@ -176,6 +176,7 @@ public class ChallengeRecordQueryRepository {
         return queryFactory
                 .selectFrom(challengeRecord)
                 .where(challengeRecord.member.eq(member),
+                        challengeRecord.challenge.challengeStatus.eq(true),
                         challengeRecord.challengeRecordStatus.eq(true),
                         challengeRecord.challenge.challengeProgress.eq(challengeStatus))
                 .fetch();
