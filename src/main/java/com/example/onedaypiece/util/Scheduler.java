@@ -47,26 +47,7 @@ public class Scheduler {
     private HashOperations<String, String, ChatRoom> hashOpsChatRoom;
     private static final String CHAT_ROOMS = "CHAT_ROOM";
 
-    private final LocalDateTime today = LocalDate.now().atStartOfDay();
-
-    @Scheduled(cron = "0/30 * * * * *")
-    public void timeCheck() {
-        log.info(String.valueOf(LocalDateTime.now()).split("T")[0]);
-        log.info(String.valueOf(LocalDateTime.now()).split("T")[0]);
-        log.info(String.valueOf(LocalDateTime.now()).split("T")[0]);
-
-
-        log.info(String.valueOf(LocalDateTime.now()));
-        log.info(String.valueOf(LocalDateTime.now()));
-        log.info(String.valueOf(LocalDateTime.now()));
-
-
-        log.info(String.valueOf(today));
-        log.info(String.valueOf(today));
-        log.info(String.valueOf(today));
-
-
-    }
+    LocalDateTime today = LocalDate.now().atStartOfDay();
 
     //    01 00 00
     @Scheduled(cron = "10 0 0 * * *") // 초, 분, 시, 일, 월, 주 순서
