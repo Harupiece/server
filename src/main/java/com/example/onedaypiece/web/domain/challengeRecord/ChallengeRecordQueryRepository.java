@@ -167,12 +167,12 @@ public class ChallengeRecordQueryRepository {
         return queryFactory
                 .selectFrom(challengeRecord)
                 .where(challengeRecord.challengeRecordStatus.eq(true),
+                        challengeRecord.challenge.challengeStatus.eq(true),
                         challengeRecord.member.eq(member),
                         challengeRecord.challenge.challengeProgress.eq(progress))
                 .fetch();
     }
 // 여기
-
     /**
      * @Query("select c " +
      * "from ChallengeRecord c " +
