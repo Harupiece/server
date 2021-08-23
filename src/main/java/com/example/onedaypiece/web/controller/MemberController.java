@@ -50,32 +50,28 @@ public class MemberController {
 
     // 재발급
     @PostMapping("/reissue")
-    public ResponseEntity<MemberTokenResponseDto> reissue(@RequestBody TokenRequestDto tokenRequestDto) {
-        return ResponseEntity.ok(memberService.reissue(tokenRequestDto));
+    public MemberTokenResponseDto reissue(@RequestBody TokenRequestDto tokenRequestDto) {
+        return memberService.reissue(tokenRequestDto);
     }
 
     // 마이 페이지 수정 비밀번호변경만
     @PutMapping("/mypage/password")
-    public ResponseEntity<Void> updateMyPageInfoPassword(@RequestBody PwUpdateRequestDto requestDto, @AuthenticationPrincipal UserDetails userDetails){
+    public void updateMyPageInfoPassword(@RequestBody PwUpdateRequestDto requestDto, @AuthenticationPrincipal UserDetails userDetails){
         memberService.updatePassword(requestDto, userDetails.getUsername());
-        return ResponseEntity.ok().build();
     }
 
     // 마이 페이지 수정 프로필 + 닉네임
     @PutMapping("/mypage/profile")
-    public ResponseEntity<String> updateMyPageInfoProfile(@RequestBody ProfileUpdateRequestDto requestDto, @AuthenticationPrincipal UserDetails userDetails){
+    public String updateMyPageInfoProfile(@RequestBody ProfileUpdateRequestDto requestDto, @AuthenticationPrincipal UserDetails userDetails){
         String afterProfileImg = memberService.updateProfile(requestDto, userDetails.getUsername());
-        return ResponseEntity.ok(afterProfileImg);
+        return afterProfileImg;
     }
 
 
     // 마이페이지 종합선물세트
     @GetMapping("/mypage")
-    public ResponseEntity<MyPageResponseDto> getMypage(@AuthenticationPrincipal UserDetails userDetails){
+    public MyPageResponseDto getMypage(@AuthenticationPrincipal UserDetails userDetails){
         MyPageResponseDto responseDto = memberService.getMyPage(userDetails.getUsername());
-        return ResponseEntity.ok().body(responseDto);
+        return responseDto;
     }
-
-
-
 }
