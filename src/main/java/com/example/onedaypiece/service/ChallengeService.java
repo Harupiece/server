@@ -75,9 +75,9 @@ public class ChallengeService {
         createChallengeException(requestDto, member);
 
         Challenge challenge = new Challenge(requestDto, member);
+        Long challengeId = challengeRepository.save(challenge).getChallengeId();
         ChallengeRecord challengeRecord = new ChallengeRecord(challenge, member);
         challengeRecordRepository.save(challengeRecord);
-        Long challengeId = challengeRepository.save(challenge).getChallengeId();
 
         ChatRoom chatRoom = new ChatRoom(challengeId);
         chatRoomRepository.save(chatRoom);

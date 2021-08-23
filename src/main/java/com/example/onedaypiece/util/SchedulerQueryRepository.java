@@ -179,8 +179,8 @@ public class SchedulerQueryRepository {
         return queryFactory
                 .selectFrom(challengeRecord)
                 .innerJoin(challengeRecord.challenge).fetchJoin()
-                .where(challengeRecord.challengeRecordStatus.eq(true),
-                        challengeRecord.challenge.challengeStatus.eq(true),
+                .where(challengeRecord.challengeRecordStatus.isTrue(),
+                        challengeRecord.challenge.challengeStatus.isTrue(),
                         challengeRecord.challenge.challengeProgress.lt(progress))
                 .fetch();
     }
