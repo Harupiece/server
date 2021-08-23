@@ -54,8 +54,11 @@ public class Scheduler {
         log.info(String.valueOf(LocalDateTime.now()));
         log.info(String.valueOf(LocalDateTime.now()));
         log.info(String.valueOf(LocalDateTime.now()));
-        log.info(String.valueOf(LocalDateTime.now()));
-        log.info(String.valueOf(LocalDateTime.now()));
+               
+
+        log.info(String.valueOf(today));
+        log.info(String.valueOf(today));
+        log.info(String.valueOf(today));
     }
 
     //    01 00 00
