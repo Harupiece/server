@@ -52,13 +52,6 @@ public class ChatMessageService {
         pubMessage(chatMessage);
     }
 
-    @Transactional
-    public void pubQuitMessage(ChatMessageRequestDto requestDto) {
-        ChatMessage chatMessage = ChatMessage.createQUITMessage(requestDto);
-        validatePubMessage(requestDto);
-        pubMessage(chatMessage);
-    }
-
     public void validatePubMessage(ChatMessageRequestDto requestDto){
         Member member = getmember(requestDto);
         validateChatRoom(requestDto, member);
