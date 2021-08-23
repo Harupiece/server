@@ -49,6 +49,15 @@ public class Scheduler {
 
     private final LocalDateTime today = LocalDate.now().atStartOfDay();
 
+    @Scheduled(cron = "0/30 * * * * *")
+    public void timeCheck() {
+        log.info(String.valueOf(LocalDateTime.now()));
+        log.info(String.valueOf(LocalDateTime.now()));
+        log.info(String.valueOf(LocalDateTime.now()));
+        log.info(String.valueOf(LocalDateTime.now()));
+        log.info(String.valueOf(LocalDateTime.now()));
+    }
+
     //    01 00 00
     @Scheduled(cron = "10 0 0 * * *") // 초, 분, 시, 일, 월, 주 순서
     @Transactional
@@ -57,7 +66,6 @@ public class Scheduler {
         int week = today.getDayOfWeek().getValue();
 
         List<ChallengeRecord> challengeMember = schedulerQueryRepository.findAllByChallenge(week);
-
 
         //진행중인 챌린지 리스트
         List<Long> challengeId = challengeMember.stream()
