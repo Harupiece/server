@@ -49,15 +49,26 @@ public class Scheduler {
 
     private final LocalDateTime today = LocalDate.now().atStartOfDay();
 
+    @Scheduled(cron = "0/30 * * * * *")
+    public void timeCheck() {
+        log.info(String.valueOf(LocalDateTime.now()));
+        log.info(String.valueOf(LocalDateTime.now()));
+        log.info(String.valueOf(LocalDateTime.now()));
+               
+
+        log.info(String.valueOf(today));
+        log.info(String.valueOf(today));
+        log.info(String.valueOf(today));
+    }
+
     //    01 00 00
-    @Scheduled(cron = "01 0 0 * * *") // 초, 분, 시, 일, 월, 주 순서
+    @Scheduled(cron = "10 0 0 * * *") // 초, 분, 시, 일, 월, 주 순서
     @Transactional
     public void certificationKick() {
 
         int week = today.getDayOfWeek().getValue();
 
         List<ChallengeRecord> challengeMember = schedulerQueryRepository.findAllByChallenge(week);
-
 
         //진행중인 챌린지 리스트
         List<Long> challengeId = challengeMember.stream()
@@ -89,7 +100,7 @@ public class Scheduler {
         log.info("updateResult 벌크 연산 result: {} ", updateResult);
     }
 
-    @Scheduled(cron = "02 0 0 * * *") // 초, 분, 시, 일, 월, 주 순서
+    @Scheduled(cron = "11 0 0 * * *") // 초, 분, 시, 일, 월, 주 순서
     @Transactional
     public void postingStatusUpdate() {
         List<Long> postingIdList = schedulerQueryRepository.findSchedulerUpdatePosting(today);
@@ -98,7 +109,7 @@ public class Scheduler {
         log.info("updateResult 벌크 연산 result: {} ", updateResult);
     }
 
-    @Scheduled(cron = "03 0 0 * * *") // 초, 분, 시, 일, 월, 주 순서
+    @Scheduled(cron = "12 0 0 * * *") // 초, 분, 시, 일, 월, 주 순서
     @Transactional
     public void challengeStatusUpdate() {
         List<ChallengeRecord> recordList = schedulerQueryRepository.findAllByChallengeProgressLessThan(3L);
@@ -129,7 +140,7 @@ public class Scheduler {
         challengeEndPoint(endList);
     }
 
-    @Scheduled(cron = "05 0 0 * * *")
+    @Scheduled(cron = "13 0 0 * * *")
     @Transactional
     public void createOfficialChallenge() {
         Member member = memberRepository.findById(1L).orElseThrow(() -> new NullPointerException("없는 유저입니다."));
@@ -235,14 +246,14 @@ public class Scheduler {
                 .collect(Collectors.toList());
 
         if (memberList.size() > 0) {
-        Long postingCount = schedulerQueryRepository.findAllByChallengeAndFirstMember(challenge, memberList.get(0));
-        Long resultPoint = postingCount * 500L * (challenge.getCategoryName().equals(OFFICIAL) ? 2L : 1L);
+            Long postingCount = schedulerQueryRepository.findAllByChallengeAndFirstMember(challenge, memberList.get(0));
+            Long resultPoint = postingCount * 500L * (challenge.getCategoryName().equals(OFFICIAL) ? 2L : 1L);
 
-        List<PointHistory> pointHistoryList = recordList
-                .stream()
-                .map(r -> new PointHistory(resultPoint, r))
-                .collect(Collectors.toList());
-        pointHistoryRepository.saveAll(pointHistoryList);
+            List<PointHistory> pointHistoryList = recordList
+                    .stream()
+                    .map(r -> new PointHistory(resultPoint, r))
+                    .collect(Collectors.toList());
+            pointHistoryRepository.saveAll(pointHistoryList);
 
             List<Point> pointList = memberList
                     .stream()

@@ -8,6 +8,7 @@ import com.example.onedaypiece.web.dto.request.mypage.PwUpdateRequestDto;
 import com.example.onedaypiece.web.dto.request.signup.SignupRequestDto;
 import com.example.onedaypiece.web.dto.request.token.TokenRequestDto;
 import com.example.onedaypiece.web.dto.response.member.MemberTokenResponseDto;
+import com.example.onedaypiece.web.dto.response.mypage.MyPageResponseDto;
 import com.example.onedaypiece.web.dto.response.mypage.histroy.MemberHistoryResponseDto;
 import com.example.onedaypiece.web.dto.response.mypage.end.MyPageEndResponseDto;
 import com.example.onedaypiece.web.dto.response.mypage.proceed.MypageProceedResponseDto;
@@ -49,57 +50,28 @@ public class MemberController {
 
     // 재발급
     @PostMapping("/reissue")
-    public ResponseEntity<MemberTokenResponseDto> reissue(@RequestBody TokenRequestDto tokenRequestDto) {
-        return ResponseEntity.ok(memberService.reissue(tokenRequestDto));
+    public MemberTokenResponseDto reissue(@RequestBody TokenRequestDto tokenRequestDto) {
+        return memberService.reissue(tokenRequestDto);
     }
 
     // 마이 페이지 수정 비밀번호변경만
     @PutMapping("/mypage/password")
-    public ResponseEntity<Void> updateMyPageInfoPassword(@RequestBody PwUpdateRequestDto requestDto, @AuthenticationPrincipal UserDetails userDetails){
+    public void updateMyPageInfoPassword(@RequestBody PwUpdateRequestDto requestDto, @AuthenticationPrincipal UserDetails userDetails){
         memberService.updatePassword(requestDto, userDetails.getUsername());
-        return ResponseEntity.ok().build();
     }
 
     // 마이 페이지 수정 프로필 + 닉네임
     @PutMapping("/mypage/profile")
-    public ResponseEntity<String> updateMyPageInfoProfile(@RequestBody ProfileUpdateRequestDto requestDto, @AuthenticationPrincipal UserDetails userDetails){
+    public String updateMyPageInfoProfile(@RequestBody ProfileUpdateRequestDto requestDto, @AuthenticationPrincipal UserDetails userDetails){
         String afterProfileImg = memberService.updateProfile(requestDto, userDetails.getUsername());
-        return ResponseEntity.ok(afterProfileImg);
+        return afterProfileImg;
     }
 
-    // 현재 진행중인거
-    @GetMapping("/mypage/proceed")
-    public ResponseEntity<MypageProceedResponseDto> getprocedd(@AuthenticationPrincipal UserDetails userDetails){
-        MypageProceedResponseDto responseDto = memberService.getProceed(userDetails.getUsername());
-        return ResponseEntity.ok().body(responseDto);
-    }
 
-    // 예정 중인거
+    // 마이페이지 종합선물세트
     @GetMapping("/mypage")
-    public ResponseEntity<MyPageScheduledResponseDto> getscheduled(@AuthenticationPrincipal UserDetails userDetails){
-        MyPageScheduledResponseDto responseDto = memberService.getSchduled(userDetails.getUsername());
-        return ResponseEntity.ok().body(responseDto);
+    public MyPageResponseDto getMypage(@AuthenticationPrincipal UserDetails userDetails){
+        MyPageResponseDto responseDto = memberService.getMyPage(userDetails.getUsername());
+        return responseDto;
     }
-
-    // 끝난거
-    @GetMapping("/mypage/end")
-    public ResponseEntity<MyPageEndResponseDto> getEnd(@AuthenticationPrincipal UserDetails userDetails){
-        MyPageEndResponseDto responseDto = memberService.getEnd(userDetails.getUsername());
-        return ResponseEntity.ok().body(responseDto);
-    }
-
-    // 마이페이지 히스토리
-    @GetMapping("/mypage/history")
-    public ResponseEntity<MemberHistoryResponseDto> getHistory(@AuthenticationPrincipal UserDetails userDetails){
-        MemberHistoryResponseDto responseDto = memberService.getHistory(userDetails.getUsername());
-        return ResponseEntity.ok().body(responseDto);
-    }
-
-    @GetMapping("/hello-world")
-    public String get123(){
-        return "hello world water mellon";
-    }
-
-
-
 }

@@ -28,6 +28,4 @@ public class MypageProceedResponseDto {
         this.challengeList = challengeList;
         this.level = CalculLevel.calculLevel(member.getPoint().getAcquiredPoint());
     }
-
-
 }

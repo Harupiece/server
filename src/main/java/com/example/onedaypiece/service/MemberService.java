@@ -22,6 +22,7 @@ import com.example.onedaypiece.web.dto.request.token.TokenRequestDto;
 import com.example.onedaypiece.web.dto.response.member.MemberResponseDto;
 import com.example.onedaypiece.web.dto.response.member.MemberTokenResponseDto;
 import com.example.onedaypiece.web.dto.response.member.reload.ReloadResponseDto;
+import com.example.onedaypiece.web.dto.response.mypage.MyPageResponseDto;
 import com.example.onedaypiece.web.dto.response.mypage.end.EndResponseDto;
 import com.example.onedaypiece.web.dto.response.mypage.end.MyPageEndResponseDto;
 import com.example.onedaypiece.web.dto.response.mypage.histroy.MemberHistoryResponseDto;
@@ -55,7 +56,6 @@ public class MemberService {
     private final TokenProvider tokenProvider;
     private final RefreshTokenRepository refreshTokenRepository;
     private final PointRepository pointRepository;
-    private final ChallengeRecordRepository challengeRecordRepository;
     private final ChallengeRecordQueryRepository challengeRecordQueryRepository;
     private final PointHistoryRepository pointHistoryRepository;
 
@@ -177,10 +177,52 @@ public class MemberService {
         return new MemberTokenResponseDto(tokenDto, member, targetList1.size() + targetList2.size(), completeList.size());
     }
 
-    // 마이 페이지 히스토리
+    // 마이 페이지 비밀번호 수정
+    @Transactional
+    public void updatePassword(PwUpdateRequestDto requestDto, String email){
+        Member member = getMemberByEmail(email);
+
+        if(!passwordEncoder.matches(requestDto.getCurrentPassword(), member.getPassword())){
+            throw new ApiRequestException("현재 비밀번호가 일치하지 않습니다.");
+        }
+
+        String newPassword = passwordEncoder.encode(requestDto.getNewPassword());
+        requestDto.setNewPassword(newPassword);
+
+        member.updatePassword(requestDto);
+    }
+
+    // 마이 페이지 (이미지 + 닉네임) 수정
+    @Transactional
+    public String updateProfile(ProfileUpdateRequestDto requestDto, String email){
+
+        Member member = getMemberByEmail(email);
+
+        // 닉네임 중복 처리 닉네임이 달라질경우만 중복확인체크 같은경우는 닉네임변경안하는경우
+        if(!member.getNickname().equals(requestDto.getNickname())){
+            existNickname(requestDto.getNickname());
+        }
+
+        return member.updateProfile(requestDto);
+    }
+
+    // 마이페이지 한꺼번에
     @Transactional(readOnly = true)
+    public MyPageResponseDto getMyPage(String email){
+        Member member = getMemberByEmail(email);
+
+        MemberHistoryResponseDto history = getHistory(email); // email이어야함 무조건
+
+        MypageProceedResponseDto proceed = getProceed(member);
+        MyPageScheduledResponseDto schedule = getSchduled(member);
+        MyPageEndResponseDto end = getEnd(member);
+
+        return new MyPageResponseDto(history, proceed, schedule, end);
+    }
+
+
+    // 마이 페이지 히스토리
     public MemberHistoryResponseDto getHistory(String email){
-//        MemberResponseDto memberResponseDto;
         Member member = getMemberByEmail(email);
 
         // 포인트 번호
@@ -216,40 +258,9 @@ public class MemberService {
         return new MemberHistoryResponseDto(member, pointHistoryListP, pointHistoryListC, rank);
     }
 
-    // 마이 페이지 비밀번호 수정
-    @Transactional
-    public void updatePassword(PwUpdateRequestDto requestDto, String email){
-        Member member = getMemberByEmail(email);
-
-        if(!passwordEncoder.matches(requestDto.getCurrentPassword(), member.getPassword())){
-            throw new ApiRequestException("현재 비밀번호가 일치하지 않습니다.");
-        }
-
-        String newPassword = passwordEncoder.encode(requestDto.getNewPassword());
-        requestDto.setNewPassword(newPassword);
-
-        member.updatePassword(requestDto);
-    }
-
-    // 마이 페이지 (이미지 + 닉네임) 수정
-    @Transactional
-    public String updateProfile(ProfileUpdateRequestDto requestDto, String email){
-
-        Member member = getMemberByEmail(email);
-
-        // 닉네임 중복 처리 닉네임이 달라질경우만 중복확인체크 같은경우는 닉네임변경안하는경우
-        if(!member.getNickname().equals(requestDto.getNickname())){
-            existNickname(requestDto.getNickname());
-        }
-
-        return member.updateProfile(requestDto);
-    }
 
     // 진행중인
-    @Transactional(readOnly = true)
-    public MypageProceedResponseDto getProceed(String email){
-        Member member = getMemberByEmail(email);
-
+    public MypageProceedResponseDto getProceed(Member member){
         //본인이 참여한 챌린지 기록리스트  1: 진행 예정, 2: 진행 중, 3 : 진행 완료
         List<ChallengeRecord> targetList = challengeRecordQueryRepository.findAllByMemberAndProgress(member,2L);
 
@@ -266,13 +277,10 @@ public class MemberService {
     }
 
     // 예정인
-    @Transactional(readOnly = true)
-    public MyPageScheduledResponseDto getSchduled(String email){
-        Member member = getMemberByEmail(email);
-
+    public MyPageScheduledResponseDto getSchduled(Member member){
         //본인이 참여한 챌린지 리스트  1: 진행 예정, 2: 진행 중, 3 : 진행 완료
         List<ChallengeRecord> targetList = challengeRecordQueryRepository.findAllByMemberAndProgress(member,1L);
-//        List<Challenge> scheduled = challengeRepository.findAllByChallengeProgressAndMember(1L, member);
+
         List<Challenge> scheduled = targetList.stream()
                 .map(challengeRecord -> challengeRecord.getChallenge()).collect(Collectors.toList());
 
@@ -284,10 +292,7 @@ public class MemberService {
     }
 
     // 종료된 챌린지
-    @Transactional(readOnly = true)
-    public MyPageEndResponseDto getEnd(String email){
-        Member member = getMemberByEmail(email);
-
+    public MyPageEndResponseDto getEnd(Member member){
         //본인이 참여한 챌린지 리스트  1: 진행 예정, 2: 진행 중, 3 : 진행 완료
         List<ChallengeRecord> targetList = challengeRecordQueryRepository.findAllByMemberAndProgress(member,3L);
 
@@ -300,6 +305,7 @@ public class MemberService {
 
         return new MyPageEndResponseDto(member, endList);
     }
+
 
     // 닉네임 중복확인
     private void existNickname(String nickname){

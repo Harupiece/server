@@ -27,7 +27,7 @@ public class CertificationService {
 
 
     @Transactional
-    public Boolean createCertification(CertificationRequestDto certificationRequestDto, UserDetails userDetails) {
+    public Long createCertification(CertificationRequestDto certificationRequestDto, UserDetails userDetails) {
         Posting posting = getPosting(certificationRequestDto.getPostingId());
         Member member = getMemberByEmail(userDetails.getUsername());
 
@@ -44,7 +44,7 @@ public class CertificationService {
         checkMemberCountAndAddPoint(posting, memberCount);
 
 
-        return posting.isPostingApproval();
+        return posting.getPostingId();
     }
 
 
