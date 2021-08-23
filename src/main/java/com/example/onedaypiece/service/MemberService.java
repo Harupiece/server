@@ -22,6 +22,7 @@ import com.example.onedaypiece.web.dto.request.token.TokenRequestDto;
 import com.example.onedaypiece.web.dto.response.member.MemberResponseDto;
 import com.example.onedaypiece.web.dto.response.member.MemberTokenResponseDto;
 import com.example.onedaypiece.web.dto.response.member.reload.ReloadResponseDto;
+import com.example.onedaypiece.web.dto.response.mypage.MyPageResponseDto;
 import com.example.onedaypiece.web.dto.response.mypage.end.EndResponseDto;
 import com.example.onedaypiece.web.dto.response.mypage.end.MyPageEndResponseDto;
 import com.example.onedaypiece.web.dto.response.mypage.histroy.MemberHistoryResponseDto;
@@ -173,47 +174,8 @@ public class MemberService {
         // 완료된 챌린지 리스트
         List<ChallengeRecord> completeList = challengeRecordQueryRepository.findAllByMemberAndProgress(member,3L);
 
-        // 토큰 발급
+        // 토큰 발급 수정해버렸음 나중에 Cookie 실험할거임
         return new MemberTokenResponseDto(tokenDto, member, targetList1.size() + targetList2.size(), completeList.size());
-    }
-
-    // 마이 페이지 히스토리
-    @Transactional(readOnly = true)
-    public MemberHistoryResponseDto getHistory(String email){
-//        MemberResponseDto memberResponseDto;
-        Member member = getMemberByEmail(email);
-
-        // 포인트 번호
-        int rank = 1;
-
-        // 포인트 순위
-        List<Point> pointList = pointRepository.findAllByOrderByAcquiredPointDesc();
-
-
-        for(int i = 0 ; i< pointList.size(); i++){
-            System.out.println("순위: "+ pointList.get(i).getAcquiredPoint()+ "아이디번호: "+ pointList.get(i).getPointId());
-            if(member.getMemberId() == pointList.get(i).getPointId() && member.getPoint().getAcquiredPoint() == pointList.get(i).getAcquiredPoint()){
-                break;
-            } else{
-                rank++;
-            }
-        }
-
-        // 1. 자기가 얻은 포인트 가져오기
-        List<MemberHistoryDto> memberHistoryListPosting = pointHistoryRepository.findHistoryPosting(email);
-        List<MemberHistoryDto> memberHistoryListChallenge = pointHistoryRepository.findHistoryChallenge(email);
-
-        // 2. 포인트에 관한것만 빼기 원하는정보만 빼기 히스토리에관한것만 따로뺴고
-        List<PointHistoryDto> pointHistoryListP = memberHistoryListPosting.stream()
-                .map(memberHistory -> new PointHistoryDto(memberHistory))
-                .collect(Collectors.toList());
-
-        List<PointHistoryDto> pointHistoryListC = memberHistoryListChallenge.stream()
-                .map(memberHistory -> new PointHistoryDto(memberHistory))
-                .collect(Collectors.toList());
-
-    // 1파라미터 MemberResponseDto
-        return new MemberHistoryResponseDto(member, pointHistoryListP, pointHistoryListC, rank);
     }
 
     // 마이 페이지 비밀번호 수정
@@ -245,11 +207,61 @@ public class MemberService {
         return member.updateProfile(requestDto);
     }
 
-    // 진행중인
+    // 마이페이지 한꺼번에
     @Transactional(readOnly = true)
-    public MypageProceedResponseDto getProceed(String email){
+    public MyPageResponseDto getMyPage(String email){
         Member member = getMemberByEmail(email);
 
+        MemberHistoryResponseDto history = getHistory(email); // email이어야함 무조건
+
+        MypageProceedResponseDto proceed = getProceed(member);
+        MyPageScheduledResponseDto schedule = getSchduled(member);
+        MyPageEndResponseDto end = getEnd(member);
+
+        return new MyPageResponseDto(history, proceed, schedule, end);
+    }
+
+
+    // 마이 페이지 히스토리
+    public MemberHistoryResponseDto getHistory(String email){
+        Member member = getMemberByEmail(email);
+
+        // 포인트 번호
+        int rank = 1;
+
+        // 포인트 순위
+        List<Point> pointList = pointRepository.findAllByOrderByAcquiredPointDesc();
+
+
+        for(int i = 0 ; i< pointList.size(); i++){
+            System.out.println("순위: "+ pointList.get(i).getAcquiredPoint()+ "아이디번호: "+ pointList.get(i).getPointId());
+            if(member.getMemberId() == pointList.get(i).getPointId() && member.getPoint().getAcquiredPoint() == pointList.get(i).getAcquiredPoint()){
+                break;
+            } else{
+                rank++;
+            }
+        }
+
+        // 1. 자기가 얻은 포인트 가져오기
+        List<MemberHistoryDto> memberHistoryListPosting = pointHistoryRepository.findHistoryPosting(email);
+        List<MemberHistoryDto> memberHistoryListChallenge = pointHistoryRepository.findHistoryChallenge(email);
+
+        // 2. 포인트에 관한것만 빼기 원하는정보만 빼기 히스토리에관한것만 따로뺴고
+        List<PointHistoryDto> pointHistoryListP = memberHistoryListPosting.stream()
+                .map(memberHistory -> new PointHistoryDto(memberHistory))
+                .collect(Collectors.toList());
+
+        List<PointHistoryDto> pointHistoryListC = memberHistoryListChallenge.stream()
+                .map(memberHistory -> new PointHistoryDto(memberHistory))
+                .collect(Collectors.toList());
+
+        // 1파라미터 MemberResponseDto
+        return new MemberHistoryResponseDto(member, pointHistoryListP, pointHistoryListC, rank);
+    }
+
+
+    // 진행중인
+    public MypageProceedResponseDto getProceed(Member member){
         //본인이 참여한 챌린지 기록리스트  1: 진행 예정, 2: 진행 중, 3 : 진행 완료
         List<ChallengeRecord> targetList = challengeRecordQueryRepository.findAllByMemberAndProgress(member,2L);
 
@@ -266,13 +278,10 @@ public class MemberService {
     }
 
     // 예정인
-    @Transactional(readOnly = true)
-    public MyPageScheduledResponseDto getSchduled(String email){
-        Member member = getMemberByEmail(email);
-
+    public MyPageScheduledResponseDto getSchduled(Member member){
         //본인이 참여한 챌린지 리스트  1: 진행 예정, 2: 진행 중, 3 : 진행 완료
         List<ChallengeRecord> targetList = challengeRecordQueryRepository.findAllByMemberAndProgress(member,1L);
-//        List<Challenge> scheduled = challengeRepository.findAllByChallengeProgressAndMember(1L, member);
+
         List<Challenge> scheduled = targetList.stream()
                 .map(challengeRecord -> challengeRecord.getChallenge()).collect(Collectors.toList());
 
@@ -284,10 +293,7 @@ public class MemberService {
     }
 
     // 종료된 챌린지
-    @Transactional(readOnly = true)
-    public MyPageEndResponseDto getEnd(String email){
-        Member member = getMemberByEmail(email);
-
+    public MyPageEndResponseDto getEnd(Member member){
         //본인이 참여한 챌린지 리스트  1: 진행 예정, 2: 진행 중, 3 : 진행 완료
         List<ChallengeRecord> targetList = challengeRecordQueryRepository.findAllByMemberAndProgress(member,3L);
 
@@ -300,6 +306,7 @@ public class MemberService {
 
         return new MyPageEndResponseDto(member, endList);
     }
+
 
     // 닉네임 중복확인
     private void existNickname(String nickname){
@@ -317,4 +324,3 @@ public class MemberService {
 
 
 }
-

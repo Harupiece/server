@@ -8,6 +8,7 @@ import com.example.onedaypiece.web.dto.request.mypage.PwUpdateRequestDto;
 import com.example.onedaypiece.web.dto.request.signup.SignupRequestDto;
 import com.example.onedaypiece.web.dto.request.token.TokenRequestDto;
 import com.example.onedaypiece.web.dto.response.member.MemberTokenResponseDto;
+import com.example.onedaypiece.web.dto.response.mypage.MyPageResponseDto;
 import com.example.onedaypiece.web.dto.response.mypage.histroy.MemberHistoryResponseDto;
 import com.example.onedaypiece.web.dto.response.mypage.end.MyPageEndResponseDto;
 import com.example.onedaypiece.web.dto.response.mypage.proceed.MypageProceedResponseDto;
@@ -67,37 +68,12 @@ public class MemberController {
         return ResponseEntity.ok(afterProfileImg);
     }
 
-    // 현재 진행중인거
-    @GetMapping("/mypage/proceed")
-    public ResponseEntity<MypageProceedResponseDto> getprocedd(@AuthenticationPrincipal UserDetails userDetails){
-        MypageProceedResponseDto responseDto = memberService.getProceed(userDetails.getUsername());
-        return ResponseEntity.ok().body(responseDto);
-    }
 
-    // 예정 중인거
+    // 마이페이지 종합선물세트
     @GetMapping("/mypage")
-    public ResponseEntity<MyPageScheduledResponseDto> getscheduled(@AuthenticationPrincipal UserDetails userDetails){
-        MyPageScheduledResponseDto responseDto = memberService.getSchduled(userDetails.getUsername());
+    public ResponseEntity<MyPageResponseDto> getMypage(@AuthenticationPrincipal UserDetails userDetails){
+        MyPageResponseDto responseDto = memberService.getMyPage(userDetails.getUsername());
         return ResponseEntity.ok().body(responseDto);
-    }
-
-    // 끝난거
-    @GetMapping("/mypage/end")
-    public ResponseEntity<MyPageEndResponseDto> getEnd(@AuthenticationPrincipal UserDetails userDetails){
-        MyPageEndResponseDto responseDto = memberService.getEnd(userDetails.getUsername());
-        return ResponseEntity.ok().body(responseDto);
-    }
-
-    // 마이페이지 히스토리
-    @GetMapping("/mypage/history")
-    public ResponseEntity<MemberHistoryResponseDto> getHistory(@AuthenticationPrincipal UserDetails userDetails){
-        MemberHistoryResponseDto responseDto = memberService.getHistory(userDetails.getUsername());
-        return ResponseEntity.ok().body(responseDto);
-    }
-
-    @GetMapping("/hello-world")
-    public String get123(){
-        return "hello world water mellon";
     }
 
 
