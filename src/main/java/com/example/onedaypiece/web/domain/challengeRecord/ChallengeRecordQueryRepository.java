@@ -6,7 +6,6 @@ import com.example.onedaypiece.web.domain.member.Member;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -33,8 +32,8 @@ public class ChallengeRecordQueryRepository {
                 .from(challengeRecord)
                 .distinct()
                 .join(challengeRecord.challenge).fetchJoin()
-                .where(challengeRecord.challengeRecordStatus.eq(true),
-                        challengeRecord.challenge.challengeStatus.eq(true),
+                .where(challengeRecord.challengeRecordStatus.isTrue(),
+                        challengeRecord.challenge.challengeStatus.isTrue(),
                         challengeRecord.challenge.challengeProgress.eq(1L))
                 .orderBy(challengeRecord.challenge.challengeStartDate.asc())
                 .fetch();
@@ -51,7 +50,7 @@ public class ChallengeRecordQueryRepository {
                 .select(challengeRecord)
                 .from(challengeRecord)
                 .join(challengeRecord.member).fetchJoin()
-                .where(challengeRecord.challengeRecordStatus.eq(true),
+                .where(challengeRecord.challengeRecordStatus.isTrue(),
                         challengeRecord.challenge.eq(challenge))
                 .fetch();
     }
@@ -70,7 +69,7 @@ public class ChallengeRecordQueryRepository {
                 .from(challengeRecord)
                 .join(challengeRecord.challenge).fetchJoin()
                 .join(challengeRecord.member).fetchJoin()
-                .where(challengeRecord.challengeRecordStatus.eq(true),
+                .where(challengeRecord.challengeRecordStatus.isTrue(),
                         challengeRecord.challenge.challengeId.in(challengeIdList))
                 .fetch();
     }
@@ -89,7 +88,7 @@ public class ChallengeRecordQueryRepository {
                 .from(challengeRecord)
                 .join(challengeRecord.challenge).fetchJoin()
                 .join(challengeRecord.challenge).fetchJoin()
-                .where(challengeRecord.challengeRecordStatus.eq(true),
+                .where(challengeRecord.challengeRecordStatus.isTrue(),
                         challengeRecord.challenge.challengeId.eq(challengeId))
                 .fetch();
     }
@@ -107,7 +106,7 @@ public class ChallengeRecordQueryRepository {
                 .select(challengeRecord)
                 .from(challengeRecord)
                 .join(challengeRecord.challenge).fetchJoin()
-                .where(challengeRecord.challenge.challengeStatus.eq(true),
+                .where(challengeRecord.challenge.challengeStatus.isTrue(),
                         challengeRecord.challenge.challengeProgress.eq(1L),
                         challengeRecord.member.email.ne(email),
                         challengeRecord.challenge.categoryName.ne(CategoryName.OFFICIAL))
@@ -132,8 +131,8 @@ public class ChallengeRecordQueryRepository {
                 .selectFrom(challengeRecord)
                 .join(challengeRecord.challenge).fetchJoin()
                 .join(challengeRecord.member).fetchJoin()
-                .where(challengeRecord.challengeRecordStatus.eq(true),
-                        challengeRecord.challenge.challengeStatus.eq(true),
+                .where(challengeRecord.challengeRecordStatus.isTrue(),
+                        challengeRecord.challenge.challengeStatus.isTrue(),
                         challengeRecord.challenge.challengeProgress.eq(1L))
                 .orderBy(challengeRecord.modifiedAt.desc())
                 .fetch();
@@ -150,7 +149,7 @@ public class ChallengeRecordQueryRepository {
         return queryFactory
                 .select(challengeRecord.challengeRecordId)
                 .from(challengeRecord)
-                .where(challengeRecord.challengeRecordStatus.eq(true),
+                .where(challengeRecord.challengeRecordStatus.isTrue(),
                         challengeRecord.challenge.eq(challenge))
                 .fetchCount();
     }
@@ -166,7 +165,7 @@ public class ChallengeRecordQueryRepository {
     public List<ChallengeRecord> findAllByMemberAndProgress(Member member, Long progress) {
         return queryFactory
                 .selectFrom(challengeRecord)
-                .where(challengeRecord.challengeRecordStatus.eq(true),
+                .where(challengeRecord.challengeRecordStatus.isTrue(),
                         challengeRecord.member.eq(member),
                         challengeRecord.challenge.challengeProgress.eq(progress))
                 .fetch();
