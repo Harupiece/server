@@ -25,7 +25,7 @@ public class ChallengeQueryRepository {
 //        List<Challenge> challengeList =
         return queryFactory
                 .selectFrom(challenge)
-                .where(challenge.challengeStatus.eq(true),
+                .where(challenge.challengeStatus.isTrue(),
                         challenge.challengeProgress.eq(1L),
                         challenge.categoryName.eq(categoryName))
                 .orderBy(challenge.modifiedAt.desc())

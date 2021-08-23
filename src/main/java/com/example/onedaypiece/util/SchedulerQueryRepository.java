@@ -103,7 +103,7 @@ public class SchedulerQueryRepository {
         return queryFactory
                 .select(challenge.challengeId)
                 .from(challenge)
-                .where(challenge.challengeStatus.eq(true),
+                .where(challenge.challengeStatus.isTrue(),
                         challenge.challengeProgress.eq(1L),
                         challenge.challengeTitle.eq(title))
                 .fetchFirst() == null;
@@ -141,7 +141,7 @@ public class SchedulerQueryRepository {
                 .select(challengeRecord)
                 .from(challengeRecord)
                 .join(challengeRecord.member).fetchJoin()
-                .where(challengeRecord.challengeRecordStatus.eq(true),
+                .where(challengeRecord.challengeRecordStatus.isTrue(),
                         challengeRecord.challenge.eq(challenge))
                 .fetch();
     }

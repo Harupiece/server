@@ -27,4 +27,10 @@ public class ChallengeRecordController {
         challengeRecordService.giveUpChallenge(challengeId, userDetails.getUsername());
         return ResponseEntity.ok().build();
     }
+
+    @PostMapping("/api/member/challenge-pre-start/{challengeId}")
+    public void preStartChallenge(@PathVariable Long challengeId,
+                                  @AuthenticationPrincipal UserDetails userDetails) {
+        challengeRecordService.preStartChallenge(challengeId, userDetails.getUsername());
+    }
 }

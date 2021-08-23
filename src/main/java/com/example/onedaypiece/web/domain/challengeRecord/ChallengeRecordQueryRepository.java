@@ -6,7 +6,6 @@ import com.example.onedaypiece.web.domain.member.Member;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -33,8 +32,8 @@ public class ChallengeRecordQueryRepository {
                 .from(challengeRecord)
                 .distinct()
                 .join(challengeRecord.challenge).fetchJoin()
-                .where(challengeRecord.challengeRecordStatus.eq(true),
-                        challengeRecord.challenge.challengeStatus.eq(true),
+                .where(challengeRecord.challengeRecordStatus.isTrue(),
+                        challengeRecord.challenge.challengeStatus.isTrue(),
                         challengeRecord.challenge.challengeProgress.eq(1L))
                 .orderBy(challengeRecord.challenge.challengeStartDate.asc())
                 .fetch();
@@ -51,7 +50,7 @@ public class ChallengeRecordQueryRepository {
                 .select(challengeRecord)
                 .from(challengeRecord)
                 .join(challengeRecord.member).fetchJoin()
-                .where(challengeRecord.challengeRecordStatus.eq(true),
+                .where(challengeRecord.challengeRecordStatus.isTrue(),
                         challengeRecord.challenge.eq(challenge))
                 .fetch();
     }
@@ -70,7 +69,7 @@ public class ChallengeRecordQueryRepository {
                 .from(challengeRecord)
                 .join(challengeRecord.challenge).fetchJoin()
                 .join(challengeRecord.member).fetchJoin()
-                .where(challengeRecord.challengeRecordStatus.eq(true),
+                .where(challengeRecord.challengeRecordStatus.isTrue(),
                         challengeRecord.challenge.challengeId.in(challengeIdList))
                 .fetch();
     }
@@ -89,7 +88,7 @@ public class ChallengeRecordQueryRepository {
                 .from(challengeRecord)
                 .join(challengeRecord.challenge).fetchJoin()
                 .join(challengeRecord.challenge).fetchJoin()
-                .where(challengeRecord.challengeRecordStatus.eq(true),
+                .where(challengeRecord.challengeRecordStatus.isTrue(),
                         challengeRecord.challenge.challengeId.eq(challengeId))
                 .fetch();
     }
@@ -107,7 +106,7 @@ public class ChallengeRecordQueryRepository {
                 .select(challengeRecord)
                 .from(challengeRecord)
                 .join(challengeRecord.challenge).fetchJoin()
-                .where(challengeRecord.challenge.challengeStatus.eq(true),
+                .where(challengeRecord.challenge.challengeStatus.isTrue(),
                         challengeRecord.challenge.challengeProgress.eq(1L),
                         challengeRecord.member.email.ne(email),
                         challengeRecord.challenge.categoryName.ne(CategoryName.OFFICIAL))
@@ -132,8 +131,8 @@ public class ChallengeRecordQueryRepository {
                 .selectFrom(challengeRecord)
                 .join(challengeRecord.challenge).fetchJoin()
                 .join(challengeRecord.member).fetchJoin()
-                .where(challengeRecord.challengeRecordStatus.eq(true),
-                        challengeRecord.challenge.challengeStatus.eq(true),
+                .where(challengeRecord.challengeRecordStatus.isTrue(),
+                        challengeRecord.challenge.challengeStatus.isTrue(),
                         challengeRecord.challenge.challengeProgress.eq(1L))
                 .orderBy(challengeRecord.modifiedAt.desc())
                 .fetch();
@@ -150,7 +149,7 @@ public class ChallengeRecordQueryRepository {
         return queryFactory
                 .select(challengeRecord.challengeRecordId)
                 .from(challengeRecord)
-                .where(challengeRecord.challengeRecordStatus.eq(true),
+                .where(challengeRecord.challengeRecordStatus.isTrue(),
                         challengeRecord.challenge.eq(challenge))
                 .fetchCount();
     }
@@ -166,28 +165,13 @@ public class ChallengeRecordQueryRepository {
     public List<ChallengeRecord> findAllByMemberAndProgress(Member member, Long progress) {
         return queryFactory
                 .selectFrom(challengeRecord)
-                .where(challengeRecord.challengeRecordStatus.eq(true),
-                        challengeRecord.challenge.challengeStatus.eq(true),
+                .where(challengeRecord.challengeRecordStatus.isTrue(),
+                        challengeRecord.challenge.challengeStatus.isTrue(),
                         challengeRecord.member.eq(member),
                         challengeRecord.challenge.challengeProgress.eq(progress))
                 .fetch();
     }
-// 여기
-    /**
-     * @Query("select c " +
-     * "from ChallengeRecord c " +
-     * "Where c.challengeRecordStatus = true " +
-     * "and c.member = :member " +
-     * "and c.challenge.challengeProgress in (:progress, :expected) ")
-     * List<ChallengeRecord> findAllByMemberAndProgressAndExpected(@Param("member") Member member, @Param("progress") Long progress, @Param("expected") Long expected);
-     */
-//    public List<ChallengeRecord> findAllByMemberAndProgressAndExpected(Member member, Long progress, Long expected) {
-//        return queryFactory
-//                .selectFrom(challengeRecord)
-//                .where(challengeRecord.member.eq(member),
-//                        challengeRecord.challenge.challengeProgress.in(progress, expected))
-//                .fetch();
-//    }
+
     public List<ChallengeRecord> findAllByMemberAndStatus(Member member, Long challengeStatus) {
         return queryFactory
                 .selectFrom(challengeRecord)
@@ -198,24 +182,6 @@ public class ChallengeRecordQueryRepository {
     }
 
 
-// 여기
-
-    /**
-     * @Query("select c from ChallengeRecord c " +
-     * "inner join c.challenge " +
-     * "where c.challengeRecordStatus= true " +
-     * "and c.challenge.challengeProgress = 2 ")
-     * List<ChallengeRecord> findAllByChallenge();
-     */
-    public List<ChallengeRecord> findAllByChallenge() {
-        return queryFactory
-                .selectFrom(challengeRecord)
-                .innerJoin(challengeRecord.challenge).fetchJoin()
-                .where(challengeRecord.challengeRecordStatus.isTrue(),
-                        challengeRecord.challenge.challengeProgress.eq(2L))
-                .fetch();
-    }
-
     public List<ChallengeRecord> findAllByMember(Member member) {
         return queryFactory
                 .selectFrom(challengeRecord)
@@ -225,31 +191,4 @@ public class ChallengeRecordQueryRepository {
                         challengeRecord.member.eq(member))
                 .fetch();
     }
-
-//    /**
-//     * @Query("select distinct c from ChallengeRecord c " +
-//     * "left join fetch Posting p on c.challenge.challengeId = p.challenge.challengeId " +
-//     * "where c.challenge.challengeId in :challengeId " +
-//     * "and p.postingId  in ( select p.postingId" +
-//     * "                    from Posting p " +
-//     * "                    where p.challenge.challengeId in :challengeId " +
-//     * "                      and p.createdAt < :today " +
-//     * "                      and p.member.memberId not in (c.member.memberId))")
-//     * List<ChallengeRecord> findPostingListTest2(List<Long> challengeId, LocalDateTime today);
-//     */
-//    public List<ChallengeRecord> findPostingListTest2(List<Long> challengeId, LocalDateTime today) {
-//        return queryFactory
-//                .select(challengeRecord).distinct()
-//                .from(challengeRecord)
-//                .leftJoin(posting).on(challengeRecord.challenge.challengeId.eq(posting.challenge.challengeId)).fetchJoin()
-//                .where(challengeRecord.challenge.challengeId.in(challengeId),
-//                        posting.postingId.in(JPAExpressions
-//                                .select(posting.postingId)
-//                                .from(posting)
-//                                .where(
-//                                        posting.challenge.challengeId.in(challengeId),
-//                                        posting.createdAt.before(today),
-//                                        posting.member.memberId.ne(challengeRecord.member.memberId)))) // notIn을 ne로 했는데 동작 확인 바람
-//                .fetch();
-//    }
 }
