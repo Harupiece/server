@@ -199,9 +199,8 @@ public class ChallengeService {
 
     private void createChallengeException(ChallengeRequestDto requestDto, Member member) {
         List<ChallengeRecord> recordList = challengeRecordQueryRepository.findAllByMember(member);
-        if (recordList.stream().anyMatch(r -> r.getChallenge().getCategoryName().equals(requestDto.getCategoryName())) &&
-                !member.getMemberId().equals(1L)) {
-            throw new ApiRequestException("이미 해당 카테고리에 챌린지를 생성한 유저입니다.");
+        if (recordList.size() > 10) {
+            throw new ApiRequestException("이미 10개의 챌린지에 참가하고 있는 유저입니다.");
         }
         if (requestDto.getChallengePassword().length() < 4) {
             if (!requestDto.getChallengePassword().equals("")) {
