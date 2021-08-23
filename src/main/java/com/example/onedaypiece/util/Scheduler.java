@@ -47,12 +47,12 @@ public class Scheduler {
     private HashOperations<String, String, ChatRoom> hashOpsChatRoom;
     private static final String CHAT_ROOMS = "CHAT_ROOM";
 
-    LocalDateTime today = LocalDate.now().atStartOfDay();
+    LocalDateTime today;
 
-    //    01 00 00
-    @Scheduled(cron = "10 0 0 * * *") // 초, 분, 시, 일, 월, 주 순서
+    @Scheduled(cron = "07 0 0 * * *") // 초, 분, 시, 일, 월, 주 순서
     @Transactional
     public void certificationKick() {
+        initializeToday();
 
         int week = today.getDayOfWeek().getValue();
 
@@ -87,8 +87,7 @@ public class Scheduler {
         int updateResult = challengeRecordRepository.kickMemberOnChallenge(UncertifiedMember, UncertifiedChallenge);
         log.info("updateResult 벌크 연산 result: {} ", updateResult);
     }
-
-    @Scheduled(cron = "11 0 0 * * *") // 초, 분, 시, 일, 월, 주 순서
+    @Scheduled(cron = "08 0 0 * * *") // 초, 분, 시, 일, 월, 주 순서
     @Transactional
     public void postingStatusUpdate() {
         List<Long> postingIdList = schedulerQueryRepository.findSchedulerUpdatePosting(today);
@@ -97,7 +96,7 @@ public class Scheduler {
         log.info("updateResult 벌크 연산 result: {} ", updateResult);
     }
 
-    @Scheduled(cron = "12 0 0 * * *") // 초, 분, 시, 일, 월, 주 순서
+    @Scheduled(cron = "09 0 0 * * *") // 초, 분, 시, 일, 월, 주 순서
     @Transactional
     public void challengeStatusUpdate() {
         List<ChallengeRecord> recordList = schedulerQueryRepository.findAllByChallengeProgressLessThan(3L);
@@ -128,7 +127,7 @@ public class Scheduler {
         challengeEndPoint(endList);
     }
 
-    @Scheduled(cron = "13 0 0 * * *")
+    @Scheduled(cron = "10 0 0 * * *")
     @Transactional
     public void createOfficialChallenge() {
         Member member = memberRepository.findById(1L).orElseThrow(() -> new NullPointerException("없는 유저입니다."));
@@ -269,5 +268,9 @@ public class Scheduler {
         return postingList.stream()
                 .map(SchedulerIdListDto::getMemberId).distinct()
                 .collect(Collectors.toList());
+    }
+
+    public void initializeToday() {
+        today = LocalDate.now().atStartOfDay();
     }
 }
