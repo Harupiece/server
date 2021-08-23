@@ -43,7 +43,8 @@ public class ChallengeRecordService {
         Challenge challenge = ChallengeChecker(challengeId);
         Member member = MemberChecker(email);
 
-        ChallengeRecord record = challengeRecordRepository.findByChallengeAndMember(challenge, member);
+        ChallengeRecord record = challengeRecordRepository.
+                findByChallengeAndMemberAndChallengeRecordStatusTrue(challenge, member);
         record.setStatusFalse();
     }
 
