@@ -23,42 +23,42 @@ public class PostingController {
      * 1.포스트 저장
      */
     @PostMapping("")
-    public ResponseEntity<Long> createPosting(@RequestBody @Valid PostingCreateRequestDto postingRequestDto,
+    public Long createPosting(@RequestBody @Valid PostingCreateRequestDto postingRequestDto,
                                               @AuthenticationPrincipal UserDetails userDetails){
         log.info("createPosting 포스트 저장: {} ",postingRequestDto);
         String email = userDetails.getUsername();
-        return ResponseEntity.ok().body(postingService.createPosting(postingRequestDto,email));
+        return postingService.createPosting(postingRequestDto,email);
     }
     /**
      * 2.포스트 리스트
      * @return
      */
     @GetMapping("/{page}/{challengeId}")
-    public ResponseEntity<PostingListDto> getPosting (@PathVariable int page,
+    public PostingListDto getPosting (@PathVariable int page,
                                                       @PathVariable Long challengeId){
         log.info("getPosting 전체 포스트 리스트 : {} ",challengeId);
-        return ResponseEntity.ok().body(postingService.getPosting(page,challengeId));
+        return postingService.getPosting(page,challengeId);
     }
     /**
      * 3.포스트 업데이트
      */
     @PutMapping("/update/{postingId}")
-    public ResponseEntity<Long> updatePosting(@PathVariable Long postingId,
+    public Long updatePosting(@PathVariable Long postingId,
                                               @AuthenticationPrincipal UserDetails userDetails,
                                               @RequestBody PostingUpdateRequestDto postingUpdateRequestDto){
         log.info("updatePosting  포스팅 업데이트 : {} ", postingUpdateRequestDto);
         String email = userDetails.getUsername();
-        return ResponseEntity.ok().body(postingService.updatePosting(postingId,email, postingUpdateRequestDto));
+        return postingService.updatePosting(postingId,email, postingUpdateRequestDto);
     }
     /**
      * 4.포스트 삭제
      */
     @DeleteMapping("/delete/{postingId}")
-    public ResponseEntity<Long> deletePosting(@PathVariable Long postingId,
+    public Long deletePosting(@PathVariable Long postingId,
                                               @AuthenticationPrincipal UserDetails userDetails){
         log.info("deletePosting 포스트 삭제: {} ", postingId);
         String email = userDetails.getUsername();
-        return ResponseEntity.ok().body(postingService.deletePosting(postingId,email));
+        return postingService.deletePosting(postingId,email);
     }
 
 }
