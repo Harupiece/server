@@ -51,14 +51,21 @@ public class Scheduler {
 
     @Scheduled(cron = "0/30 * * * * *")
     public void timeCheck() {
+        log.info(String.valueOf(LocalDateTime.now()).split("T")[0]);
+        log.info(String.valueOf(LocalDateTime.now()).split("T")[0]);
+        log.info(String.valueOf(LocalDateTime.now()).split("T")[0]);
+
+
         log.info(String.valueOf(LocalDateTime.now()));
         log.info(String.valueOf(LocalDateTime.now()));
         log.info(String.valueOf(LocalDateTime.now()));
-               
+
 
         log.info(String.valueOf(today));
         log.info(String.valueOf(today));
         log.info(String.valueOf(today));
+
+
     }
 
     //    01 00 00
