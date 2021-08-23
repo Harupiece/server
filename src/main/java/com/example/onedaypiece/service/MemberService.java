@@ -55,7 +55,6 @@ public class MemberService {
     private final TokenProvider tokenProvider;
     private final RefreshTokenRepository refreshTokenRepository;
     private final PointRepository pointRepository;
-    private final ChallengeRecordRepository challengeRecordRepository;
     private final ChallengeRecordQueryRepository challengeRecordQueryRepository;
     private final PointHistoryRepository pointHistoryRepository;
 

@@ -45,12 +45,14 @@ public class ChallengeController {
     }
 
     @PostMapping("/api/member/challenge") // 챌린지 등록
-    public Long createChallenge(@RequestBody ChallengeRequestDto requestDto, @AuthenticationPrincipal UserDetails userDetails) {
+    public Long createChallenge(@RequestBody ChallengeRequestDto requestDto,
+                                @AuthenticationPrincipal UserDetails userDetails) {
         return challengeService.createChallenge(requestDto, userDetails.getUsername());
     }
 
     @PutMapping("/api/member/challenge") // 챌린지 수정
-    public void putChallenge(@RequestBody PutChallengeRequestDto requestDto, @AuthenticationPrincipal UserDetails userDetails) {
+    public void putChallenge(@RequestBody PutChallengeRequestDto requestDto,
+                             @AuthenticationPrincipal UserDetails userDetails) {
         challengeService.putChallenge(requestDto, userDetails.getUsername());
     }
 

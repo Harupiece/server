@@ -11,7 +11,7 @@ import java.util.List;
 
 public interface ChallengeRecordRepository extends JpaRepository<ChallengeRecord, Long> {
 
-    ChallengeRecord findByChallengeAndMember(Challenge challenge, Member member);
+    ChallengeRecord findByChallengeAndMemberAndChallengeRecordStatusTrue(Challenge challenge, Member member);
 
     List<ChallengeRecord> findAllByChallengeAndChallengeRecordStatusTrue(Challenge challenge);
 

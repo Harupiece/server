@@ -19,14 +19,14 @@ public class ChallengeSearchController {
     private final ChallengeSearchService challengeSearchService;
 
     @GetMapping("/api/guest/challenge/category/{page}/{categoryName}") // 카테고리 별 조회
-    public ResponseEntity<ChallengeListResponseDto> getChallengeByCategoryName(@PathVariable int page,
-                                                                               @PathVariable CategoryName categoryName) {
-        return ResponseEntity.ok().body(challengeSearchService.getChallengeByCategoryName(categoryName, page));
+    public ChallengeListResponseDto getChallengeByCategoryName(@PathVariable int page,
+                                                               @PathVariable CategoryName categoryName) {
+        return challengeSearchService.getChallengeByCategoryName(categoryName, page);
     }
 
     @GetMapping("/api/guest/search/{page}/{searchWords}") // 제목 검색
-    public ResponseEntity<ChallengeListResponseDto> getChallengeSearchResult(@PathVariable int page,
-                                                                             @PathVariable String searchWords) {
-        return ResponseEntity.ok().body(challengeSearchService.getChallengeSearchResult(searchWords, page));
+    public ChallengeListResponseDto getChallengeSearchResult(@PathVariable int page,
+                                                             @PathVariable String searchWords) {
+        return challengeSearchService.getChallengeSearchResult(searchWords, page);
     }
 }
