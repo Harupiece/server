@@ -8,6 +8,8 @@ import com.example.onedaypiece.web.domain.challenge.Challenge;
 import com.example.onedaypiece.web.domain.challenge.ChallengeRepository;
 import com.example.onedaypiece.web.domain.member.Member;
 import com.example.onedaypiece.web.domain.member.MemberRepository;
+import com.example.onedaypiece.web.domain.pointHistory.PointHistory;
+import com.example.onedaypiece.web.domain.pointHistory.PointHistoryRepository;
 import com.example.onedaypiece.web.domain.posting.Posting;
 import com.example.onedaypiece.web.domain.posting.PostingQueryRepository;
 import com.example.onedaypiece.web.domain.posting.PostingRepository;
@@ -42,6 +44,7 @@ public class PostingService {
     private final CertificationRepository certificationRepository;
     private final PostingQueryRepository postingQueryRepository;
     private final CertificationQueryRepository certificationQueryRepository;
+    private  final PointHistoryRepository pointHistoryRepository;
 
     /**
      * 1.포스트 저장
@@ -60,8 +63,13 @@ public class PostingService {
         postingRepository.save(posting);
         certificationRepository.save(certification);
 
+        Long memberCount = postingCreateRequestDto.getTotalNumber(); // <- 참여인원 있음
+
+        checkMemberCountAndAddPoint(posting, memberCount);
+
         return posting.getPostingId();
     }
+
 
     /**
      * 2.포스트 리스트
@@ -172,6 +180,18 @@ public class PostingService {
 
         if(posting.getCreatedAt().isBefore(now)){
             throw new ApiRequestException("작성 후 하루가 지나면 수정 할 수 없습니다.");
+        }
+    }
+
+    private void checkMemberCountAndAddPoint(Posting posting, Long memberCount) {
+        if(memberCount /2 <= posting.getPostingCount()){
+            if(!posting.isPostingApproval()){
+                PointHistory pointHistory = new PointHistory(1L, posting); // 몇점받는지 첫번쨰 파라미터로 들어가야함
+                pointHistoryRepository.save(pointHistory);
+                posting.getMember().updatePoint(1L);
+                posting.updateApproval();
+                posting.updatePoint();
+            }
         }
     }
 
