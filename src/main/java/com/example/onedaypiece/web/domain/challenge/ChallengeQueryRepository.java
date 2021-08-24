@@ -53,7 +53,7 @@ public class ChallengeQueryRepository {
                         challenge.challengeProgress.eq(1L),
                         challenge.categoryName.ne(CategoryName.OFFICIAL),
                         challenge.challengeTitle.contains(words))
-                .orderBy(challenge.modifiedAt.asc())
+                .orderBy(challenge.challengeStartDate.asc())
                 .offset(page.getOffset())
                 .limit(page.getPageSize() + 1)
                 .fetch();
@@ -74,7 +74,7 @@ public class ChallengeQueryRepository {
         List<Challenge> challengeList = queryFactory
                 .selectFrom(challenge)
                 .where(predicateByCategoryNameAndPeriod(categoryName, String.valueOf(period)))
-                .orderBy(challenge.modifiedAt.desc())
+                .orderBy(challenge.challengeStartDate.asc())
                 .offset(page.getOffset())
                 .limit(page.getPageSize() + 1)
                 .fetch();
