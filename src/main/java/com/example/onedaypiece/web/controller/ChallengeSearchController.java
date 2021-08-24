@@ -18,7 +18,7 @@ public class ChallengeSearchController {
 
     private final ChallengeSearchService challengeSearchService;
 
-    @GetMapping("/api/guest/search/{page}/{searchWords}") // 제목 검색
+    @GetMapping("/api/guest/search/{searchWords}/{page}") // 제목 검색
     public ChallengeListResponseDto getChallengeSearchResult(@PathVariable int page,
                                                              @PathVariable String searchWords) {
         return challengeSearchService.getChallengeSearchResult(searchWords, page);

@@ -234,7 +234,7 @@ public class Scheduler {
 
         if (memberList.size() > 0) {
             Long postingCount = schedulerQueryRepository.findAllByChallengeAndFirstMember(challenge, memberList.get(0));
-            Long resultPoint = postingCount * 500L * (challenge.getCategoryName().equals(OFFICIAL) ? 2L : 1L);
+            Long resultPoint = postingCount * 50L * (challenge.getCategoryName().equals(OFFICIAL) ? 2L : 1L);
 
             List<PointHistory> pointHistoryList = recordList
                     .stream()
