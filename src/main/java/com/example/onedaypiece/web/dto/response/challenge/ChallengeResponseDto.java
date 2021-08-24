@@ -30,8 +30,8 @@ public class ChallengeResponseDto {
     private String challengeGood;
     private String challengeBad;
     private String challengeHoliday;
+    private String tag;
     private final Set<Long> challengeMember = new HashSet<>();
-    private final List<String> tagList = new ArrayList<>();
 
     public ChallengeResponseDto(Challenge challenge,
                                 List<Long> challengeMember) {
@@ -49,15 +49,7 @@ public class ChallengeResponseDto {
         this.challengeGood = challenge.getChallengeGood();
         this.challengeBad = challenge.getChallengeBad();
         this.challengeHoliday = challenge.getChallengeHoliday();
+        this.tag = challenge.getTag();
         this.challengeMember.addAll(challengeMember);
-        if (ChronoUnit.DAYS.between(challenge.getChallengeStartDate(), challenge.getChallengeEndDate()) <= 7) {
-            tagList.add("#1주");
-        } else if (ChronoUnit.DAYS.between(challenge.getChallengeStartDate(), challenge.getChallengeEndDate()) <= 14) {
-            tagList.add("#2주");
-        } else if (ChronoUnit.DAYS.between(challenge.getChallengeStartDate(), challenge.getChallengeEndDate()) <= 21) {
-            tagList.add("#3주");
-        } else {
-            tagList.add("#4주 이상");
-        }
     }
 }
