@@ -24,7 +24,7 @@ public class ChallengeSearchController {
         return challengeSearchService.getChallengeSearchResult(searchWords, page);
     }
 
-    @GetMapping("/api/guest/search/{categoryName}/{period}/{page}")
+    @GetMapping("/api/guest/search/{categoryName}/{period}/{page}") // 소팅 검색
     public ChallengeListResponseDto getChallengeSearchByCategoryNameAndPeriod(@PathVariable String categoryName,
                                                                               @PathVariable int period,
                                                                               @PathVariable int page) {
