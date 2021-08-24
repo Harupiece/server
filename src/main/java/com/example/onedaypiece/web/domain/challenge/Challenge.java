@@ -103,13 +103,13 @@ public class Challenge extends Timestamped implements Serializable {
         this.challengeHoliday = requestDto.getChallengeHoliday();
         this.member = member;
         if (ChronoUnit.DAYS.between(requestDto.getChallengeStartDate(), requestDto.getChallengeEndDate()) <= 7) {
-            this.tag = "#1주";
+            this.tag = "1주";
         } else if (ChronoUnit.DAYS.between(requestDto.getChallengeStartDate(), requestDto.getChallengeEndDate()) <= 14) {
-            this.tag = "#2주";
+            this.tag = "2주";
         } else if (ChronoUnit.DAYS.between(requestDto.getChallengeStartDate(), requestDto.getChallengeEndDate()) <= 21) {
-            this.tag = "#3주";
+            this.tag = "3주";
         } else {
-            this.tag = "#4주 이상";
+            this.tag = "4주 이상";
         }
     }
 
@@ -132,13 +132,13 @@ public class Challenge extends Timestamped implements Serializable {
         this.challengeBad = requestDto.getChallengeBad();
         this.challengeHoliday = requestDto.getChallengeHoliday();
         if (ChronoUnit.DAYS.between(requestDto.getChallengeStartDate(), requestDto.getChallengeEndDate()) <= 7) {
-            this.tag = "#1주";
+            this.tag = "1주";
         } else if (ChronoUnit.DAYS.between(requestDto.getChallengeStartDate(), requestDto.getChallengeEndDate()) <= 14) {
-            this.tag = "#2주";
+            this.tag = "2주";
         } else if (ChronoUnit.DAYS.between(requestDto.getChallengeStartDate(), requestDto.getChallengeEndDate()) <= 21) {
-            this.tag = "#3주";
+            this.tag = "3주";
         } else {
-            this.tag = "#4주 이상";
+            this.tag = "4주 이상";
         }
     }
 

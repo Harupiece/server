@@ -72,11 +72,8 @@ public class ChallengeRecordService {
 
     private void requestChallengeException(Challenge challenge, Member member) {
         List<ChallengeRecord> recordList = challengeRecordQueryRepository.findAllByMember(member);
-        if (recordList.stream().anyMatch(r -> r.getChallenge().equals(challenge))) {
+        if (recordList.size() >= 10) {
             throw new ApiRequestException("이미 10개의 챌린지에 참가하고 있는 유저입니다.");
-        }
-        if (recordList.size() > 10) {
-            throw new ApiRequestException("");
         }
         if (!challenge.getCategoryName().equals(OFFICIAL) &&
                 challengeRecordQueryRepository.countByChallenge(challenge) >= 10) {
