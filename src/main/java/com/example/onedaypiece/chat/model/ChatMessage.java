@@ -4,24 +4,19 @@ import com.example.onedaypiece.chat.dto.request.ChatMessageRequestDto;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.cfg.annotations.reflection.XMLContext;
 
 
 import javax.persistence.*;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Getter
 @Entity
 @NoArgsConstructor
 public class ChatMessage implements Serializable {
-
-    private static final String BAD_WORD = "badword";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -82,19 +77,7 @@ public class ChatMessage implements Serializable {
                 .type(requestDto.getType())
                 .roomId(requestDto.getRoomId())
                 .sender(requestDto.getNickname())
-                .message(requestDto.getNickname() + "님이 방에 입장했습니다.")
-                .profileImg(requestDto.getProfileImg())
-                .createdAt(createTime())
-                .alert(requestDto.getAlert())
-                .build();
-    }
-
-    public static ChatMessage createQUITMessage(ChatMessageRequestDto requestDto) {
-        return ChatMessage.builder()
-                .type(requestDto.getType())
-                .roomId(requestDto.getRoomId())
-                .sender(requestDto.getNickname())
-                .message(requestDto.getNickname() + "님이 방에서 퇴장했습니다.")
+                .message(requestDto.getNickname() + "님이 챌린지에 참여했습니다.")
                 .profileImg(requestDto.getProfileImg())
                 .createdAt(createTime())
                 .alert(requestDto.getAlert())
@@ -109,7 +92,7 @@ public class ChatMessage implements Serializable {
         return time.format(date);
     }
 
-    // /home/dhkdrb897/bad.txt
+    // /home/dhkdrb897/badword.txt
     // C:/Users/User/Desktop/bad.txt
     public static String messageFilter(String message) {
         FileInputStream fis;

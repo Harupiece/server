@@ -1,7 +1,9 @@
 package com.example.onedaypiece.chat.service;
 
 import com.example.onedaypiece.chat.dto.request.ChatMessageRequestDto;
+import com.example.onedaypiece.chat.model.ChatMember;
 import com.example.onedaypiece.chat.model.ChatMessage;
+import com.example.onedaypiece.chat.repository.ChatMemberRepository;
 import com.example.onedaypiece.chat.repository.ChatMessageRepository;
 import com.example.onedaypiece.exception.ApiRequestException;
 import com.example.onedaypiece.web.domain.challengeRecord.ChallengeRecordRepository;
@@ -24,6 +26,7 @@ public class ChatMessageService {
     private final MemberRepository memberRepository;
     private final ChallengeRecordRepository challengeRecordRepository;
     private final ChatMessageRepository chatMessageRepository;
+    private final ChatMemberRepository chatMemberRepository;
 
     // tcp
     //destination정보에서 roomId 추출
@@ -40,28 +43,22 @@ public class ChatMessageService {
     // 채팅방에 메세지 발송
     @Transactional
     public void pubTalkMessage(ChatMessageRequestDto requestDto) {
+        Member member = getMember(requestDto);
+        validateChatRoom(requestDto, member);
         ChatMessage chatMessage = ChatMessage.createTALKMessage(requestDto);
-        validatePubMessage(requestDto);
         pubMessage(chatMessage);
     }
 
     @Transactional
     public void pubEnterMessage(ChatMessageRequestDto requestDto) {
-        ChatMessage chatMessage = ChatMessage.createENTERMessage(requestDto);
-        validatePubMessage(requestDto);
-        pubMessage(chatMessage);
-    }
-
-    @Transactional
-    public void pubQuitMessage(ChatMessageRequestDto requestDto) {
-        ChatMessage chatMessage = ChatMessage.createQUITMessage(requestDto);
-        validatePubMessage(requestDto);
-        pubMessage(chatMessage);
-    }
-
-    public void validatePubMessage(ChatMessageRequestDto requestDto){
-        Member member = getmember(requestDto);
+        Member member = getMember(requestDto);
         validateChatRoom(requestDto, member);
+        ChatMember chatMember = chatMemberRepository.findByMemberId(member);
+        if(chatMember.getStatusFirst()) {
+            ChatMessage chatMessage = ChatMessage.createENTERMessage(requestDto);
+            pubMessage(chatMessage);
+            chatMember.setStatusFirstFalse();
+        }
     }
 
     public void pubMessage(ChatMessage chatMessage){
@@ -69,7 +66,7 @@ public class ChatMessageService {
         redisTemplate.convertAndSend(channelTopic.getTopic(), chatMessage);
     }
 
-    private Member getmember(ChatMessageRequestDto requestDto) {
+    private Member getMember(ChatMessageRequestDto requestDto) {
         return memberRepository.findByNickname(requestDto.getNickname())
                 .orElseThrow(() -> new ApiRequestException("조회되지 않는 회원입니다."));
     }
