@@ -25,6 +25,7 @@ public class ChatMessageController {
 
     @MessageMapping("/enter")
     public ResponseEntity<Void> pubEnterMessage(@RequestBody ChatMessageRequestDto requestDto){
+        log.info("request {}", requestDto.getRoomId());
         chatMessageService.pubEnterMessage(requestDto);
         return ResponseEntity.ok().build();
     }
