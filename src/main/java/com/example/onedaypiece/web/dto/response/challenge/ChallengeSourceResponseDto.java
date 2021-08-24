@@ -26,7 +26,7 @@ public class ChallengeSourceResponseDto {
     private LocalDateTime challengeEndDate;
     private String challengeImgUrl;
     private Set<Long> challengeMember;
-    private final List<String> tagList = new ArrayList<>();
+    private String tag;
 
     public ChallengeSourceResponseDto(Challenge challenge, List<ChallengeRecord> records) {
         this.challengeId = challenge.getChallengeId();
@@ -40,14 +40,6 @@ public class ChallengeSourceResponseDto {
                 .filter(r -> r.getChallenge().equals(challenge))
                 .map(r -> r.getMember().getMemberId())
                 .collect(Collectors.toSet());
-        if (ChronoUnit.DAYS.between(challenge.getChallengeStartDate(), challenge.getChallengeEndDate()) <= 7) {
-            tagList.add("#1주");
-        } else if (ChronoUnit.DAYS.between(challenge.getChallengeStartDate(), challenge.getChallengeEndDate()) <= 14) {
-            tagList.add("#2주");
-        } else if (ChronoUnit.DAYS.between(challenge.getChallengeStartDate(), challenge.getChallengeEndDate()) <= 21) {
-            tagList.add("#3주");
-        } else {
-            tagList.add("#4주 이상");
-        }
+        this.tag = challenge.getTag();
     }
 }

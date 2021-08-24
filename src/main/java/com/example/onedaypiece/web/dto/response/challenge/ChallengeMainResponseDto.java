@@ -40,8 +40,4 @@ public class ChallengeMainResponseDto {
     public void addSlider(List<ChallengeSourceResponseDto> sliderSource) {
         this.slider.addAll(sliderSource);
     }
-
-    public void setHistoryCount(Long historyCount) {
-        this.historyCount = historyCount;
-    }
 }
