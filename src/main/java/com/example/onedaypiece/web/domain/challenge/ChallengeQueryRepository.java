@@ -73,8 +73,8 @@ public class ChallengeQueryRepository {
     public Slice<Challenge> findAllByCategoryNameAndPeriod(String categoryName, int period, Pageable page) {
         List<Challenge> challengeList = queryFactory
                 .selectFrom(challenge)
-                .where(predicateByCategoryNameAndPeriod(categoryName, period))
-                .orderBy(challengeRecord.challenge.modifiedAt.desc())
+                .where(predicateByCategoryNameAndPeriod(categoryName, String.valueOf(period)))
+                .orderBy(challenge.modifiedAt.desc())
                 .offset(page.getOffset())
                 .limit(page.getPageSize() + 1)
                 .fetch();
@@ -82,20 +82,20 @@ public class ChallengeQueryRepository {
         return RepositoryHelper.toSlice(challengeList, page);
     }
 
-    private Predicate[] predicateByCategoryNameAndPeriod(String categoryName, int period) {
+    private Predicate[] predicateByCategoryNameAndPeriod(String categoryName, String period) {
         Predicate[] predicates;
-        if (!categoryName.equals("N") && period == 0) { // 카테고리o 기간x
+        if (!categoryName.equals("ALL") && period.equals("0")) { // 카테고리o 기간x
             predicates = new Predicate[]{challenge.challengeStatus.isTrue(),
                     challenge.challengeProgress.eq(1L),
                     challenge.categoryName.ne(CategoryName.OFFICIAL),
-                    challengeRecord.challenge.categoryName.eq(CategoryName.valueOf(categoryName))};
-        } else if (!categoryName.equals("N")) { // 카테고리o, 기간o
+                    challenge.categoryName.eq(CategoryName.valueOf(categoryName))};
+        } else if (!categoryName.equals("ALL")) { // 카테고리o, 기간o
             predicates = new Predicate[]{challenge.challengeStatus.isTrue(),
                     challenge.challengeProgress.eq(1L),
-                    challengeRecord.challenge.categoryName.eq(CategoryName.valueOf(categoryName)),
+                    challenge.categoryName.eq(CategoryName.valueOf(categoryName)),
                     challenge.categoryName.ne(CategoryName.OFFICIAL),
-                    challengeRecord.challenge.tag.eq(period + "주")};
-        } else if (period == 0) { // 카테고리x, 기간x
+                    challenge.tag.eq(getPeriodString(period))};
+        } else if (period.equals("0")) { // 카테고리x, 기간x
             predicates = new Predicate[]{challenge.challengeStatus.isTrue(),
                     challenge.challengeProgress.eq(1L),
                     challenge.categoryName.ne(CategoryName.OFFICIAL)};
@@ -103,8 +103,12 @@ public class ChallengeQueryRepository {
             predicates = new Predicate[]{challenge.challengeStatus.isTrue(),
                     challenge.challengeProgress.eq(1L),
                     challenge.categoryName.ne(CategoryName.OFFICIAL),
-                    challengeRecord.challenge.tag.eq(period + "주")};
+                    challenge.tag.eq(getPeriodString(period))};
         }
         return predicates;
+    }
+
+    private String getPeriodString(String period) {
+        return period.equals("4") ? period + "주 이상" : period + "주";
     }
 }

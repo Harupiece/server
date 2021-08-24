@@ -138,7 +138,7 @@ public class Challenge extends Timestamped implements Serializable {
         } else if (ChronoUnit.DAYS.between(requestDto.getChallengeStartDate(), requestDto.getChallengeEndDate()) <= 21) {
             this.tag = "3주";
         } else {
-            this.tag = "4주";
+            this.tag = "4주 이상";
         }
     }
 
