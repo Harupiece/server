@@ -1,6 +1,8 @@
 package com.example.onedaypiece.service;
 
+import com.example.onedaypiece.chat.model.ChatMember;
 import com.example.onedaypiece.chat.model.ChatRoom;
+import com.example.onedaypiece.chat.repository.ChatMemberRepository;
 import com.example.onedaypiece.chat.repository.ChatRoomRepository;
 import com.example.onedaypiece.exception.ApiRequestException;
 import com.example.onedaypiece.web.domain.challenge.CategoryName;
@@ -43,6 +45,7 @@ public class ChallengeService {
     private final ChallengeRecordQueryRepository challengeRecordQueryRepository;
     private final MemberRepository memberRepository;
     private final ChatRoomRepository chatRoomRepository;
+    private final ChatMemberRepository chatMemberRepository;
 
     // 채팅룸 저장
     @Resource(name = "redisTemplate")
@@ -82,6 +85,9 @@ public class ChallengeService {
         ChatRoom chatRoom = new ChatRoom(challengeId);
         chatRoomRepository.save(chatRoom);
         hashOpsChatRoom.put(CHAT_ROOMS, chatRoom.getRoomId(), chatRoom);
+
+        ChatMember chatMember = ChatMember.createChatMember(member.getMemberId(), chatRoom.getRoomId());
+        chatMemberRepository.save(chatMember);
 
         return challengeId;
     }
