@@ -18,12 +18,14 @@ public class ChatMessageController {
 
     // 웹소켓으로 들어오는 메시지 발행 처리 -> 클라이언트에서는 /pub/message로 발행 요청
     @MessageMapping("/talk")
-    public void pubTalkMessage(@RequestBody ChatMessageRequestDto requestDto){
+    public ResponseEntity<Void> pubTalkMessage(@RequestBody ChatMessageRequestDto requestDto){
         chatMessageService.pubTalkMessage(requestDto);
+        return ResponseEntity.ok().build();
     }
 
     @MessageMapping("/enter")
-    public void pubEnterMessage(@RequestBody ChatMessageRequestDto requestDto){
+    public ResponseEntity<Void> pubEnterMessage(@RequestBody ChatMessageRequestDto requestDto){
         chatMessageService.pubEnterMessage(requestDto);
+        return ResponseEntity.ok().build();
     }
 }
