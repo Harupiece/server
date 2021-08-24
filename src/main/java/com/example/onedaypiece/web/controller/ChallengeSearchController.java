@@ -18,15 +18,16 @@ public class ChallengeSearchController {
 
     private final ChallengeSearchService challengeSearchService;
 
-    @GetMapping("/api/guest/challenge/category/{page}/{categoryName}") // 카테고리 별 조회
-    public ChallengeListResponseDto getChallengeByCategoryName(@PathVariable int page,
-                                                               @PathVariable CategoryName categoryName) {
-        return challengeSearchService.getChallengeByCategoryName(categoryName, page);
-    }
-
     @GetMapping("/api/guest/search/{page}/{searchWords}") // 제목 검색
     public ChallengeListResponseDto getChallengeSearchResult(@PathVariable int page,
                                                              @PathVariable String searchWords) {
         return challengeSearchService.getChallengeSearchResult(searchWords, page);
+    }
+
+    @GetMapping("/api/guest/search/{categoryName}/{period}/{page}")
+    public ChallengeListResponseDto getChallengeSearchByCategoryNameAndPeriod(@PathVariable String categoryName,
+                                                                              @PathVariable int period,
+                                                                              @PathVariable int page) {
+        return challengeSearchService.getChallengeByCategoryNameAndPeriod(categoryName, period, page);
     }
 }

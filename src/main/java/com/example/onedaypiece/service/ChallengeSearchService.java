@@ -1,14 +1,14 @@
 package com.example.onedaypiece.service;
 
-import com.example.onedaypiece.web.domain.challenge.CategoryName;
 import com.example.onedaypiece.web.domain.challenge.Challenge;
 import com.example.onedaypiece.web.domain.challenge.ChallengeQueryRepository;
-import com.example.onedaypiece.web.domain.challengeRecord.ChallengeRecord;
 import com.example.onedaypiece.web.domain.challengeRecord.ChallengeRecordQueryRepository;
 import com.example.onedaypiece.web.dto.response.challenge.ChallengeListResponseDto;
 import com.example.onedaypiece.web.dto.response.challenge.ChallengeResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,39 +21,43 @@ public class ChallengeSearchService {
     private final ChallengeRecordQueryRepository challengeRecordQueryRepository;
     private final ChallengeQueryRepository challengeQueryRepository;
 
-    final int PAGE_SIZE = 999;
+    final int SEARCH_SIZE = 8;
 
-    public ChallengeListResponseDto getChallengeByCategoryName(CategoryName categoryName, int page) {
-        List<Challenge> challengeList = challengeQueryRepository.
-                findAllByCategoryName(categoryName, PageRequest.of(page - 1, PAGE_SIZE));
-        return listResponseDtoSource(challengeList);
-    }
-
+    /**
+     * 챌린지 단어 검색
+     */
     public ChallengeListResponseDto getChallengeSearchResult(String searchWords, int page) {
-        List<Challenge> challengeList = challengeQueryRepository.
+        Slice<Challenge> challengeList = challengeQueryRepository.
                 findAllByWords(
-                        searchWords.trim(), PageRequest.of(page - 1, PAGE_SIZE));
-        return listResponseDtoSource(challengeList);
+                        searchWords.trim(), PageRequest.of(page - 1, SEARCH_SIZE));
+
+        return getChallengeListResponseDto(challengeList);
     }
 
-    private ChallengeListResponseDto listResponseDtoSource(List<Challenge> challengeList) {
-        ChallengeListResponseDto listResponseDto = new ChallengeListResponseDto();
+    /**
+     * 챌린지 카테고리, 태그별 검색
+     */
+    public ChallengeListResponseDto getChallengeByCategoryNameAndPeriod(String categoryName, int period, int page) {
+        Pageable pageable = PageRequest.of(page - 1, SEARCH_SIZE);
+        Slice<Challenge> challengeList = challengeQueryRepository
+                .findAllByCategoryNameAndPeriod(categoryName, period, pageable);
 
-        List<ChallengeRecord> recordList = challengeRecordQueryRepository.findAllByChallengeIdList(challengeList
+        return getChallengeListResponseDto(challengeList);
+    }
+
+    private ChallengeListResponseDto getChallengeListResponseDto(Slice<Challenge> challengeList) {
+        List<ChallengeResponseDto> challengeDtoList = challengeList
                 .stream()
-                .map(Challenge::getChallengeId)
-                .collect(Collectors.toList()));
+                .map(c -> new ChallengeResponseDto(c, getRecordListFromRepository(c)))
+                .collect(Collectors.toList());
 
-        for (Challenge challenge : challengeList) {
-            List<Long> memberIdList = recordList
-                    .stream()
-                    .map(r -> r.getMember().getMemberId())
-                    .collect(Collectors.toList());
+        return ChallengeListResponseDto.createChallengeListDto(challengeDtoList, challengeList.hasNext());
+    }
 
-            ChallengeResponseDto responseDto = new ChallengeResponseDto(challenge, memberIdList);
-            listResponseDto.addResult(responseDto);
-        }
-
-        return listResponseDto;
+    private List<Long> getRecordListFromRepository(Challenge challenge) {
+        return challengeRecordQueryRepository.findAllByChallenge(challenge)
+                .stream()
+                .map(r -> r.getMember().getMemberId())
+                .collect(Collectors.toList());
     }
 }

@@ -1,16 +1,20 @@
 package com.example.onedaypiece.web.domain.challengeRecord;
 
+import com.example.onedaypiece.util.RepositoryHelper;
 import com.example.onedaypiece.web.domain.challenge.CategoryName;
 import com.example.onedaypiece.web.domain.challenge.Challenge;
 import com.example.onedaypiece.web.domain.member.Member;
+import com.querydsl.core.types.Predicate;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 import static com.example.onedaypiece.web.domain.challengeRecord.QChallengeRecord.challengeRecord;
+import static com.example.onedaypiece.web.domain.posting.QPosting.posting;
 
 @Repository
 @RequiredArgsConstructor
@@ -177,7 +181,7 @@ public class ChallengeRecordQueryRepository {
         return queryFactory
                 .selectFrom(challengeRecord)
                 .where(challengeRecord.member.eq(member),
-                        challengeRecord.challengeRecordStatus.eq(true),
+                        challengeRecord.challengeRecordStatus.isTrue(),
                         challengeRecord.challenge.challengeProgress.eq(challengeStatus))
                 .fetch();
     }
@@ -186,10 +190,49 @@ public class ChallengeRecordQueryRepository {
     public List<ChallengeRecord> findAllByMember(Member member) {
         return queryFactory
                 .selectFrom(challengeRecord)
-                .where(challengeRecord.challengeRecordStatus.eq(true),
-                        challengeRecord.challenge.challengeStatus.eq(true),
+                .where(challengeRecord.challengeRecordStatus.isTrue(),
+                        challengeRecord.challenge.challengeStatus.isTrue(),
                         challengeRecord.challenge.challengeProgress.lt(3L),
                         challengeRecord.member.eq(member))
                 .fetch();
     }
+
+//    public Slice<Challenge> categoryAndTagSearch(String categoryName, int period, Pageable page) {
+//        List<Challenge> recordList =  queryFactory
+//                .selectFrom(challengeRecord.challenge)
+//                .join(challengeRecord.challenge).fetchJoin()
+//                .where(predicateByCategoryNameAndPeriod(categoryName, period))
+//                .orderBy(challengeRecord.challenge.modifiedAt.desc())
+//                .offset(page.getOffset())
+//                .limit(page.getPageSize() + 1)
+//                .fetch();
+//
+//        return RepositoryHelper.toSlice(recordList,page);
+//    }
+
+//    private Predicate[] predicateByCategoryNameAndPeriod(String categoryName, int period) {
+//        Predicate[] predicates;
+//        if (!categoryName.equals("") && period == 0) { // 카테고리o 기간x
+//            predicates = new Predicate[]{challengeRecord.challengeRecordStatus.isTrue(),
+//                    challengeRecord.challenge.challengeStatus.isTrue(),
+//                    challengeRecord.challenge.challengeProgress.eq(1L),
+//                    challengeRecord.challenge.categoryName.eq(CategoryName.valueOf(categoryName))};
+//        } else if (!categoryName.equals("")) { // 카테고리o, 기간o
+//            predicates = new Predicate[]{challengeRecord.challengeRecordStatus.isTrue(),
+//                    challengeRecord.challenge.challengeStatus.isTrue(),
+//                    challengeRecord.challenge.challengeProgress.eq(1L),
+//                    challengeRecord.challenge.categoryName.eq(CategoryName.valueOf(categoryName)),
+//                    challengeRecord.challenge.tag.eq(period + "주")};
+//        } else if (period == 0) { // 카테고리x, 기간x
+//            predicates = new Predicate[]{challengeRecord.challengeRecordStatus.isTrue(),
+//                    challengeRecord.challenge.challengeStatus.isTrue(),
+//                    challengeRecord.challenge.challengeProgress.eq(1L)};
+//        } else { // 카테고리x, 기간o
+//            predicates = new Predicate[]{challengeRecord.challengeRecordStatus.isTrue(),
+//                    challengeRecord.challenge.challengeStatus.isTrue(),
+//                    challengeRecord.challenge.challengeProgress.eq(1L),
+//                    challengeRecord.challenge.tag.eq(period + "주")};
+//        }
+//        return predicates;
+//    }
 }
