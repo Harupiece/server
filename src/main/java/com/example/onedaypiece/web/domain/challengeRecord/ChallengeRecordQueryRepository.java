@@ -150,6 +150,7 @@ public class ChallengeRecordQueryRepository {
                 .select(challengeRecord.challengeRecordId)
                 .from(challengeRecord)
                 .where(challengeRecord.challengeRecordStatus.isTrue(),
+                        challengeRecord.challenge.challengeStatus.isTrue(),
                         challengeRecord.challenge.eq(challenge))
                 .fetchCount();
     }
