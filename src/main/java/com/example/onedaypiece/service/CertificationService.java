@@ -43,14 +43,12 @@ public class CertificationService {
         //50% 이상 여기에 pointHistory추가되는거임
         checkMemberCountAndAddPoint(posting, memberCount);
 
-
         return posting.getPostingId();
     }
 
 
     // 인증 인원 50% 넘으면 승인
-    private void checkMemberCountAndAddPoint (Posting posting, Long memberCount) {
-
+    private void checkMemberCountAndAddPoint(Posting posting, Long memberCount) {
 
         if(memberCount /2 <= posting.getPostingCount()){
             if(!posting.isPostingApproval()){
