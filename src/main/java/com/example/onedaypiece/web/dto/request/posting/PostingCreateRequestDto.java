@@ -15,13 +15,15 @@ public class PostingCreateRequestDto {
     private String postingContent;
     private Long memberId;
     private Long challengeId;
+    private Long totalNumber;
 
     @Builder
-    public PostingCreateRequestDto(String postingImg, String postingContent, long memberId, long challengeId) {
-
+    public PostingCreateRequestDto(String postingImg, String postingContent, Long memberId, Long challengeId, Long totalNumber) {
         this.postingImg = postingImg;
         this.postingContent = postingContent;
         this.memberId = memberId;
-        this.challengeId =challengeId;
+        this.challengeId = challengeId;
+        this.totalNumber = totalNumber;
     }
+
 }
