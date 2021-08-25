@@ -24,10 +24,11 @@ public class ChallengeSearchController {
         return challengeSearchService.getChallengeSearchResult(searchWords, page);
     }
 
-    @GetMapping("/api/guest/search/{categoryName}/{period}/{page}") // 소팅 검색
+    @GetMapping("/api/guest/search/{categoryName}/{period}/{progress}/{page}") // 소팅 검색
     public ChallengeListResponseDto getChallengeSearchByCategoryNameAndPeriod(@PathVariable String categoryName,
                                                                               @PathVariable int period,
+                                                                              @PathVariable int progress,
                                                                               @PathVariable int page) {
-        return challengeSearchService.getChallengeByCategoryNameAndPeriod(categoryName, period, page);
+        return challengeSearchService.getChallengeByCategoryNameAndPeriod(categoryName, period, progress, page);
     }
 }
