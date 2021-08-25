@@ -53,7 +53,7 @@ public class ChatMessageService {
     public void pubEnterMessage(ChatMessageRequestDto requestDto) {
         Member member = getMember(requestDto);
         validateChatRoom(requestDto, member);
-        ChatMember chatMember = chatMemberRepository.findByMemberId(member);
+        ChatMember chatMember = chatMemberRepository.findByMemberIdAndRoomId(member.getMemberId(), requestDto.getRoomId());
         log.info("chatMember.getStatusFirst() 상태 가져오니: {}" ,chatMember.getStatusFirst());
         if(chatMember.getStatusFirst()) {
             ChatMessage chatMessage = ChatMessage.createENTERMessage(requestDto);
