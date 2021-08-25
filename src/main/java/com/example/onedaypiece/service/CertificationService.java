@@ -62,15 +62,18 @@ public class CertificationService {
             }
         }
     }
+
     private void duplicateCertification(Posting posting, Member member){
         if(certificationRepository.existsByPostingAndMember(posting,member)){
             throw new ApiRequestException("이미 인증한 게시물입니다!");
         }
     }
+
     private Member getMemberByEmail(String email) {
         return memberRepository.findByEmail(email)
                 .orElseThrow(() -> new ApiRequestException("등록된 유저가 없습니다."));
     }
+
     private Posting getPosting(Long postingId) {
         return postingRepository.findById(postingId)
                 .orElseThrow(() -> new ApiRequestException("등록된 포스트가 없습니다."));
