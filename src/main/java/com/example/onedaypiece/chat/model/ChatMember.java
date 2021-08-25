@@ -23,8 +23,8 @@ public class ChatMember implements Serializable {
     @Column
     private String roomId;
 
-    @Column
-    private Boolean statusFirst; // 채팅 첫방문인지 체크 true
+    @Column(nullable = false)
+    private boolean statusFirst; // 채팅 첫방문인지 체크 true
 
     @Builder
     public ChatMember(Long memberId, String roomId, boolean statusFirst){
