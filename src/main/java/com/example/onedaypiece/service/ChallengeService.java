@@ -86,9 +86,6 @@ public class ChallengeService {
         chatRoomRepository.save(chatRoom);
         hashOpsChatRoom.put(CHAT_ROOMS, chatRoom.getRoomId(), chatRoom);
 
-        ChatMember chatMember = ChatMember.createChatMember(member.getMemberId(), chatRoom.getRoomId());
-        chatMemberRepository.save(chatMember);
-
         return challengeId;
     }
 

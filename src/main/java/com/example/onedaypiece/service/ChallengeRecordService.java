@@ -1,5 +1,7 @@
 package com.example.onedaypiece.service;
 
+import com.example.onedaypiece.chat.model.ChatMember;
+import com.example.onedaypiece.chat.repository.ChatMemberRepository;
 import com.example.onedaypiece.exception.ApiRequestException;
 import com.example.onedaypiece.web.domain.challenge.Challenge;
 import com.example.onedaypiece.web.domain.challenge.ChallengeRepository;
@@ -26,6 +28,7 @@ public class ChallengeRecordService {
     private final ChallengeRecordQueryRepository challengeRecordQueryRepository;
     private final ChallengeRepository challengeRepository;
     private final MemberRepository memberRepository;
+    private final ChatMemberRepository chatMemberRepository;
 
     @Transactional
     public void requestChallenge(ChallengeRecordRequestDto requestDto, String email) {
@@ -36,6 +39,9 @@ public class ChallengeRecordService {
 
         ChallengeRecord record = new ChallengeRecord(challenge, member);
         challengeRecordRepository.save(record);
+
+        ChatMember chatMember = ChatMember.createChatMember(member.getMemberId(), String.valueOf(challenge.getChallengeId()));
+        chatMemberRepository.save(chatMember);
     }
 
     @Transactional
