@@ -70,10 +70,13 @@ public class ChallengeQueryRepository {
                 .fetch();
     }
 
-    public Slice<Challenge> findAllByCategoryNameAndPeriod(String categoryName, int period, Pageable page) {
+    public Slice<Challenge> findAllByCategoryNameAndPeriod(String categoryName,
+                                                           int period,
+                                                           int progress,
+                                                           Pageable page) {
         List<Challenge> challengeList = queryFactory
                 .selectFrom(challenge)
-                .where(predicateByCategoryNameAndPeriod(categoryName, String.valueOf(period)))
+                .where(predicateByCategoryNameAndPeriod(categoryName, progress, String.valueOf(period)))
                 .orderBy(challenge.challengeStartDate.asc())
                 .offset(page.getOffset())
                 .limit(page.getPageSize() + 1)
@@ -82,28 +85,74 @@ public class ChallengeQueryRepository {
         return RepositoryHelper.toSlice(challengeList, page);
     }
 
-    private Predicate[] predicateByCategoryNameAndPeriod(String categoryName, String period) {
+    private Predicate[] predicateByCategoryNameAndPeriod(String categoryName, int progress, String period) {
         Predicate[] predicates;
-        if (!categoryName.equals("ALL") && period.equals("0")) { // 카테고리o 기간x
-            predicates = new Predicate[]{challenge.challengeStatus.isTrue(),
-                    challenge.challengeProgress.eq(1L),
-                    challenge.categoryName.ne(CategoryName.OFFICIAL),
-                    challenge.categoryName.eq(CategoryName.valueOf(categoryName))};
-        } else if (!categoryName.equals("ALL")) { // 카테고리o, 기간o
-            predicates = new Predicate[]{challenge.challengeStatus.isTrue(),
-                    challenge.challengeProgress.eq(1L),
-                    challenge.categoryName.eq(CategoryName.valueOf(categoryName)),
-                    challenge.categoryName.ne(CategoryName.OFFICIAL),
-                    challenge.tag.eq(getPeriodString(period))};
-        } else if (period.equals("0")) { // 카테고리x, 기간x
-            predicates = new Predicate[]{challenge.challengeStatus.isTrue(),
-                    challenge.challengeProgress.eq(1L),
-                    challenge.categoryName.ne(CategoryName.OFFICIAL)};
-        } else { // 카테고리x, 기간o
-            predicates = new Predicate[]{challenge.challengeStatus.isTrue(),
-                    challenge.challengeProgress.eq(1L),
-                    challenge.categoryName.ne(CategoryName.OFFICIAL),
-                    challenge.tag.eq(getPeriodString(period))};
+        if (progress == 0) {
+            if (!categoryName.equals("ALL") && period.equals("0")) { // 카테고리o 기간x
+                predicates = new Predicate[]{challenge.challengeStatus.isTrue(),
+                        challenge.challengeProgress.lt(3L),
+                        challenge.categoryName.ne(CategoryName.OFFICIAL),
+                        challenge.categoryName.eq(CategoryName.valueOf(categoryName))};
+            } else if (!categoryName.equals("ALL")) { // 카테고리o, 기간o
+                predicates = new Predicate[]{challenge.challengeStatus.isTrue(),
+                        challenge.challengeProgress.lt(3L),
+                        challenge.categoryName.eq(CategoryName.valueOf(categoryName)),
+                        challenge.categoryName.ne(CategoryName.OFFICIAL),
+                        challenge.tag.eq(getPeriodString(period))};
+            } else if (period.equals("0")) { // 카테고리x, 기간x
+                predicates = new Predicate[]{challenge.challengeStatus.isTrue(),
+                        challenge.challengeProgress.lt(3L),
+                        challenge.categoryName.ne(CategoryName.OFFICIAL)};
+            } else { // 카테고리x, 기간o
+                predicates = new Predicate[]{challenge.challengeStatus.isTrue(),
+                        challenge.challengeProgress.lt(3L),
+                        challenge.categoryName.ne(CategoryName.OFFICIAL),
+                        challenge.tag.eq(getPeriodString(period))};
+            }
+        } else if (progress == 1) {
+            if (!categoryName.equals("ALL") && period.equals("0")) { // 카테고리o 기간x
+                predicates = new Predicate[]{challenge.challengeStatus.isTrue(),
+                        challenge.challengeProgress.eq(1L),
+                        challenge.categoryName.ne(CategoryName.OFFICIAL),
+                        challenge.categoryName.eq(CategoryName.valueOf(categoryName))};
+            } else if (!categoryName.equals("ALL")) { // 카테고리o, 기간o
+                predicates = new Predicate[]{challenge.challengeStatus.isTrue(),
+                        challenge.challengeProgress.eq(1L),
+                        challenge.categoryName.eq(CategoryName.valueOf(categoryName)),
+                        challenge.categoryName.ne(CategoryName.OFFICIAL),
+                        challenge.tag.eq(getPeriodString(period))};
+            } else if (period.equals("0")) { // 카테고리x, 기간x
+                predicates = new Predicate[]{challenge.challengeStatus.isTrue(),
+                        challenge.challengeProgress.eq(1L),
+                        challenge.categoryName.ne(CategoryName.OFFICIAL)};
+            } else { // 카테고리x, 기간o
+                predicates = new Predicate[]{challenge.challengeStatus.isTrue(),
+                        challenge.challengeProgress.eq(1L),
+                        challenge.categoryName.ne(CategoryName.OFFICIAL),
+                        challenge.tag.eq(getPeriodString(period))};
+            }
+        } else {
+            if (!categoryName.equals("ALL") && period.equals("0")) { // 카테고리o 기간x
+                predicates = new Predicate[]{challenge.challengeStatus.isTrue(),
+                        challenge.challengeProgress.eq(2L),
+                        challenge.categoryName.ne(CategoryName.OFFICIAL),
+                        challenge.categoryName.eq(CategoryName.valueOf(categoryName))};
+            } else if (!categoryName.equals("ALL")) { // 카테고리o, 기간o
+                predicates = new Predicate[]{challenge.challengeStatus.isTrue(),
+                        challenge.challengeProgress.eq(2L),
+                        challenge.categoryName.eq(CategoryName.valueOf(categoryName)),
+                        challenge.categoryName.ne(CategoryName.OFFICIAL),
+                        challenge.tag.eq(getPeriodString(period))};
+            } else if (period.equals("0")) { // 카테고리x, 기간x
+                predicates = new Predicate[]{challenge.challengeStatus.isTrue(),
+                        challenge.challengeProgress.eq(2L),
+                        challenge.categoryName.ne(CategoryName.OFFICIAL)};
+            } else { // 카테고리x, 기간o
+                predicates = new Predicate[]{challenge.challengeStatus.isTrue(),
+                        challenge.challengeProgress.eq(2L),
+                        challenge.categoryName.ne(CategoryName.OFFICIAL),
+                        challenge.tag.eq(getPeriodString(period))};
+            }
         }
         return predicates;
     }

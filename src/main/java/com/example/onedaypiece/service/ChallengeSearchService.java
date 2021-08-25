@@ -37,10 +37,13 @@ public class ChallengeSearchService {
     /**
      * 챌린지 카테고리, 태그별 검색
      */
-    public ChallengeListResponseDto getChallengeByCategoryNameAndPeriod(String categoryName, int period, int page) {
+    public ChallengeListResponseDto getChallengeByCategoryNameAndPeriod(String categoryName,
+                                                                        int period,
+                                                                        int progress,
+                                                                        int page) {
         Pageable pageable = PageRequest.of(page - 1, SEARCH_SIZE);
         Slice<Challenge> challengeList = challengeQueryRepository
-                .findAllByCategoryNameAndPeriod(categoryName, period, pageable);
+                .findAllByCategoryNameAndPeriod(categoryName, period, progress, pageable);
 
         return getChallengeListResponseDto(challengeList);
     }
