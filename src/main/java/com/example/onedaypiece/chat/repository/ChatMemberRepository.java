@@ -5,5 +5,5 @@ import com.example.onedaypiece.web.domain.member.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ChatMemberRepository extends JpaRepository<ChatMember, Long> {
-    ChatMember findByMemberId(Member member);
+    ChatMember findByMemberIdAndRoomId(Long memberId, String roomId);
 }
