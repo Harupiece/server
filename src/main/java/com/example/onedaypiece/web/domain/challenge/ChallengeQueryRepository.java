@@ -70,10 +70,10 @@ public class ChallengeQueryRepository {
                 .fetch();
     }
 
-    public Slice<Challenge> findAllByCategoryNameAndPeriod(String categoryName,
-                                                           int period,
-                                                           int progress,
-                                                           Pageable page) {
+    public Slice<Challenge> findAllBySearch(String categoryName,
+                                            int period,
+                                            int progress,
+                                            Pageable page) {
         List<Challenge> challengeList = queryFactory
                 .selectFrom(challenge)
                 .where(predicateByCategoryNameAndPeriod(categoryName, progress, String.valueOf(period)))

@@ -55,7 +55,20 @@ public class ChallengeRecordQueryRepository {
                 .from(challengeRecord)
                 .join(challengeRecord.member).fetchJoin()
                 .where(challengeRecord.challengeRecordStatus.isTrue(),
+                        challengeRecord.challenge.challengeStatus.isTrue(),
                         challengeRecord.challenge.eq(challenge))
+                .fetch();
+    }
+
+    public List<ChallengeRecord> findAllByChallengeList(Slice<Challenge> challengeList) {
+        return queryFactory
+                .select(challengeRecord)
+                .from(challengeRecord)
+                .join(challengeRecord.challenge).fetchJoin()
+                .distinct()
+                .where(challengeRecord.challengeRecordStatus.isTrue(),
+                        challengeRecord.challenge.challengeStatus.isTrue(),
+                        challengeRecord.challenge.in(challengeList.getContent()))
                 .fetch();
     }
 
