@@ -77,8 +77,8 @@ public class ChallengeQueryRepository {
         List<Challenge> challengeList = queryFactory
                 .selectFrom(challenge)
                 .where(predicateByCategoryNameAndPeriod(categoryName, progress, String.valueOf(period)))
-                .orderBy(challenge.challengeStartDate.asc(),
-                        challenge.challengeProgress.asc())
+                .orderBy(challenge.challengeProgress.asc(),
+                        challenge.challengeStartDate.asc())
                 .offset(page.getOffset())
                 .limit(page.getPageSize() + 1)
                 .fetch();
