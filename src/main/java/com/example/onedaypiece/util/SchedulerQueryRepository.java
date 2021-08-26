@@ -62,7 +62,7 @@ public class SchedulerQueryRepository {
                         posting.challenge.challengeId.in(challengeId),
                         posting.member.memberId.in(memberId),
                         posting.createdAt.lt(today),
-                        posting.postingCount.eq(1L))
+                        posting.postingApproval.isFalse())
                 .fetch();
     }
     /**
