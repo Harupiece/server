@@ -151,7 +151,7 @@ public class Scheduler {
                     OFFICIAL,
                     today.plusDays(CREATE_DELAY),
                     today.plusDays(CREATE_DELAY + PROGRESS_PERIOD),
-                    "https://i.ibb.co/YQCrYJR/banner-01.png",
+                    "https://i.ibb.co/nD0s4F4/banner-01.png",
                     "https://i.ibb.co/Bg9T9JZ/image.jpg",
                     "https://i.ibb.co/Y0GL0TP/badf.jpg",
                     ""
@@ -167,7 +167,7 @@ public class Scheduler {
                     OFFICIAL,
                     today.plusDays(CREATE_DELAY),
                     today.plusDays(CREATE_DELAY + PROGRESS_PERIOD),
-                    "https://i.ibb.co/4WDR3nd/Kakao-Talk-20210821-171834310.jpg",
+                    "https://i.ibb.co/HhKkDD5/Kakao-Talk-20210826-121609453-min.jpg",
                     "https://i.ibb.co/j8rmx81/bad.jpg",
                     "https://i.ibb.co/NpDZLYL/good.jpg",
                     ""
@@ -183,7 +183,7 @@ public class Scheduler {
                     OFFICIAL,
                     today.plusDays(CREATE_DELAY),
                     today.plusDays(CREATE_DELAY + PROGRESS_PERIOD),
-                    "https://i.ibb.co/5j6TNb1/Kakao-Talk-20210821-171849115.jpg",
+                    "https://i.ibb.co/4fKQ9SM/Kakao-Talk-20210826-121602210-min.jpg",
                     "https://i.ibb.co/88pwY4r/image.jpg",
                     "https://i.ibb.co/y8p1LJx/bad.jpg",
                     ""
