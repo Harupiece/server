@@ -1,6 +1,5 @@
 package com.example.onedaypiece.web.domain.point;
 
-
 import com.example.onedaypiece.web.domain.common.Timestamped;
 import lombok.*;
 

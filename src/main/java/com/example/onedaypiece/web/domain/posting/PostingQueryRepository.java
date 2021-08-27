@@ -1,7 +1,6 @@
 package com.example.onedaypiece.web.domain.posting;
 
 import com.example.onedaypiece.util.RepositoryHelper;
-import com.example.onedaypiece.web.domain.certification.QCertification;
 import com.example.onedaypiece.web.dto.query.posting.PostingListQueryDto;
 import com.example.onedaypiece.web.dto.query.posting.QPostingListQueryDto;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -14,9 +13,7 @@ import org.springframework.stereotype.Repository;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static com.example.onedaypiece.web.domain.certification.QCertification.*;
 import static com.example.onedaypiece.web.domain.posting.QPosting.posting;
-
 
 @Repository
 @RequiredArgsConstructor

@@ -18,10 +18,7 @@ import com.example.onedaypiece.web.dto.request.challenge.ChallengeRequestDto;
 import com.example.onedaypiece.web.dto.request.challenge.PutChallengeRequestDto;
 import com.example.onedaypiece.web.dto.response.challenge.*;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,7 +34,6 @@ import static com.example.onedaypiece.web.domain.challenge.Challenge.createChall
 import static com.example.onedaypiece.web.domain.challengeRecord.ChallengeRecord.createChallengeRecord;
 import static com.example.onedaypiece.web.dto.response.challenge.ChallengeDetailResponseDto.createChallengeDetailResponseDto;
 import static com.example.onedaypiece.web.dto.response.challenge.ChallengeMainResponseDto.createChallengeMainResponseDto;
-import static java.lang.Math.min;
 
 @Service
 @RequiredArgsConstructor

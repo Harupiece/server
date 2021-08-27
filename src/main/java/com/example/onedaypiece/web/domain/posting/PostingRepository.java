@@ -1,6 +1,5 @@
 package com.example.onedaypiece.web.domain.posting;
 
-
 import com.example.onedaypiece.web.domain.challenge.Challenge;
 import com.example.onedaypiece.web.domain.member.Member;
 import org.springframework.data.jpa.repository.JpaRepository;

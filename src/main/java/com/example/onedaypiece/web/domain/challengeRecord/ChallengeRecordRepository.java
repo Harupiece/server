@@ -15,17 +15,6 @@ public interface ChallengeRecordRepository extends JpaRepository<ChallengeRecord
 
     List<ChallengeRecord> findAllByChallengeAndChallengeRecordStatusTrue(Challenge challenge);
 
-    // 채팅방 입장할 때 사용
-    @Query("select distinct c from ChallengeRecord c " +
-            "left join fetch Posting p on c.challenge.challengeId = p.challenge.challengeId " +
-            "where c.challenge.challengeId in :challengeId " +
-            "and p.postingId  in ( select p.postingId" +
-            "                    from Posting p " +
-            "                    where p.challenge.challengeId in :challengeId " +
-            "                      and p.createdAt < :today " +
-            "                      and p.member.memberId not in (c.member.memberId))")
-    List<ChallengeRecord> findPostingListTest2(List<Long> challengeId, LocalDateTime today);
-
     @Modifying(clearAutomatically = true)
     @Query("update ChallengeRecord c " +
             "set c.challengeRecordStatus = false " +

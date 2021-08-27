@@ -28,7 +28,6 @@ public class ChallengeRecordService {
     private final ChallengeRecordRepository challengeRecordRepository;
     private final ChallengeRecordQueryRepository challengeRecordQueryRepository;
     private final ChallengeRepository challengeRepository;
-    private final ChallengeQueryRepository challengeQueryRepository;
     private final MemberRepository memberRepository;
     private final ChatMemberRepository chatMemberRepository;
 

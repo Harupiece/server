@@ -1,13 +1,10 @@
 package com.example.onedaypiece.web.domain.challengeRecord;
 
-import com.example.onedaypiece.util.RepositoryHelper;
 import com.example.onedaypiece.web.domain.challenge.CategoryName;
 import com.example.onedaypiece.web.domain.challenge.Challenge;
 import com.example.onedaypiece.web.domain.member.Member;
-import com.example.onedaypiece.web.domain.member.QMember;
 import com.example.onedaypiece.web.dto.response.challenge.ChallengeDetailResponseDtoMemberDto;
 import com.example.onedaypiece.web.dto.response.challenge.QChallengeDetailResponseDtoMemberDto;
-import com.querydsl.core.types.Predicate;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -17,34 +14,12 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 import static com.example.onedaypiece.web.domain.challengeRecord.QChallengeRecord.challengeRecord;
-import static com.example.onedaypiece.web.domain.posting.QPosting.posting;
 
 @Repository
 @RequiredArgsConstructor
 public class ChallengeRecordQueryRepository {
 
     private final JPAQueryFactory queryFactory;
-
-    /**
-     * @Query("select c from ChallengeRecord c inner join fetch c.challenge " +
-     * "where c.challengeRecordStatus = true " +
-     * "and c.challenge.challengeStatus = true " +
-     * "and c.challenge.challengeProgress = 1 " +
-     * "order by c.challenge.challengeStartDate asc")
-     * List<ChallengeRecord> findAllByChallengeStatusTrueAndProgressNotStart();
-     */
-    public List<ChallengeRecord> findAllByChallengeStatusTrueAndProgressNotStart() {
-        return queryFactory
-                .select(challengeRecord)
-                .from(challengeRecord)
-                .distinct()
-                .join(challengeRecord.challenge).fetchJoin()
-                .where(challengeRecord.challengeRecordStatus.isTrue(),
-                        challengeRecord.challenge.challengeStatus.isTrue(),
-                        challengeRecord.challenge.challengeProgress.eq(1L))
-                .orderBy(challengeRecord.challenge.challengeStartDate.asc())
-                .fetch();
-    }
 
     /**
      * @Query("select r from ChallengeRecord r " +
@@ -72,25 +47,6 @@ public class ChallengeRecordQueryRepository {
                 .where(challengeRecord.challengeRecordStatus.isTrue(),
                         challengeRecord.challenge.challengeStatus.isTrue(),
                         challengeRecord.challenge.in(challengeList.getContent()))
-                .fetch();
-    }
-
-    /**
-     * @Query("select c from ChallengeRecord c " +
-     * "inner join fetch c.challenge " +
-     * "inner join fetch c.member " +
-     * "Where c.challengeRecordStatus = true " +
-     * "and c.challenge.challengeId in :challengeIdList")
-     * List<ChallengeRecord> findAllByChallengeIdList(List<Long> challengeIdList);
-     */
-    public List<ChallengeRecord> findAllByChallengeIdList(List<Long> challengeIdList) {
-        return queryFactory
-                .select(challengeRecord)
-                .from(challengeRecord)
-                .join(challengeRecord.challenge).fetchJoin()
-                .join(challengeRecord.member).fetchJoin()
-                .where(challengeRecord.challengeRecordStatus.isTrue(),
-                        challengeRecord.challenge.challengeId.in(challengeIdList))
                 .fetch();
     }
 
