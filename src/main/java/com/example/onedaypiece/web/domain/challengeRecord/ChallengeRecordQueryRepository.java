@@ -109,6 +109,7 @@ public class ChallengeRecordQueryRepository {
                         challengeRecord.member.nickname,
                         challengeRecord.member.profileImg
                 ))
+                .distinct()
                 .from(challengeRecord)
                 .join(challengeRecord.member)
                 .where(challengeRecord.challengeRecordStatus.isTrue(),
@@ -211,6 +212,7 @@ public class ChallengeRecordQueryRepository {
     public List<ChallengeRecord> findAllByMember(Member member) {
         return queryFactory
                 .selectFrom(challengeRecord)
+                .distinct()
                 .where(challengeRecord.challengeRecordStatus.isTrue(),
                         challengeRecord.challenge.challengeStatus.isTrue(),
                         challengeRecord.challenge.challengeProgress.lt(3L),
