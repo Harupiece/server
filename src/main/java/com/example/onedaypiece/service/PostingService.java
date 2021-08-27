@@ -181,6 +181,10 @@ public class PostingService {
         if(posting.getCreatedAt().isBefore(now)){
             throw new ApiRequestException("작성 후 하루가 지나면 수정 할 수 없습니다.");
         }
+
+        if(posting.isPostingApproval()){
+            throw new ApiRequestException("인증된 게시글은 수정할 수 없습니다.");
+        }
     }
 
     private void checkMemberCountAndAddPoint(Posting posting, Long memberCount) {
