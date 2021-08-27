@@ -4,6 +4,9 @@ import com.example.onedaypiece.util.RepositoryHelper;
 import com.example.onedaypiece.web.domain.challenge.CategoryName;
 import com.example.onedaypiece.web.domain.challenge.Challenge;
 import com.example.onedaypiece.web.domain.member.Member;
+import com.example.onedaypiece.web.domain.member.QMember;
+import com.example.onedaypiece.web.dto.response.challenge.ChallengeDetailResponseDtoMemberDto;
+import com.example.onedaypiece.web.dto.response.challenge.QChallengeDetailResponseDtoMemberDto;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -99,12 +102,15 @@ public class ChallengeRecordQueryRepository {
      * "and c.challenge.challengeId = :challengeId")
      * List<ChallengeRecord> findAllByChallengeId(Long challengeId);
      */
-    public List<ChallengeRecord> findAllByChallengeId(Long challengeId) {
+    public List<ChallengeDetailResponseDtoMemberDto> findAllByChallengeId(Long challengeId) {
         return queryFactory
-                .select(challengeRecord)
+                .select(new QChallengeDetailResponseDtoMemberDto(
+                        challengeRecord.member.memberId,
+                        challengeRecord.member.nickname,
+                        challengeRecord.member.profileImg
+                ))
                 .from(challengeRecord)
-                .join(challengeRecord.challenge).fetchJoin()
-                .join(challengeRecord.challenge).fetchJoin()
+                .join(challengeRecord.member)
                 .where(challengeRecord.challengeRecordStatus.isTrue(),
                         challengeRecord.challenge.challengeId.eq(challengeId))
                 .fetch();

@@ -11,9 +11,13 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
+
+import static org.springframework.util.CollectionUtils.isEmpty;
 
 @Service
 @RequiredArgsConstructor
@@ -31,9 +35,12 @@ public class ChallengeSearchService {
         Slice<Challenge> challengeList = challengeQueryRepository.
                 findAllByWords(
                         searchWords.trim(), PageRequest.of(page - 1, SEARCH_SIZE));
-        List<ChallengeRecord> recordList = challengeRecordQueryRepository.findAllByChallengeList(challengeList);
+        Map<Challenge, List<ChallengeRecord>> recordMap = challengeRecordQueryRepository
+                .findAllByChallengeList(challengeList)
+                .stream()
+                .collect(Collectors.groupingBy(ChallengeRecord::getChallenge));
 
-        return getChallengeListResponseDto(challengeList, recordList);
+        return getChallengeListResponseDto(challengeList, recordMap);
     }
 
     /**
@@ -46,17 +53,20 @@ public class ChallengeSearchService {
         Pageable pageable = PageRequest.of(page - 1, SEARCH_SIZE);
         Slice<Challenge> challengeList = challengeQueryRepository
                 .findAllBySearch(categoryName, period, progress, pageable);
-        List<ChallengeRecord> recordList = challengeRecordQueryRepository.findAllByChallengeList(challengeList);
+        Map<Challenge, List<ChallengeRecord>> recordMap = challengeRecordQueryRepository
+                .findAllByChallengeList(challengeList).stream()
+                .collect(Collectors.groupingBy(ChallengeRecord::getChallenge));
 
-        return getChallengeListResponseDto(challengeList, recordList);
+        return getChallengeListResponseDto(challengeList, recordMap);
     }
 
     private ChallengeListResponseDto getChallengeListResponseDto(Slice<Challenge> challengeList,
-                                                                 List<ChallengeRecord> recordList) {
+                                                                 Map<Challenge, List<ChallengeRecord>> recordMap) {
+
         List<ChallengeResponseDto> challengeDtoList = challengeList
                 .stream()
-                .map(c -> new ChallengeResponseDto(c, getRecordListEqualsCurrentChallenge(c, recordList)))
-                .filter(c -> !c.getChallengeMember().isEmpty())
+                .filter(c -> !isEmpty(recordMap.get(c)))
+                .map(c -> new ChallengeResponseDto(c, getRecordListEqualsCurrentChallenge(c, recordMap.get(c))))
                 .collect(Collectors.toList());
 
         return ChallengeListResponseDto.createChallengeListDto(challengeDtoList, challengeList.hasNext());

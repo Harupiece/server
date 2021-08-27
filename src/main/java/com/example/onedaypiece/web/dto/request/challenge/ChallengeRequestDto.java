@@ -1,6 +1,7 @@
 package com.example.onedaypiece.web.dto.request.challenge;
 
 import com.example.onedaypiece.web.domain.challenge.CategoryName;
+import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
@@ -18,9 +19,17 @@ public class ChallengeRequestDto {
     private final String challengeBad;
     private final String challengeHoliday;
 
-    public ChallengeRequestDto(String challengeTitle, String challengeContent, String challengePassword, CategoryName categoryName,
-                               LocalDateTime challengeStartDate, LocalDateTime challengeEndDate, String challengeImgUrl,
-                               String challengeGood, String challengeBad, String challengeHoliday){
+    @Builder
+    public ChallengeRequestDto(String challengeTitle,
+                               String challengeContent,
+                               String challengePassword,
+                               CategoryName categoryName,
+                               LocalDateTime challengeStartDate,
+                               LocalDateTime challengeEndDate,
+                               String challengeImgUrl,
+                               String challengeGood,
+                               String challengeBad,
+                               String challengeHoliday){
 
         this.challengeTitle = challengeTitle;
         this.challengeContent = challengeContent;
@@ -32,5 +41,29 @@ public class ChallengeRequestDto {
         this.challengeGood = challengeGood;
         this.challengeBad = challengeBad;
         this.challengeHoliday = challengeHoliday;
+    }
+
+    public static ChallengeRequestDto createChallengeRequestDto(String challengeTitle,
+                                                                String challengeContent,
+                                                                String challengePassword,
+                                                                CategoryName categoryName,
+                                                                LocalDateTime challengeStartDate,
+                                                                LocalDateTime challengeEndDate,
+                                                                String challengeImgUrl,
+                                                                String challengeGood,
+                                                                String challengeBad,
+                                                                String challengeHoliday) {
+        return ChallengeRequestDto.builder()
+                .challengeTitle(challengeTitle)
+                .challengeContent(challengeContent)
+                .challengePassword(challengePassword)
+                .categoryName(categoryName)
+                .challengeStartDate(challengeStartDate)
+                .challengeEndDate(challengeEndDate)
+                .challengeImgUrl(challengeImgUrl)
+                .challengeGood(challengeGood)
+                .challengeBad(challengeBad)
+                .challengeHoliday(challengeHoliday)
+                .build();
     }
 }

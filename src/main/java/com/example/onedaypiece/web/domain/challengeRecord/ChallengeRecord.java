@@ -3,6 +3,7 @@ package com.example.onedaypiece.web.domain.challengeRecord;
 import com.example.onedaypiece.web.domain.challenge.Challenge;
 import com.example.onedaypiece.web.domain.common.Timestamped;
 import com.example.onedaypiece.web.domain.member.Member;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -36,11 +37,22 @@ public class ChallengeRecord extends Timestamped {
     @Column(name = "challenge_record_status", nullable = false)
     private boolean challengeRecordStatus;
 
-    public ChallengeRecord(Challenge challenge, Member member) {
+    @Builder
+    public ChallengeRecord(Challenge challenge,
+                           Member member,
+                           boolean challengeRecordStatus) {
         this.challengePoint = false;
         this.challenge = challenge;
         this.member = member;
         this.challengeRecordStatus = true;
+    }
+
+    public static ChallengeRecord createChallengeRecord(Challenge challenge,
+                                                        Member member) {
+        return ChallengeRecord.builder()
+                .challenge(challenge)
+                .member(member)
+                .build();
     }
 
     public void setStatusFalse() {

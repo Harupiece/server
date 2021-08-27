@@ -16,7 +16,10 @@ public class ChallengeMainResponseDto {
     private final List<ChallengeSourceResponseDto> exercise = new ArrayList<>();
     private final List<ChallengeSourceResponseDto> livinghabits = new ArrayList<>();
     private final List<ChallengeSourceResponseDto> nodrinknosmoke = new ArrayList<>();
-    private Long historyCount;
+
+    public static ChallengeMainResponseDto createChallengeMainResponseDto() {
+        return new ChallengeMainResponseDto();
+    }
 
     public void addExercise(ChallengeSourceResponseDto responseDto) {
         exercise.add(responseDto);

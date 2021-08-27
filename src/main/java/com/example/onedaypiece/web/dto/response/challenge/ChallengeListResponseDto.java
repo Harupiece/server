@@ -10,6 +10,7 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 public class ChallengeListResponseDto {
+
     private List<ChallengeResponseDto> challengeList = new ArrayList<>();
     private boolean hasNext;
 

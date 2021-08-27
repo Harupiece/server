@@ -4,6 +4,7 @@ import com.example.onedaypiece.chat.model.ChatMember;
 import com.example.onedaypiece.chat.repository.ChatMemberRepository;
 import com.example.onedaypiece.exception.ApiRequestException;
 import com.example.onedaypiece.web.domain.challenge.Challenge;
+import com.example.onedaypiece.web.domain.challenge.ChallengeQueryRepository;
 import com.example.onedaypiece.web.domain.challenge.ChallengeRepository;
 import com.example.onedaypiece.web.domain.challengeRecord.ChallengeRecord;
 import com.example.onedaypiece.web.domain.challengeRecord.ChallengeRecordQueryRepository;
@@ -27,6 +28,7 @@ public class ChallengeRecordService {
     private final ChallengeRecordRepository challengeRecordRepository;
     private final ChallengeRecordQueryRepository challengeRecordQueryRepository;
     private final ChallengeRepository challengeRepository;
+    private final ChallengeQueryRepository challengeQueryRepository;
     private final MemberRepository memberRepository;
     private final ChatMemberRepository chatMemberRepository;
 
@@ -37,7 +39,7 @@ public class ChallengeRecordService {
 
         requestChallengeException(challenge, member);
 
-        ChallengeRecord record = new ChallengeRecord(challenge, member);
+        ChallengeRecord record = ChallengeRecord.createChallengeRecord(challenge, member);
         challengeRecordRepository.save(record);
 
         ChatMember chatMember = ChatMember.createChatMember(member.getMemberId(), String.valueOf(challenge.getChallengeId()));
@@ -56,7 +58,7 @@ public class ChallengeRecordService {
 
     @Transactional
     public void preStartChallenge(Long challengeId, String username) {
-        Challenge challenge = challengeRepository.findById(challengeId).orElseThrow(
+        Challenge challenge = challengeQueryRepository.findById(challengeId).orElseThrow(
                 () -> new ApiRequestException("존재하지 않는 챌린지입니다.")
         );
         if (challenge.getChallengeStartDate().equals(LocalDate.now().atStartOfDay())) {
