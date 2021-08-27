@@ -4,7 +4,6 @@ import com.example.onedaypiece.service.CertificationService;
 import com.example.onedaypiece.web.dto.request.certification.CertificationRequestDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.PostMapping;

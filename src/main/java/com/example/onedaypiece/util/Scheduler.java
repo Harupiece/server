@@ -29,6 +29,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.example.onedaypiece.web.domain.challenge.CategoryName.OFFICIAL;
+import static com.example.onedaypiece.web.domain.challenge.Challenge.createChallenge;
+import static com.example.onedaypiece.web.domain.challengeRecord.ChallengeRecord.createChallengeRecord;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -191,8 +193,8 @@ public class Scheduler {
         }
 
         if (requestDto != null && schedulerQueryRepository.findAllByOfficialAndChallengeTitle(title)) {
-            Challenge challenge = new Challenge(requestDto, member);
-            ChallengeRecord challengeRecord = new ChallengeRecord(challenge, member);
+            Challenge challenge = createChallenge(requestDto, member);
+            ChallengeRecord challengeRecord = createChallengeRecord(challenge, member);
             challengeRecordRepository.save(challengeRecord);
             Long challengeId = challengeRepository.save(challenge).getChallengeId();
 

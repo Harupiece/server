@@ -9,6 +9,7 @@ import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import static com.example.onedaypiece.web.domain.challenge.QChallenge.challenge;
 import static com.example.onedaypiece.web.domain.challengeRecord.QChallengeRecord.challengeRecord;
@@ -160,5 +161,13 @@ public class ChallengeQueryRepository {
 
     private String getPeriodString(String period) {
         return period.equals("4") ? period + "주 이상" : period + "주";
+    }
+
+    public Optional<Challenge> findById(Long challengeId) {
+        return Optional.ofNullable(queryFactory
+                .selectFrom(challenge)
+                .join(challenge.member).fetchJoin()
+                .where(challenge.challengeId.eq(challengeId))
+                .fetchOne());
     }
 }
