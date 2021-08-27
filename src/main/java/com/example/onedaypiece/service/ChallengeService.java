@@ -101,12 +101,12 @@ public class ChallengeService {
         challenge.putChallenge(requestDto);
     }
 
-    public ChallengeMainResponseDto getMainPage(String email) {
+    public ChallengeMainResponseDto getMainPage() {
         ChallengeMainResponseDto responseDto = createChallengeMainResponseDto();
         List<ChallengeRecord> records = challengeRecordQueryRepository.findAllByStatusTrue();
 
         sliderUpdate(responseDto, records);
-        popularUpdate(responseDto, email, records);
+        popularUpdate(responseDto, records);
 
         categoryCollector(EXERCISE, records).forEach(responseDto::addExercise);
         categoryCollector(LIVINGHABITS, records).forEach(responseDto::addLivingHabits);
@@ -126,11 +126,11 @@ public class ChallengeService {
         responseDto.addSlider(sliderSourceList);
     }
 
-    private void popularUpdate(ChallengeMainResponseDto responseDto, String email, List<ChallengeRecord> records) {
+    private void popularUpdate(ChallengeMainResponseDto responseDto, List<ChallengeRecord> records) {
         final int POPULAR_SIZE = 4;
 
         List<ChallengeRecord> popularRecords = challengeRecordQueryRepository
-                .findAllPopular(email, PageRequest.of(0, POPULAR_SIZE));
+                .findAllPopular(PageRequest.of(0, POPULAR_SIZE));
         responseDto.addPopular(popularRecords, records);
     }
 
