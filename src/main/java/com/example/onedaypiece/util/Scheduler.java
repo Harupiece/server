@@ -9,8 +9,10 @@ import com.example.onedaypiece.web.domain.challengeRecord.ChallengeRecordReposit
 import com.example.onedaypiece.web.domain.member.Member;
 import com.example.onedaypiece.web.domain.member.MemberRepository;
 import com.example.onedaypiece.web.domain.point.Point;
+import com.example.onedaypiece.web.domain.point.PointRepository;
 import com.example.onedaypiece.web.domain.pointHistory.PointHistory;
 import com.example.onedaypiece.web.domain.pointHistory.PointHistoryRepository;
+import com.example.onedaypiece.web.domain.posting.Posting;
 import com.example.onedaypiece.web.domain.posting.PostingRepository;
 import com.example.onedaypiece.web.dto.query.posting.SchedulerIdListDto;
 import com.example.onedaypiece.web.dto.request.challenge.ChallengeRequestDto;
@@ -44,6 +46,7 @@ public class Scheduler {
     private final MemberRepository memberRepository;
     private final SchedulerQueryRepository schedulerQueryRepository;
     private final ChatRoomRepository chatRoomRepository;
+    private final PointRepository pointRepository;
 
     @Resource(name = "redisTemplate")
     private HashOperations<String, String, ChatRoom> hashOpsChatRoom;
@@ -51,7 +54,7 @@ public class Scheduler {
 
     LocalDateTime today;
 
-    @Scheduled(cron = "07 0 0 * * *") // 초, 분, 시, 일, 월, 주 순서
+    @Scheduled(cron = "01 0 0 * * *") // 초, 분, 시, 일, 월, 주 순서
     @Transactional
     public void certificationKick() {
         initializeToday();
@@ -66,31 +69,45 @@ public class Scheduler {
                 .distinct()
                 .collect(Collectors.toList());
 
-        // 챌린지 참여중인 멤버
-        List<Long> memberId = challengeMember.stream()
-                .map(challengeRecord -> challengeRecord.getMember().getMemberId())
-                .distinct()
-                .collect(Collectors.toList());
+        List<SchedulerIdListDto> notWrittenList = schedulerQueryRepository.findNotWrittenList(challengeId);
 
-        // 인증 글 올렸지만 인증 받지 못한 친구
-        List<SchedulerIdListDto> UncertifiedList = schedulerQueryRepository.findUncertifiedList(challengeId, memberId, today);
+        List<Long> notWrittenMember = getKickMember(notWrittenList);
+        List<Long> notWrittenChallenge = getKickChallenge(notWrittenList);
 
-        // 인증글 작성하지 않은 사람.
-        List<SchedulerIdListDto> NotWrittenList = schedulerQueryRepository.findNotWrittenList(challengeId);
+        int notWrittenChallengeRecordKick = challengeRecordRepository.kickMemberOnChallenge(notWrittenMember, notWrittenChallenge);
+        log.info("포스팅 작성하지 않은 인원 update : {} ", notWrittenChallengeRecordKick);
 
-        List<Long> UncertifiedMember = getKickMember(UncertifiedList);
-        List<Long> NotWrittenMember = getKickMember(NotWrittenList);
-        List<Long> UncertifiedChallenge = getKickChallenge(UncertifiedList);
-        List<Long> NotWrittenChallenge = getKickChallenge(NotWrittenList);
-
-        UncertifiedMember.addAll(NotWrittenMember);
-        UncertifiedChallenge.addAll(NotWrittenChallenge);
-
-        int updateResult = challengeRecordRepository.kickMemberOnChallenge(UncertifiedMember, UncertifiedChallenge);
-        log.info("updateResult 벌크 연산 result: {} ", updateResult);
     }
 
-    @Scheduled(cron = "08 0 0 * * *") // 초, 분, 시, 일, 월, 주 순서
+
+    @Scheduled(cron = "04 0 0 * * *") // 초, 분, 시, 일, 월, 주 순서
+    @Transactional
+    public void changePostingApproval() {
+
+        LocalDateTime today = LocalDate.now().atStartOfDay();
+        List<RemainingMember> challengeRecords =  schedulerQueryRepository.findChallengeMember(today);
+        List<Posting> approvalPostingList = challengeRecords.stream()
+                .map(RemainingMember::getPosting)
+                .collect(Collectors.toList());
+
+        int postingApprovalUpdate = postingRepository.updatePostingApproval(approvalPostingList);
+        log.info("postingApprovalUpdate 벌크 연산 result: {} ", postingApprovalUpdate);
+
+        List<PointHistory> pointHistoryList = approvalPostingList.stream()
+                .map(posting -> new PointHistory(1L, posting))
+                .collect(Collectors.toList());
+
+        pointHistoryRepository.saveAll(pointHistoryList);
+
+        List<Long> memberList = approvalPostingList.stream()
+                .map(posting -> posting.getMember().getMemberId())
+                .collect(Collectors.toList());
+
+        int updatePoint = pointRepository.updatePoint(memberList);
+        log.info("updatePoint 벌크 연산 result: {} ", updatePoint);
+    }
+
+    @Scheduled(cron = "05 0 0 * * *") // 초, 분, 시, 일, 월, 주 순서
     @Transactional
     public void postingStatusUpdate() {
         List<Long> postingIdList = schedulerQueryRepository.findSchedulerUpdatePosting(today);
@@ -99,7 +116,7 @@ public class Scheduler {
         log.info("updateResult 벌크 연산 result: {} ", updateResult);
     }
 
-    @Scheduled(cron = "09 0 0 * * *") // 초, 분, 시, 일, 월, 주 순서
+    @Scheduled(cron = "07 0 0 * * *") // 초, 분, 시, 일, 월, 주 순서
     @Transactional
     public void challengeStatusUpdate() {
         List<ChallengeRecord> recordList = schedulerQueryRepository.findAllByChallengeProgressLessThan(3L);
