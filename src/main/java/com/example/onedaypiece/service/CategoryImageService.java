@@ -6,12 +6,9 @@ import com.example.onedaypiece.web.domain.categoryImage.CategoryImageRepository;
 import com.example.onedaypiece.web.domain.challenge.CategoryName;
 import com.example.onedaypiece.web.dto.request.categoryImage.CategoryImageRequestDto;
 import com.example.onedaypiece.web.dto.response.category.CategoryImageResponseDto;
-import com.fasterxml.jackson.annotation.JsonIgnoreType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor

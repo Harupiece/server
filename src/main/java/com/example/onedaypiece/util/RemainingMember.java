@@ -15,7 +15,6 @@ public class RemainingMember {
     private Long challengeRecordId;
     private boolean challengeRecordStatus;
 
-
     @QueryProjection
     public RemainingMember(Posting posting, Long challengeRecordId, boolean challengeRecordStatus) {
         this.posting = posting;

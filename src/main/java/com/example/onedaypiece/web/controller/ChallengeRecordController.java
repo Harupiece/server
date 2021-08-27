@@ -24,10 +24,4 @@ public class ChallengeRecordController {
                                 @AuthenticationPrincipal UserDetails userDetails) {
         challengeRecordService.giveUpChallenge(challengeId, userDetails.getUsername());
     }
-
-    @PostMapping("/api/member/challenge-pre-start/{challengeId}") // 챌린지 바로 시작
-    public void preStartChallenge(@PathVariable Long challengeId,
-                                  @AuthenticationPrincipal UserDetails userDetails) {
-        challengeRecordService.preStartChallenge(challengeId, userDetails.getUsername());
-    }
 }

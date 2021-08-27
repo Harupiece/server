@@ -20,12 +20,7 @@ public class ChallengeController {
 
     @GetMapping("/api/guest/main") // 비로그인 메인 페이지
     public ChallengeMainResponseDto getGuestMainChallengeDetail() {
-        return challengeService.getMainPage("");
-    }
-
-    @GetMapping("/api/member/main") // 로그인 메인 페이지
-    public ChallengeMainResponseDto getMemberMainChallengeDetail(@AuthenticationPrincipal UserDetails userDetails) {
-        return challengeService.getMainPage(userDetails.getUsername());
+        return challengeService.getMainPage();
     }
 
     @GetMapping("/api/guest/challenge/{challengeId}") // 챌린지 상세

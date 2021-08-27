@@ -18,10 +18,7 @@ import com.example.onedaypiece.web.dto.request.challenge.ChallengeRequestDto;
 import com.example.onedaypiece.web.dto.request.challenge.PutChallengeRequestDto;
 import com.example.onedaypiece.web.dto.response.challenge.*;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,7 +34,6 @@ import static com.example.onedaypiece.web.domain.challenge.Challenge.createChall
 import static com.example.onedaypiece.web.domain.challengeRecord.ChallengeRecord.createChallengeRecord;
 import static com.example.onedaypiece.web.dto.response.challenge.ChallengeDetailResponseDto.createChallengeDetailResponseDto;
 import static com.example.onedaypiece.web.dto.response.challenge.ChallengeMainResponseDto.createChallengeMainResponseDto;
-import static java.lang.Math.min;
 
 @Service
 @RequiredArgsConstructor
@@ -101,12 +97,12 @@ public class ChallengeService {
         challenge.putChallenge(requestDto);
     }
 
-    public ChallengeMainResponseDto getMainPage(String email) {
+    public ChallengeMainResponseDto getMainPage() {
         ChallengeMainResponseDto responseDto = createChallengeMainResponseDto();
         List<ChallengeRecord> records = challengeRecordQueryRepository.findAllByStatusTrue();
 
         sliderUpdate(responseDto, records);
-        popularUpdate(responseDto, email, records);
+        popularUpdate(responseDto, records);
 
         categoryCollector(EXERCISE, records).forEach(responseDto::addExercise);
         categoryCollector(LIVINGHABITS, records).forEach(responseDto::addLivingHabits);
@@ -126,11 +122,11 @@ public class ChallengeService {
         responseDto.addSlider(sliderSourceList);
     }
 
-    private void popularUpdate(ChallengeMainResponseDto responseDto, String email, List<ChallengeRecord> records) {
+    private void popularUpdate(ChallengeMainResponseDto responseDto, List<ChallengeRecord> records) {
         final int POPULAR_SIZE = 4;
 
         List<ChallengeRecord> popularRecords = challengeRecordQueryRepository
-                .findAllPopular(email, PageRequest.of(0, POPULAR_SIZE));
+                .findAllPopular(PageRequest.of(0, POPULAR_SIZE));
         responseDto.addPopular(popularRecords, records);
     }
 

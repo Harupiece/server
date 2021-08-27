@@ -28,7 +28,6 @@ public class ChallengeRecordService {
     private final ChallengeRecordRepository challengeRecordRepository;
     private final ChallengeRecordQueryRepository challengeRecordQueryRepository;
     private final ChallengeRepository challengeRepository;
-    private final ChallengeQueryRepository challengeQueryRepository;
     private final MemberRepository memberRepository;
     private final ChatMemberRepository chatMemberRepository;
 
@@ -56,18 +55,6 @@ public class ChallengeRecordService {
         record.setStatusFalse();
     }
 
-    @Transactional
-    public void preStartChallenge(Long challengeId, String username) {
-        Challenge challenge = challengeQueryRepository.findById(challengeId).orElseThrow(
-                () -> new ApiRequestException("존재하지 않는 챌린지입니다.")
-        );
-        if (challenge.getChallengeStartDate().equals(LocalDate.now().atStartOfDay())) {
-            challenge.updateChallengeProgress(2L);
-        } else {
-            throw new ApiRequestException("시작 날짜가 아닙니다.");
-        }
-    }
-
     private Challenge ChallengeChecker(Long challengeId) {
         return challengeRepository.findById(challengeId)
                 .orElseThrow(() -> new ApiRequestException("존재하지 않은 챌린지입니다."));
@@ -86,6 +73,9 @@ public class ChallengeRecordService {
         if (!challenge.getCategoryName().equals(OFFICIAL) &&
                 challengeRecordQueryRepository.countByChallenge(challenge) >= 10) {
             throw new ApiRequestException("챌린지는 10명까지만 참여 가능합니다.");
+        }
+        if (recordList.stream().anyMatch(r -> r.getChallenge().equals(challenge))) {
+            throw new ApiRequestException("이미 해당 챌린지에 참가하고 있는 유저입니다.");
         }
     }
 }

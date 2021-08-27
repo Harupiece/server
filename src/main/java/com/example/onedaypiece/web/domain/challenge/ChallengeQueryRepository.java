@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.example.onedaypiece.web.domain.challenge.QChallenge.challenge;
-import static com.example.onedaypiece.web.domain.challengeRecord.QChallengeRecord.challengeRecord;
 
 @Repository
 @RequiredArgsConstructor
