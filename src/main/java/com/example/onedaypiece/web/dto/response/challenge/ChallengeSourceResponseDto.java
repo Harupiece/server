@@ -21,7 +21,7 @@ public class ChallengeSourceResponseDto {
 
     private Long challengeId;
     private String challengeTitle;
-    private CategoryName categoryName; // enum
+    private CategoryName categoryName;
     private LocalDateTime challengeStartDate;
     private LocalDateTime challengeEndDate;
     private String challengeImgUrl;

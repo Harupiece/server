@@ -31,6 +31,7 @@ import java.util.stream.Collectors;
 import static com.example.onedaypiece.web.domain.challenge.CategoryName.OFFICIAL;
 import static com.example.onedaypiece.web.domain.challenge.Challenge.createChallenge;
 import static com.example.onedaypiece.web.domain.challengeRecord.ChallengeRecord.createChallengeRecord;
+import static com.example.onedaypiece.web.dto.request.challenge.ChallengeRequestDto.createChallengeRequestDto;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -144,7 +145,7 @@ public class Scheduler {
         // 월요일이 1, 일요일이 7
         if (dayValue == 1) {
             title = "매일 산책하기";
-            requestDto = new ChallengeRequestDto(
+            requestDto = createChallengeRequestDto(
                     title,
                     "1. 하루에 한번 자기 신체 부위가 포함된 바깥 사진을 찍어서 올려주세요! 공원을 걸으며 찍은 사진이면 더 좋겠죠? \n" +
                             "2. 사진은 언제 찍어도 괜찮지만 인증시간은 밤 9시에서 10시 사이에 해주세요.  단, 형체를 알아보기 힘들 정도로 흔들린 사진은 안 돼요❗❗  \n" +
@@ -160,7 +161,7 @@ public class Scheduler {
             );
         } else if (dayValue == 3) {
             title = "작심육일 금연!";
-            requestDto = new ChallengeRequestDto(
+            requestDto = createChallengeRequestDto(
                     title,
                     "1. 하루에 한번 담배 대신 자기가 한 일에 대한 사진을 올려주세요! 사탕이나 초콜릿 , 젤리처럼 간단하면서도 달콤한 간식으로 담배를 이겨낸 걸 뿌듯한 마음으로 인증하는 것도 가능하겠죠? \n" +
                             "2. 사진은 언제 찍어도 괜찮지만 인증시간은 밤 9시에서 10시 사이에 해주세요.  단, 담배를 피는 사진은 당연히 안 돼요! \n" +
@@ -176,7 +177,7 @@ public class Scheduler {
             );
         } else if (dayValue == 6) {
             title = "매일 영양제 챙겨먹기";
-            requestDto = new ChallengeRequestDto(
+            requestDto = createChallengeRequestDto(
                     title,
                     "1. 매일 매일 영양도 쑥쑥! 조각도 쑥쑥! 영양제를 먹기 직전에 찍어주시면 정확한 인증샷이 될 수 있겠죠?\n" +
                             "2. 사진은 언제 찍어도 괜찮지만 인증시간은 밤 9시에서 10시 사이에 해주세요.  단, 영양제 같이 생긴 젤리나 사탕은 안 돼요!\n" +
