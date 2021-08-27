@@ -25,7 +25,7 @@ public class ChallengeSearchService {
     private final ChallengeRecordQueryRepository challengeRecordQueryRepository;
     private final ChallengeQueryRepository challengeQueryRepository;
 
-    final int SEARCH_SIZE = 4;
+    final int SEARCH_SIZE = 8;
 
     /**
      * 챌린지 단어 검색
