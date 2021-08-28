@@ -117,6 +117,7 @@ public class Challenge extends Timestamped implements Serializable {
                 .challengeGood(requestDto.getChallengeGood())
                 .challengeBad(requestDto.getChallengeBad())
                 .challengeHoliday(requestDto.getChallengeHoliday())
+                .member(member)
                 .build();
     }
 
