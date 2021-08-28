@@ -87,6 +87,7 @@ public class Challenge extends Timestamped implements Serializable {
         this.challengePassword = challengePassword;
         this.challengeStartDate = challengeStartDate;
         this.challengeEndDate = challengeEndDate;
+        this.challengeStatus = true;
         this.challengeProgress = 1L;
         this.challengeImgUrl = challengeImgUrl;
         this.challengeGood = challengeGood;
