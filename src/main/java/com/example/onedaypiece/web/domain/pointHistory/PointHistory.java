@@ -47,4 +47,8 @@ public class PointHistory extends Timestamped {
         this.challengeRecord = challengeRecord;
         this.status = true;
     }
+
+    public void updateStatus() {
+        this.status = false;
+    }
 }

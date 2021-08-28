@@ -88,10 +88,9 @@ public class Posting extends Timestamped {
         this.postingCount += 1;
     }
 
-
     // 인증 상태 로직
-    public void updateApproval() {
-        this.postingApproval = true;
+    public void updateApproval(boolean isApproval) {
+        this.postingApproval = isApproval;
     }
 
     // 포인트 지급 상태 로직
