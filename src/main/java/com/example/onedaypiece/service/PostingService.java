@@ -162,7 +162,7 @@ public class PostingService {
         boolean sun = 7 == now.getDayOfWeek().getValue();
 
         if ( sat || sun){
-            if (challenge.getChallengeHoliday().equals("") ){
+            if (challenge.getChallengeHoliday().equals("0,6") ){
                 throw new ApiRequestException("주말에 작성 불가능한 챌린지 입니다!");
             }
         }
