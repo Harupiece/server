@@ -4,19 +4,15 @@ import com.example.onedaypiece.web.domain.challenge.Challenge;
 import com.example.onedaypiece.web.domain.challengeRecord.ChallengeRecord;
 import com.example.onedaypiece.web.domain.challengeRecord.QChallengeRecord;
 import com.example.onedaypiece.web.domain.member.Member;
-import com.example.onedaypiece.web.domain.member.QMember;
 import com.example.onedaypiece.web.domain.point.Point;
-import com.example.onedaypiece.web.domain.posting.QPosting;
 import com.example.onedaypiece.web.dto.query.posting.QSchedulerIdListDto;
 import com.example.onedaypiece.web.dto.query.posting.SchedulerIdListDto;
-import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,7 +25,6 @@ import static com.example.onedaypiece.web.domain.challengeRecord.QChallengeRecor
 import static com.example.onedaypiece.web.domain.member.QMember.member;
 import static com.example.onedaypiece.web.domain.point.QPoint.point;
 import static com.example.onedaypiece.web.domain.posting.QPosting.posting;
-import static com.querydsl.jpa.JPAExpressions.*;
 
 @Repository
 @RequiredArgsConstructor
@@ -205,17 +200,4 @@ public class SchedulerQueryRepository {
                 .fetch();
     }
 
-
-
-
-//    select challenge_record_id,count(c.challenge_id)
-//    from challenge_record cr
-//    left outer join challenge c on cr.challenge_id = c.challenge_id
-//    where challenge_record_status = true
-//    and c.challenge_status = true
-//    and c.challenge_progress = 2
-//    group by c.challenge_id
-
-//    ;
 }
-

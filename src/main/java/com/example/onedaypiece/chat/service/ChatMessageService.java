@@ -54,13 +54,8 @@ public class ChatMessageService {
         Member member = getMember(requestDto);
         validateChatRoom(requestDto, member);
         ChatMember chatMember = chatMemberRepository.findByMemberIdAndRoomId(member.getMemberId(), requestDto.getRoomId());
-        log.info("chatMember.getStatusFirst() 상태 가져오니: {}" ,chatMember.isStatusFirst());
         if(chatMember.isStatusFirst()) {
             ChatMessage chatMessage = ChatMessage.createENTERMessage(requestDto);
-            log.info("chatMessage.getMessage() {}",requestDto.getMessage());
-            log.info("requestDto.getType() {}",requestDto.getType());
-            log.info("requestDto.getRoomId() {}",requestDto.getRoomId());
-            log.info("requestDto.getAlert() {}",requestDto.getAlert());
             pubMessage(chatMessage);
             chatMember.setStatusFirstFalse();
         }

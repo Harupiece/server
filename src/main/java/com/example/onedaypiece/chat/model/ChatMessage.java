@@ -4,14 +4,15 @@ import com.example.onedaypiece.chat.dto.request.ChatMessageRequestDto;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.cfg.annotations.reflection.XMLContext;
-
+import lombok.extern.slf4j.Slf4j;
 
 import javax.persistence.*;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.TimeZone;
 
 @Getter
 @Entity
@@ -118,12 +119,10 @@ public class ChatMessage implements Serializable {
                         j++;
                     }
                     message = message.replaceAll(filterword, change);
-                    System.out.println(message);
                 }
             }
         } catch (FileNotFoundException e) {
             e.printStackTrace();
-            System.out.println("지정 경로에 해당파일 없음");
         } catch (IOException e) {
             e.printStackTrace();
         }

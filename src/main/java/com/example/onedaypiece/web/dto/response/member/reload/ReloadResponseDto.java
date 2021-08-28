@@ -11,8 +11,7 @@ import lombok.NoArgsConstructor;
 public class ReloadResponseDto {
 
     private MemberResponseDto userInfo;
-
-
+    
     public ReloadResponseDto(Member member, int challengeCount, int completeChallengeCount){
         this.userInfo = new MemberResponseDto(member, challengeCount, completeChallengeCount);
     }

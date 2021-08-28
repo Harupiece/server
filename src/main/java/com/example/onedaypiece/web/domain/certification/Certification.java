@@ -34,7 +34,6 @@ public class Certification extends Timestamped {
         this.posting = posting;
     }
 
-
     public static Certification createCertification(Member member, Posting posting) {
         Certification certification =Certification
                 .builder()
@@ -45,5 +44,4 @@ public class Certification extends Timestamped {
         posting.addCount();
         return certification;
     }
-
 }

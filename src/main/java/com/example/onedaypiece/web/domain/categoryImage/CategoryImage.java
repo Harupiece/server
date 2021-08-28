@@ -1,7 +1,6 @@
 package com.example.onedaypiece.web.domain.categoryImage;
 
 import com.example.onedaypiece.web.domain.challenge.CategoryName;
-import com.example.onedaypiece.web.domain.common.Timestamped;
 import com.example.onedaypiece.web.dto.request.categoryImage.CategoryImageRequestDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

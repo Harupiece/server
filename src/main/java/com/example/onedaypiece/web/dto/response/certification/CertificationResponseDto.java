@@ -7,7 +7,6 @@ import lombok.ToString;
 
 @Getter
 @NoArgsConstructor
-@ToString
 public class CertificationResponseDto {
     private Long memberId;
     private String nickName;
