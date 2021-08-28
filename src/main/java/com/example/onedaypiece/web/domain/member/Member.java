@@ -71,9 +71,6 @@ public class Member extends Timestamped implements Serializable {
         this.point = point;
     }
 
-
-
-
     // 마이페이지 비밀번호 수정
     public void updatePassword(PwUpdateRequestDto requestDto){
         this.password = requestDto.getNewPassword();

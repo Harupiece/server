@@ -20,7 +20,6 @@ public class ChatRoom extends Timestamped implements Serializable {
     @Column
     private String roomId;
 
-
     public ChatRoom(Long challengeId){
         this.roomId = String.valueOf(challengeId);
     }

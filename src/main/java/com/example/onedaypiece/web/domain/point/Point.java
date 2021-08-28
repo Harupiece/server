@@ -8,7 +8,6 @@ import javax.persistence.*;
 @Setter
 @Getter
 @Entity
-
 public class Point extends Timestamped {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)

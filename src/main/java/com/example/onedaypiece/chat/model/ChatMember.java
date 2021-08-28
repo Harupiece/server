@@ -1,6 +1,5 @@
 package com.example.onedaypiece.chat.model;
 
-import com.example.onedaypiece.web.domain.member.Member;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

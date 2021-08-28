@@ -56,8 +56,6 @@ public class Posting extends Timestamped {
         this.postingCount = 0L;
         this.member = member;
         this.challenge = challenge;
-
-
     }
 
     //==생성 메서드==//

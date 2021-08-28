@@ -39,8 +39,7 @@ public class ChallengeRecord extends Timestamped {
 
     @Builder
     public ChallengeRecord(Challenge challenge,
-                           Member member,
-                           boolean challengeRecordStatus) {
+                           Member member) {
         this.challengePoint = false;
         this.challenge = challenge;
         this.member = member;

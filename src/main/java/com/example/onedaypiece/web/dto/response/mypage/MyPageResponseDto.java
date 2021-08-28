@@ -1,5 +1,5 @@
 package com.example.onedaypiece.web.dto.response.mypage;
-import com.example.onedaypiece.web.domain.member.Member;
+
 import com.example.onedaypiece.web.dto.response.mypage.end.MyPageEndResponseDto;
 import com.example.onedaypiece.web.dto.response.mypage.histroy.MemberHistoryResponseDto;
 import com.example.onedaypiece.web.dto.response.mypage.proceed.MypageProceedResponseDto;

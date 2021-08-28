@@ -1,6 +1,5 @@
 package com.example.onedaypiece.web.domain.point;
 
-import com.example.onedaypiece.web.domain.member.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

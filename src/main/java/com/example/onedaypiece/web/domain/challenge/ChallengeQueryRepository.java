@@ -1,7 +1,6 @@
 package com.example.onedaypiece.web.domain.challenge;
 
 import com.example.onedaypiece.util.RepositoryHelper;
-import com.example.onedaypiece.web.domain.challengeRecord.QChallengeRecord;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -12,9 +11,8 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 
-import static com.example.onedaypiece.util.RepositoryHelper.toSlice;
 import static com.example.onedaypiece.web.domain.challenge.QChallenge.challenge;
-import static com.example.onedaypiece.web.domain.challengeRecord.QChallengeRecord.*;
+import static com.example.onedaypiece.web.domain.challengeRecord.QChallengeRecord.challengeRecord;
 
 @Repository
 @RequiredArgsConstructor
@@ -39,7 +37,7 @@ public class ChallengeQueryRepository {
                 .limit(page.getPageSize() + 1)
                 .fetch();
 
-        return toSlice(challengeList, page);
+        return RepositoryHelper.toSlice(challengeList, page);
     }
 
     public List<Challenge> findAllByOfficialChallenge() {
@@ -68,7 +66,7 @@ public class ChallengeQueryRepository {
                 .limit(page.getPageSize() + 1)
                 .fetch();
 
-        return toSlice(challengeList, page);
+        return RepositoryHelper.toSlice(challengeList, page);
     }
 
     private Predicate[] predicateByCategoryNameAndPeriod(String categoryName, int progress, String period) {

@@ -2,12 +2,8 @@ package com.example.onedaypiece.web.dto.request.mypage;
 
 
 import com.example.onedaypiece.exception.ApiRequestException;
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 
 @Getter
 @NoArgsConstructor

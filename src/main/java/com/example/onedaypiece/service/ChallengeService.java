@@ -74,9 +74,6 @@ public class ChallengeService {
         Member member = memberChecker(email);
         createChallengeException(requestDto, member);
 
-        System.out.println("email = " + email);
-        System.out.println("member.getMemberId() = " + member.getMemberId());
-
         Challenge challenge = createChallenge(requestDto, member);
         challengeRepository.save(challenge);
 
@@ -140,8 +137,8 @@ public class ChallengeService {
 
         List<Challenge> challenges = records
                 .stream()
-                .filter(r -> r.getChallenge().getCategoryName().equals(category))
                 .map(ChallengeRecord::getChallenge)
+                .filter(challenge -> challenge.getCategoryName().equals(category))
                 .distinct()
                 .limit(CATEGORY_SIZE)
                 .collect(Collectors.toList());
