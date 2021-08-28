@@ -45,7 +45,7 @@ public class ChallengeController {
         challengeService.deleteChallenge(challengeId, userDetails.getUsername());
     }
 
-    @PostMapping("/api/member/challenge/official") // 챌린지 등록
+    @PostMapping("/api/guest/challenge/official") // 챌린지 등록
     public void createOfficialChallenge() {
         scheduler.createOfficialChallenge();
     }

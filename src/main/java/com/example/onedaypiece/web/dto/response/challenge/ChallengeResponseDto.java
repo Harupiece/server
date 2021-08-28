@@ -32,7 +32,8 @@ public class ChallengeResponseDto {
     private Set<Long> challengeMember = new HashSet<>();
 
     @Builder
-    public ChallengeResponseDto(Long memberId,
+    public ChallengeResponseDto(Long challengeId,
+                                Long memberId,
                                 String memberName,
                                 String challengeTitle,
                                 String challengeContent,
@@ -47,6 +48,7 @@ public class ChallengeResponseDto {
                                 String challengeHoliday,
                                 String tag,
                                 Set<Long> challengeMember) {
+        this.challengeId = challengeId;
         this.memberId = memberId;
         this.memberName = memberName;
         this.challengeTitle = challengeTitle;
@@ -66,6 +68,7 @@ public class ChallengeResponseDto {
 
     public static ChallengeResponseDto createChallengeResponseDto(Challenge challenge, Set<Long> challengeMember) {
         return ChallengeResponseDto.builder()
+                .challengeId(challenge.getChallengeId())
                 .memberId(challenge.getMember().getMemberId())
                 .memberName(challenge.getMember().getNickname())
                 .challengeTitle(challenge.getChallengeTitle())

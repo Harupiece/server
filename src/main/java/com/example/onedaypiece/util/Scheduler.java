@@ -168,9 +168,9 @@ public class Scheduler {
     @Transactional
     public void createOfficialChallenge() {
 
-        if ( isNotScheduleMode() ) {
-            return;
-        }
+//        if ( isNotScheduleMode() ) {
+//            return;
+//        }
         Member member = memberRepository.findById(1L).orElseThrow(() -> new NullPointerException("없는 유저입니다."));
 
         final int CREATE_DELAY = 7;
@@ -180,7 +180,7 @@ public class Scheduler {
         int dayValue = today.getDayOfWeek().getValue();
         String title = "";
         // 월요일이 1, 일요일이 7
-        if (dayValue == 1) {
+        if (dayValue == 6) {
             title = "매일 산책하기";
             requestDto = createChallengeRequestDto(
                     title,
