@@ -14,6 +14,7 @@ public class PostingUpdateRequestDto {
     private String postingContent;
 
     @Builder
+
     public PostingUpdateRequestDto(String postingImg, String postingContent) {
         this.postingImg = postingImg;
         this.postingContent = postingContent;
