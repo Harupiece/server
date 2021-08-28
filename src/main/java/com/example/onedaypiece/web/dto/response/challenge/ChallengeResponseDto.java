@@ -2,6 +2,7 @@ package com.example.onedaypiece.web.dto.response.challenge;
 
 import com.example.onedaypiece.web.domain.challenge.CategoryName;
 import com.example.onedaypiece.web.domain.challenge.Challenge;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -31,25 +32,58 @@ public class ChallengeResponseDto {
     private String challengeBad;
     private String challengeHoliday;
     private String tag;
-    private final Set<Long> challengeMember = new HashSet<>();
+    private Set<Long> challengeMember = new HashSet<>();
 
-    public ChallengeResponseDto(Challenge challenge,
-                                List<Long> challengeMember) {
-        this.memberId = challenge.getMember().getMemberId();
-        this.challengeId = challenge.getChallengeId();
-        this.memberName = challenge.getMember().getNickname();
-        this.challengeTitle = challenge.getChallengeTitle();
-        this.challengeContent = challenge.getChallengeContent();
-        this.categoryName = challenge.getCategoryName();
-        this.challengePassword = challenge.getChallengePassword();
-        this.challengeStartDate = challenge.getChallengeStartDate();
-        this.challengeEndDate = challenge.getChallengeEndDate();
-        this.challengeProgress = challenge.getChallengeProgress();
-        this.challengeImgUrl = challenge.getChallengeImgUrl();
-        this.challengeGood = challenge.getChallengeGood();
-        this.challengeBad = challenge.getChallengeBad();
-        this.challengeHoliday = challenge.getChallengeHoliday();
-        this.tag = challenge.getTag();
-        this.challengeMember.addAll(challengeMember);
+    @Builder
+    public ChallengeResponseDto(Long memberId,
+                                String memberName,
+                                String challengeTitle,
+                                String challengeContent,
+                                CategoryName categoryName,
+                                String challengePassword,
+                                LocalDateTime challengeStartDate,
+                                LocalDateTime challengeEndDate,
+                                Long challengeProgress,
+                                String challengeImgUrl,
+                                String challengeGood,
+                                String challengeBad,
+                                String challengeHoliday,
+                                String tag,
+                                Set<Long> challengeMember) {
+        this.memberId = memberId;
+        this.memberName = memberName;
+        this.challengeTitle = challengeTitle;
+        this.challengeContent = challengeContent;
+        this.categoryName = categoryName;
+        this.challengePassword = challengePassword;
+        this.challengeStartDate = challengeStartDate;
+        this.challengeEndDate = challengeEndDate;
+        this.challengeProgress = challengeProgress;
+        this.challengeImgUrl = challengeImgUrl;
+        this.challengeGood = challengeGood;
+        this.challengeBad = challengeBad;
+        this.challengeHoliday = challengeHoliday;
+        this.tag = tag;
+        this.challengeMember = challengeMember;
+    }
+
+    public static ChallengeResponseDto createChallengeResponseDto(Challenge challenge, Set<Long> challengeMember) {
+        return ChallengeResponseDto.builder()
+                .memberId(challenge.getMember().getMemberId())
+                .memberName(challenge.getMember().getNickname())
+                .challengeTitle(challenge.getChallengeTitle())
+                .challengeContent(challenge.getChallengeContent())
+                .categoryName(challenge.getCategoryName())
+                .challengePassword(challenge.getChallengePassword())
+                .challengeStartDate(challenge.getChallengeStartDate())
+                .challengeEndDate(challenge.getChallengeEndDate())
+                .challengeProgress(challenge.getChallengeProgress())
+                .challengeImgUrl(challenge.getChallengeImgUrl())
+                .challengeGood(challenge.getChallengeGood())
+                .challengeBad(challenge.getChallengeBad())
+                .challengeHoliday(challenge.getChallengeHoliday())
+                .tag(challenge.getTag())
+                .challengeMember(challengeMember)
+                .build();
     }
 }

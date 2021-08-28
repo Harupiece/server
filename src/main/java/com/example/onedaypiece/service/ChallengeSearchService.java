@@ -14,8 +14,10 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
+import static com.example.onedaypiece.web.dto.response.challenge.ChallengeResponseDto.createChallengeResponseDto;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
 @Service
@@ -53,11 +55,6 @@ public class ChallengeSearchService {
         Slice<Challenge> challengeList = challengeQueryRepository
                 .findAllBySearch(categoryName, period, progress, pageable);
 
-        for (Challenge challenge : challengeList) {
-            System.out.println("challenge.getChallengeId() = " + challenge.getChallengeId());
-        }
-
-
         Map<Challenge, List<ChallengeRecord>> recordMap = challengeRecordQueryRepository
                 .findAllByChallengeList(challengeList).stream()
                 .collect(Collectors.groupingBy(ChallengeRecord::getChallenge));
@@ -67,26 +64,20 @@ public class ChallengeSearchService {
 
     private ChallengeListResponseDto getChallengeListResponseDto(Slice<Challenge> challengeList,
                                                                  Map<Challenge, List<ChallengeRecord>> recordMap) {
-
         List<ChallengeResponseDto> challengeDtoList = challengeList
                 .stream()
                 .filter(c -> !isEmpty(recordMap.get(c)))
-                .map(c -> new ChallengeResponseDto(c, getRecordListEqualsCurrentChallenge(c, recordMap.get(c))))
+                .map(c -> createChallengeResponseDto(c, getRecordListEqualsCurrentChallenge(c, recordMap.get(c))))
                 .collect(Collectors.toList());
-
-        for (ChallengeResponseDto challengeResponseDto : challengeDtoList) {
-            System.out.println("challengeResponseDto.getChallengeId() = " + challengeResponseDto.getChallengeId());
-            System.out.println("challengeDtoList.size() = " + challengeDtoList.size());
-        }
 
         return ChallengeListResponseDto.createChallengeListDto(challengeDtoList, challengeList.hasNext());
     }
 
-    private List<Long> getRecordListEqualsCurrentChallenge(Challenge challenge, List<ChallengeRecord> recordList) {
+    private Set<Long> getRecordListEqualsCurrentChallenge(Challenge challenge, List<ChallengeRecord> recordList) {
         return recordList
                 .stream()
                 .filter(r -> r.getChallenge().equals(challenge))
                 .map(r -> r.getMember().getMemberId())
-                .collect(Collectors.toList());
+                .collect(Collectors.toSet());
     }
 }

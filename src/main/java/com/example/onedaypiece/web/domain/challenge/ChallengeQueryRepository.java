@@ -22,16 +22,12 @@ public class ChallengeQueryRepository {
 
     private final JPAQueryFactory queryFactory;
 
-    /**
-     * @Query("select c from Challenge c " +
-     * "WHERE c.challengeStatus = true and c.challengeProgress = 1 and c.challengeTitle like %?1%" +
-     * "ORDER BY c.modifiedAt DESC")
-     * List<Challenge> findAllByWordsAndChallengeStatusTrueOrderByModifiedAtDesc(String words, Pageable pageable);
-     **/
     public Slice<Challenge> findAllByWords(String words, Pageable page) {
         List<Challenge> challengeList = queryFactory
                 .selectFrom(challenge)
-                .join(challengeRecord).fetchJoin()
+                .distinct()
+                .join(challengeRecord).on(challenge.challengeId.eq(challengeRecord.challenge.challengeId),
+                        challengeRecord.challengeRecordStatus.isTrue())
                 .where(
                         challengeRecord.challengeRecordStatus.isTrue(),
                         challenge.challengeStatus.isTrue(),
@@ -83,25 +79,25 @@ public class ChallengeQueryRepository {
                         challenge.challengeStatus.isTrue(),
                         challenge.challengeProgress.lt(3L),
                         challenge.categoryName.ne(CategoryName.OFFICIAL),
-                        challenge.categoryName.eq(CategoryName.valueOf(categoryName)),
+                        challenge.categoryName.eq(CategoryName.valueOf(categoryName))
                 };
             } else if (!categoryName.equals("ALL")) { // 카테고리o, 기간o
                 predicates = new Predicate[]{challenge.challengeStatus.isTrue(),
                         challenge.challengeProgress.lt(3L),
                         challenge.categoryName.eq(CategoryName.valueOf(categoryName)),
                         challenge.categoryName.ne(CategoryName.OFFICIAL),
-                        challenge.tag.eq(getPeriodString(period)),
+                        challenge.tag.eq(getPeriodString(period))
                 };
             } else if (period.equals("0")) { // 카테고리x, 기간x
                 predicates = new Predicate[]{challenge.challengeStatus.isTrue(),
                         challenge.challengeProgress.lt(3L),
-                        challenge.categoryName.ne(CategoryName.OFFICIAL),
+                        challenge.categoryName.ne(CategoryName.OFFICIAL)
                 };
             } else { // 카테고리x, 기간o
                 predicates = new Predicate[]{challenge.challengeStatus.isTrue(),
                         challenge.challengeProgress.lt(3L),
                         challenge.categoryName.ne(CategoryName.OFFICIAL),
-                        challenge.tag.eq(getPeriodString(period)),
+                        challenge.tag.eq(getPeriodString(period))
                 };
             }
         } else if (progress == 1) {
