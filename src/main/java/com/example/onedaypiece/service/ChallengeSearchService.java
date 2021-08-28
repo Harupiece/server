@@ -32,8 +32,8 @@ public class ChallengeSearchService {
      */
     public ChallengeListResponseDto getChallengeSearchResult(String searchWords, int page) {
         Slice<Challenge> challengeList = challengeQueryRepository.
-                findAllByWords(
-                        searchWords.trim(), PageRequest.of(page - 1, SEARCH_SIZE));
+                findAllByWords(searchWords.trim(), PageRequest.of(page - 1, SEARCH_SIZE));
+
         Map<Challenge, List<ChallengeRecord>> recordMap = challengeRecordQueryRepository
                 .findAllByChallengeList(challengeList)
                 .stream()
@@ -52,6 +52,12 @@ public class ChallengeSearchService {
         Pageable pageable = PageRequest.of(page - 1, SEARCH_SIZE);
         Slice<Challenge> challengeList = challengeQueryRepository
                 .findAllBySearch(categoryName, period, progress, pageable);
+
+        for (Challenge challenge : challengeList) {
+            System.out.println("challenge.getChallengeId() = " + challenge.getChallengeId());
+        }
+
+
         Map<Challenge, List<ChallengeRecord>> recordMap = challengeRecordQueryRepository
                 .findAllByChallengeList(challengeList).stream()
                 .collect(Collectors.groupingBy(ChallengeRecord::getChallenge));
@@ -67,6 +73,11 @@ public class ChallengeSearchService {
                 .filter(c -> !isEmpty(recordMap.get(c)))
                 .map(c -> new ChallengeResponseDto(c, getRecordListEqualsCurrentChallenge(c, recordMap.get(c))))
                 .collect(Collectors.toList());
+
+        for (ChallengeResponseDto challengeResponseDto : challengeDtoList) {
+            System.out.println("challengeResponseDto.getChallengeId() = " + challengeResponseDto.getChallengeId());
+            System.out.println("challengeDtoList.size() = " + challengeDtoList.size());
+        }
 
         return ChallengeListResponseDto.createChallengeListDto(challengeDtoList, challengeList.hasNext());
     }

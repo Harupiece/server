@@ -1,20 +1,16 @@
 package com.example.onedaypiece.web.dto.response.posting;
 
-import com.example.onedaypiece.web.domain.certification.Certification;
-import com.example.onedaypiece.web.dto.query.certification.CertificationQueryDto;
-import com.example.onedaypiece.web.dto.query.posting.PostingListQueryDto;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.domain.Slice;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @NoArgsConstructor
 @Getter
 public class PostingListDto {
-    private List<PostingResponseDto> postList;
+    private List<PostingResponseDto> postList = new ArrayList<>();
     private boolean hasNext;
 
     @Builder
