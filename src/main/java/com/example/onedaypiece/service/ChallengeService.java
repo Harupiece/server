@@ -74,8 +74,13 @@ public class ChallengeService {
         Member member = memberChecker(email);
         createChallengeException(requestDto, member);
 
+        System.out.println("email = " + email);
+        System.out.println("member.getMemberId() = " + member.getMemberId());
+
         Challenge challenge = createChallenge(requestDto, member);
-        Long challengeId = challengeRepository.save(challenge).getChallengeId();
+        challengeRepository.save(challenge);
+
+        Long challengeId = challenge.getChallengeId();
         ChallengeRecord challengeRecord = createChallengeRecord(challenge, member);
         challengeRecordRepository.save(challengeRecord);
 

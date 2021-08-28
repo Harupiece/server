@@ -55,19 +55,10 @@ public class Scheduler {
 
     LocalDateTime today;
 
-    @Scheduled(cron = "01 0/1 * * * *") // 초, 분, 시, 일, 월, 주 순서
-    public void test() {
-        if (isNotScheduleMode()) {
-            return;
-        }
-        System.out.println(" 테스트입니다 여기는 들어오나요?");
-        log.info("테스트입니다 여기는 들어오나요? SCHEDULE_MODE : {} ", SCHEDULE_MODE);
-
-    }
-
     @Scheduled(cron = "01 0 0 * * *") // 초, 분, 시, 일, 월, 주 순서
     @Transactional
     public void certificationKick() {
+
         if ( isNotScheduleMode() ) {
             return;
         }
@@ -97,6 +88,7 @@ public class Scheduler {
     @Scheduled(cron = "04 0 0 * * *") // 초, 분, 시, 일, 월, 주 순서
     @Transactional
     public void changePostingApproval() {
+
         if ( isNotScheduleMode() ) {
             return;
         }
@@ -127,6 +119,7 @@ public class Scheduler {
     @Scheduled(cron = "05 0 0 * * *") // 초, 분, 시, 일, 월, 주 순서
     @Transactional
     public void postingStatusUpdate() {
+
         if ( isNotScheduleMode() ) {
             return;
         }
@@ -139,6 +132,7 @@ public class Scheduler {
     @Scheduled(cron = "07 0 0 * * *") // 초, 분, 시, 일, 월, 주 순서
     @Transactional
     public void challengeStatusUpdate() {
+
         if ( isNotScheduleMode() ) {
             return;
         }
@@ -173,6 +167,7 @@ public class Scheduler {
     @Scheduled(cron = "10 0 0 * * *")
     @Transactional
     public void createOfficialChallenge() {
+
         if ( isNotScheduleMode() ) {
             return;
         }

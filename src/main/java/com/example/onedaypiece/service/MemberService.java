@@ -230,7 +230,6 @@ public class MemberService {
 
 
         for(int i = 0 ; i< pointList.size(); i++){
-            System.out.println("순위: "+ pointList.get(i).getAcquiredPoint()+ "아이디번호: "+ pointList.get(i).getPointId());
             if(member.getMemberId() == pointList.get(i).getPointId() && member.getPoint().getAcquiredPoint() == pointList.get(i).getAcquiredPoint()){
                 break;
             } else{
