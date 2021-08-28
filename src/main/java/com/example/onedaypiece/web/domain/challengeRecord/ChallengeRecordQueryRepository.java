@@ -42,7 +42,7 @@ public class ChallengeRecordQueryRepository {
         return queryFactory
                 .select(challengeRecord)
                 .from(challengeRecord)
-                .join(challengeRecord.challenge).fetchJoin()
+                .join(challengeRecord.member).fetchJoin()
                 .distinct()
                 .where(challengeRecord.challengeRecordStatus.isTrue(),
                         challengeRecord.challenge.challengeStatus.isTrue(),
