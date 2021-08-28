@@ -1,5 +1,6 @@
 package com.example.onedaypiece.web.domain.pointHistory;
 
+import com.example.onedaypiece.web.domain.posting.Posting;
 import com.example.onedaypiece.web.dto.response.mypage.histroy.MemberHistoryDto;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -23,7 +24,8 @@ public interface PointHistoryRepository extends JpaRepository<PointHistory, Long
             "left join p.posting.member " +
             "left join p.posting.member.point " +
             "left join p.posting.challenge " +
-            "where p.posting.member.email =:email ")
+            "where p.posting.member.email =:email " +
+            "and p.status =true ")
     List<MemberHistoryDto> findHistoryPosting(String email);
 
 
@@ -43,6 +45,10 @@ public interface PointHistoryRepository extends JpaRepository<PointHistory, Long
             "left join p.challengeRecord.member " +
             "left join p.challengeRecord.member.point " +
             "left join p.challengeRecord.challenge " +
-            "where p.challengeRecord.member.email = :email ")
+            "where p.challengeRecord.member.email = :email " +
+            "and p.status =true ")
     List<MemberHistoryDto> findHistoryChallenge(String email);
+
+    PointHistory findByPosting(Posting posting);
+
 }

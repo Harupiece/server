@@ -144,10 +144,17 @@ public class PostingService {
     }
 
     private void isApprovalTrue(Posting posting) {
+
+
         if(posting.getPostingCount() != 1L) {
             if (posting.isPostingApproval()) {
                 throw new ApiRequestException("이미 인증된 게시글은 삭제할 수 없습니다.");
             }
+        }else{
+            posting.updateApproval(false);
+            PointHistory pointHistory = pointHistoryRepository.findByPosting(posting);
+            pointHistory.updateStatus();
+            posting.getMember().updatePoint(-1L);
         }
     }
 
@@ -197,7 +204,7 @@ public class PostingService {
                 PointHistory pointHistory = new PointHistory(1L, posting); // 몇점받는지 첫번쨰 파라미터로 들어가야함
                 pointHistoryRepository.save(pointHistory);
                 posting.getMember().updatePoint(1L);
-                posting.updateApproval();
+                posting.updateApproval(true);
                 posting.updatePoint();
             }
         }
