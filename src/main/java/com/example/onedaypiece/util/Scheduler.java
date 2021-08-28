@@ -51,12 +51,26 @@ public class Scheduler {
     @Resource(name = "redisTemplate")
     private HashOperations<String, String, ChatRoom> hashOpsChatRoom;
     private static final String CHAT_ROOMS = "CHAT_ROOM";
+    private final static String SCHEDULE_MODE = System.getProperty( "schedule.mode" );
 
     LocalDateTime today;
+
+    @Scheduled(cron = "01 0/1 * * * *") // 초, 분, 시, 일, 월, 주 순서
+    public void test() {
+        if (isNotScheduleMode()) {
+            return;
+        }
+        System.out.println(" 테스트입니다 여기는 들어오나요?");
+        log.info("테스트입니다 여기는 들어오나요? SCHEDULE_MODE : {} ", SCHEDULE_MODE);
+
+    }
 
     @Scheduled(cron = "01 0 0 * * *") // 초, 분, 시, 일, 월, 주 순서
     @Transactional
     public void certificationKick() {
+        if ( isNotScheduleMode() ) {
+            return;
+        }
         initializeToday();
 
         int week = today.getDayOfWeek().getValue();
@@ -83,6 +97,9 @@ public class Scheduler {
     @Scheduled(cron = "04 0 0 * * *") // 초, 분, 시, 일, 월, 주 순서
     @Transactional
     public void changePostingApproval() {
+        if ( isNotScheduleMode() ) {
+            return;
+        }
 
         LocalDateTime today = LocalDate.now().atStartOfDay();
         List<RemainingMember> challengeRecords = schedulerQueryRepository.findChallengeMember(today);
@@ -110,6 +127,9 @@ public class Scheduler {
     @Scheduled(cron = "05 0 0 * * *") // 초, 분, 시, 일, 월, 주 순서
     @Transactional
     public void postingStatusUpdate() {
+        if ( isNotScheduleMode() ) {
+            return;
+        }
         List<Long> postingIdList = schedulerQueryRepository.findSchedulerUpdatePosting(today);
         // 벌크성 쿼리 업데이트
         long updateResult = postingRepository.updatePostingStatus(postingIdList);
@@ -119,6 +139,9 @@ public class Scheduler {
     @Scheduled(cron = "07 0 0 * * *") // 초, 분, 시, 일, 월, 주 순서
     @Transactional
     public void challengeStatusUpdate() {
+        if ( isNotScheduleMode() ) {
+            return;
+        }
         List<ChallengeRecord> recordList = schedulerQueryRepository.findAllByChallengeProgressLessThan(3L);
 
         List<Challenge> challengeList = recordList
@@ -150,6 +173,9 @@ public class Scheduler {
     @Scheduled(cron = "10 0 0 * * *")
     @Transactional
     public void createOfficialChallenge() {
+        if ( isNotScheduleMode() ) {
+            return;
+        }
         Member member = memberRepository.findById(1L).orElseThrow(() -> new NullPointerException("없는 유저입니다."));
 
         final int CREATE_DELAY = 7;
@@ -293,6 +319,16 @@ public class Scheduler {
     }
 
     public void initializeToday() {
+
         today = LocalDate.now().atStartOfDay();
+    }
+
+    private boolean isNotScheduleMode() {
+
+        if ( null != SCHEDULE_MODE && SCHEDULE_MODE.equals( "on" ) ) {
+            return false;
+        }
+        return true;
+
     }
 }
