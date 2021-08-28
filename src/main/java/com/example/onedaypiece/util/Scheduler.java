@@ -85,7 +85,7 @@ public class Scheduler {
     public void changePostingApproval() {
 
         LocalDateTime today = LocalDate.now().atStartOfDay();
-        List<RemainingMember> challengeRecords =  schedulerQueryRepository.findChallengeMember(today);
+        List<RemainingMember> challengeRecords = schedulerQueryRepository.findChallengeMember(today);
         List<Posting> approvalPostingList = challengeRecords.stream()
                 .map(RemainingMember::getPosting)
                 .collect(Collectors.toList());
@@ -256,17 +256,19 @@ public class Scheduler {
             Long postingCount = schedulerQueryRepository.findAllByChallengeAndFirstMember(challenge, memberList.get(0));
             Long resultPoint = postingCount * 50L * (challenge.getCategoryName().equals(OFFICIAL) ? 2L : 1L);
 
-            List<PointHistory> pointHistoryList = recordList
-                    .stream()
-                    .map(r -> new PointHistory(resultPoint, r))
-                    .collect(Collectors.toList());
-            pointHistoryRepository.saveAll(pointHistoryList);
+            if (resultPoint != 0L) {
+                List<PointHistory> pointHistoryList = recordList
+                        .stream()
+                        .map(r -> new PointHistory(resultPoint, r))
+                        .collect(Collectors.toList());
+                pointHistoryRepository.saveAll(pointHistoryList);
 
-            List<Point> pointList = memberList
-                    .stream()
-                    .map(Member::getPoint)
-                    .collect(Collectors.toList());
-            schedulerQueryRepository.updatePointAll(pointList, resultPoint);
+                List<Point> pointList = memberList
+                        .stream()
+                        .map(Member::getPoint)
+                        .collect(Collectors.toList());
+                schedulerQueryRepository.updatePointAll(pointList, resultPoint);
+            }
         }
     }
 

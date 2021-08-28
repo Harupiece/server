@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 
+import static com.example.onedaypiece.util.RepositoryHelper.toSlice;
 import static com.example.onedaypiece.web.domain.challenge.QChallenge.challenge;
 
 @Repository
@@ -18,27 +19,6 @@ import static com.example.onedaypiece.web.domain.challenge.QChallenge.challenge;
 public class ChallengeQueryRepository {
 
     private final JPAQueryFactory queryFactory;
-
-    /**
-     * @Query("select c from Challenge c " +
-     * "Where c.challengeStatus = true and c.challengeProgress = 1 and c.categoryName = :categoryName " +
-     * "ORDER BY c.modifiedAt DESC")
-     * List<Challenge> findAllByCategoryNameOrderByModifiedAtDescListed(CategoryName categoryName, Pageable pageable);
-     **/
-    public List<Challenge> findAllByCategoryName(CategoryName categoryName, Pageable page) {
-//        List<Challenge> challengeList =
-        return queryFactory
-                .selectFrom(challenge)
-                .where(challenge.challengeStatus.isTrue(),
-                        challenge.challengeProgress.eq(1L),
-                        challenge.categoryName.eq(categoryName))
-                .orderBy(challenge.modifiedAt.desc())
-                .offset(page.getOffset())
-                .limit(page.getPageSize() + 1)
-                .fetch();
-
-//        return RepositoryHelper.toSlice(challengeList, page);
-    }
 
     /**
      * @Query("select c from Challenge c " +
@@ -58,7 +38,7 @@ public class ChallengeQueryRepository {
                 .limit(page.getPageSize() + 1)
                 .fetch();
 
-        return RepositoryHelper.toSlice(challengeList, page);
+        return toSlice(challengeList, page);
     }
 
     public List<Challenge> findAllByOfficialChallenge() {
@@ -83,7 +63,7 @@ public class ChallengeQueryRepository {
                 .limit(page.getPageSize() + 1)
                 .fetch();
 
-        return RepositoryHelper.toSlice(challengeList, page);
+        return toSlice(challengeList, page);
     }
 
     private Predicate[] predicateByCategoryNameAndPeriod(String categoryName, int progress, String period) {
