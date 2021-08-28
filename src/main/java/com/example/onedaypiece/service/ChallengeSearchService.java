@@ -80,4 +80,5 @@ public class ChallengeSearchService {
                 .map(r -> r.getMember().getMemberId())
                 .collect(Collectors.toSet());
     }
+
 }

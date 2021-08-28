@@ -5,6 +5,7 @@ import com.example.onedaypiece.web.dto.response.challenge.ChallengeListResponseD
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
@@ -25,5 +26,10 @@ public class ChallengeSearchController {
                                                                               @PathVariable int progress,
                                                                               @PathVariable int page) {
         return challengeSearchService.getChallengeBySearch(categoryName, period, progress, page);
+    }
+
+    @GetMapping("/api/guest/challenges/{page}") // 소팅 검색
+    public ChallengeListResponseDto getChallenges(@PathVariable int page) {
+        return challengeSearchService.getChallengeBySearch("ALL", 0, 0, page);
     }
 }

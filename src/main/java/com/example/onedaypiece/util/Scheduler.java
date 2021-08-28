@@ -176,11 +176,13 @@ public class Scheduler {
         final int CREATE_DELAY = 7;
         final int PROGRESS_PERIOD = 6;
 
+        initializeToday();
+
         ChallengeRequestDto requestDto = null;
         int dayValue = today.getDayOfWeek().getValue();
         String title = "";
         // 월요일이 1, 일요일이 7
-        if (dayValue == 6) {
+        if (dayValue == 1) {
             title = "매일 산책하기";
             requestDto = createChallengeRequestDto(
                     title,
