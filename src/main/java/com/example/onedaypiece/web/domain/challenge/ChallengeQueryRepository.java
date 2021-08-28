@@ -29,7 +29,7 @@ public class ChallengeQueryRepository {
                 .where(
                         challengeRecord.challengeRecordStatus.isTrue(),
                         challenge.challengeStatus.isTrue(),
-                        challenge.challengeProgress.eq(1L),
+                        challenge.challengeProgress.lt(3L),
                         challenge.categoryName.ne(CategoryName.OFFICIAL),
                         challenge.challengeTitle.contains(words))
                 .orderBy(challenge.challengeStartDate.asc())
