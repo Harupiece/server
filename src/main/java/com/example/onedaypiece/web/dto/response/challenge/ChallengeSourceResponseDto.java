@@ -57,6 +57,7 @@ public class ChallengeSourceResponseDto {
                         .filter(r -> r.getChallenge().equals(challenge))
                         .map(r -> r.getMember().getMemberId())
                         .collect(Collectors.toSet()))
+                .tag(challenge.getTag())
                 .build();
     }
 }
