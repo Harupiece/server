@@ -45,7 +45,8 @@ public class ChallengeQueryRepository {
                 .selectFrom(challenge)
                 .where(challenge.challengeStatus.isTrue(),
                         challenge.challengeProgress.eq(1L),
-                        challenge.categoryName.eq(CategoryName.OFFICIAL))
+                        challenge.categoryName.eq(CategoryName.OFFICIAL),
+                        challenge.challengePassword.eq(""))
                 .fetch();
     }
 
