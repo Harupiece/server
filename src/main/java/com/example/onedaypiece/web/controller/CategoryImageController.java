@@ -28,12 +28,4 @@ public class CategoryImageController {
     public CategoryImageResponseDto getCategoryImage(@PathVariable CategoryName categoryName) {
         return categoryImageService.getCategoryImage(categoryName);
     }
-
-    /**
-     * 3. 카테고리 이미지 조회
-     */
-    @DeleteMapping("/api/category-image/{imgUrl}")
-    public void deleteCategoryImage(@PathVariable String imgUrl) {
-        categoryImageService.deleteCategoryImage(imgUrl);
-    }
 }
