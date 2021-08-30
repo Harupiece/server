@@ -80,7 +80,7 @@ public class ChallengeService {
         ChallengeRecord challengeRecord = createChallengeRecord(challenge, member);
         challengeRecordRepository.save(challengeRecord);
 
-        ChatRoom chatRoom = new ChatRoom(challengeId);
+        ChatRoom chatRoom = ChatRoom.createChatRoom(challengeId);
         chatRoomRepository.save(chatRoom);
         hashOpsChatRoom.put(CHAT_ROOMS, chatRoom.getRoomId(), chatRoom);
 

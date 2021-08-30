@@ -19,8 +19,12 @@ public class ChatRoomController {
 
     private final ChatRoomService chatRoomService;
 
-    // 채팅방 입장
-    // 채팅방 대화 불러오기
+
+
+    /*
+       채팅방 입장
+       채팅방 대화 불러오기
+     */
     @GetMapping("/chat/messages/{roomId}")
     public ChatRoomResponseDto getEachChatRoom(@PathVariable String roomId,
                                                @RequestParam("page") int page,

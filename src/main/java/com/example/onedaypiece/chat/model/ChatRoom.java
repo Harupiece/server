@@ -1,6 +1,7 @@
 package com.example.onedaypiece.chat.model;
 
 import com.example.onedaypiece.web.domain.common.Timestamped;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -20,7 +21,18 @@ public class ChatRoom extends Timestamped implements Serializable {
     @Column
     private String roomId;
 
-    public ChatRoom(Long challengeId){
-        this.roomId = String.valueOf(challengeId);
+
+    @Builder
+    public ChatRoom(String roomId){
+        this.roomId = roomId;
+    }
+
+    /*
+        채팅방 생성
+     */
+    public static ChatRoom createChatRoom(Long challengeId){
+        return ChatRoom.builder()
+                .roomId(String.valueOf(challengeId))
+                .build();
     }
 }

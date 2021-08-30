@@ -31,22 +31,25 @@ public class ChatRoomService {
 
     // 채팅방 생성
 
-    // 채팅방 입장(member가 현재 참여 중인)
+    /*
+        채팅방 입장
+     */
     public ChatRoomResponseDto getEachChatRoom(String roomId, String email,int page) {
 
+        // 회원이 참여한 챌린지가 맞는지
+        // 챌린지가 진행 예정이거나 진행 중인지
         Member member = getMember(email);
         Long challengeId = Long.parseLong(roomId);
         existsByChallengeProgress(member, challengeId);
 
-
+        // 페이징 처리
         Pageable pageable = PageRequest.of(page-1,15);
         Slice<ChatMessage> chatMessages = chatMessageRepository.findAllByRoomIdOrderByCreatedAtDesc(roomId,pageable);
 
-
+        // slice 한 부분을 다시 sort
         List<ChatMessageResponseDto> chatMessageResponseDtoList = chatMessages.getContent().stream()
                 .sorted(Comparator.comparing(chatMessage -> chatMessage.getCreatedAt()))
                 .map(chatMessage -> new ChatMessageResponseDto(chatMessage))
-
                 .collect(Collectors.toList());
 
         return ChatRoomResponseDto.builder()
