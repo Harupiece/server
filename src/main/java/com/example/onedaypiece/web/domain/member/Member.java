@@ -77,17 +77,6 @@ public class Member extends Timestamped implements Serializable {
                 .build();
     }
 
-
-    public Member(SignupRequestDto requestDto, Point point){
-        this.email = requestDto.getEmail();
-        this.password = requestDto.getPassword();
-        this.nickname = requestDto.getNickname();
-        this.profileImg = requestDto.getProfileImg();
-        this.memberStatus = 1L;
-        this.role = MemberRole.MEMBER;
-        this.point = point;
-    }
-
     // 마이페이지 비밀번호 수정
     public void updatePassword(PwUpdateRequestDto requestDto){
         this.password = requestDto.getNewPassword();

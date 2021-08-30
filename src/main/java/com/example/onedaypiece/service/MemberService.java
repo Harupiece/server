@@ -90,7 +90,7 @@ public class MemberService {
         requestDto.setPassword(password);
 
         Point point = new Point();
-//        memberRepository.save(new Member(requestDto, pointRepository.save(point)));
+
         Member member = Member.createMember(requestDto.getEmail(), requestDto.getPassword(), requestDto.getNickname(), requestDto.getProfileImg(), point);
         memberRepository.save(member);
     }
