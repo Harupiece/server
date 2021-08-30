@@ -61,6 +61,23 @@ public class Member extends Timestamped implements Serializable {
         this.point = point;
     }
 
+    public static Member createMember(String email,
+                                      String password,
+                                      String nickname,
+                                      String profileImg,
+                                      Point point){
+        return Member.builder()
+                .email(email)
+                .password(password)
+                .nickname(nickname)
+                .profileImg(profileImg)
+                .memberStatus(1L)
+                .role(MemberRole.MEMBER)
+                .point(point)
+                .build();
+    }
+
+
     public Member(SignupRequestDto requestDto, Point point){
         this.email = requestDto.getEmail();
         this.password = requestDto.getPassword();
