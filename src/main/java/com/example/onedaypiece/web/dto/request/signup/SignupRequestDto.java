@@ -2,11 +2,12 @@ package com.example.onedaypiece.web.dto.request.signup;
 
 import com.example.onedaypiece.exception.ApiRequestException;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
-
 
 @Setter
 @Getter
+@NoArgsConstructor
 public class SignupRequestDto {
 
     private String email;

@@ -7,19 +7,19 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 @NoArgsConstructor
 @Getter
-public class ChallengeResponseDto {
+public class ChallengeDetailResponseDto {
 
     private Long challengeId;
     private Long memberId;
-    private String memberName; // 챌린지 만든 사람
+    private String memberName;
     private String challengeTitle;
     private String challengeContent;
-    private CategoryName categoryName; // enum
+    private CategoryName categoryName;
     private String challengePassword;
     private LocalDateTime challengeStartDate;
     private LocalDateTime challengeEndDate;
@@ -29,25 +29,25 @@ public class ChallengeResponseDto {
     private String challengeBad;
     private String challengeHoliday;
     private String tag;
-    private Set<Long> challengeMember = new HashSet<>();
+    private List<ChallengeDetailResponseDtoMemberDto> challengeMember = new ArrayList<>();
 
     @Builder
-    public ChallengeResponseDto(Long challengeId,
-                                Long memberId,
-                                String memberName,
-                                String challengeTitle,
-                                String challengeContent,
-                                CategoryName categoryName,
-                                String challengePassword,
-                                LocalDateTime challengeStartDate,
-                                LocalDateTime challengeEndDate,
-                                Long challengeProgress,
-                                String challengeImgUrl,
-                                String challengeGood,
-                                String challengeBad,
-                                String challengeHoliday,
-                                String tag,
-                                Set<Long> challengeMember) {
+    public ChallengeDetailResponseDto(Long challengeId,
+                                      Long memberId,
+                                      String memberName,
+                                      String challengeTitle,
+                                      String challengeContent,
+                                      CategoryName categoryName,
+                                      String challengePassword,
+                                      LocalDateTime challengeStartDate,
+                                      LocalDateTime challengeEndDate,
+                                      Long challengeProgress,
+                                      String challengeImgUrl,
+                                      String challengeGood,
+                                      String challengeBad,
+                                      String challengeHoliday,
+                                      String tag,
+                                      List<ChallengeDetailResponseDtoMemberDto> challengeMember) {
         this.challengeId = challengeId;
         this.memberId = memberId;
         this.memberName = memberName;
@@ -66,8 +66,11 @@ public class ChallengeResponseDto {
         this.challengeMember = challengeMember;
     }
 
-    public static ChallengeResponseDto createChallengeResponseDto(Challenge challenge, Set<Long> challengeMember) {
-        return ChallengeResponseDto.builder()
+    public static ChallengeDetailResponseDto createChallengeDetailResponseDto(
+            Challenge challenge,
+            List<ChallengeDetailResponseDtoMemberDto> challengeMember) {
+
+        return ChallengeDetailResponseDto.builder()
                 .challengeId(challenge.getChallengeId())
                 .memberId(challenge.getMember().getMemberId())
                 .memberName(challenge.getMember().getNickname())

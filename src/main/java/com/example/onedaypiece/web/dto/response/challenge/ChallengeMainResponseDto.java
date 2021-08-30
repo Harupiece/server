@@ -16,7 +16,10 @@ public class ChallengeMainResponseDto {
     private final List<ChallengeSourceResponseDto> exercise = new ArrayList<>();
     private final List<ChallengeSourceResponseDto> livinghabits = new ArrayList<>();
     private final List<ChallengeSourceResponseDto> nodrinknosmoke = new ArrayList<>();
-    private Long historyCount;
+
+    public static ChallengeMainResponseDto createChallengeMainResponseDto() {
+        return new ChallengeMainResponseDto();
+    }
 
     public void addExercise(ChallengeSourceResponseDto responseDto) {
         exercise.add(responseDto);
@@ -33,7 +36,7 @@ public class ChallengeMainResponseDto {
     public void addPopular(List<ChallengeRecord> popularSource, List<ChallengeRecord> records) {
         this.popular.addAll(popularSource
                 .stream()
-                .map(record -> (new ChallengeSourceResponseDto(record.getChallenge(), records)))
+                .map(record -> (ChallengeSourceResponseDto.createChallengeSourceResponseDto(record.getChallenge(), records)))
                 .collect(Collectors.toList()));
     }
 

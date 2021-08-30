@@ -5,6 +5,7 @@ import com.example.onedaypiece.web.dto.response.challenge.ChallengeListResponseD
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
@@ -13,17 +14,31 @@ public class ChallengeSearchController {
 
     private final ChallengeSearchService challengeSearchService;
 
-    @GetMapping("/api/guest/search/{searchWords}/{page}") // 제목 검색
+    /**
+     * 1. 제목 검색
+     */
+    @GetMapping("/api/guest/search/{searchWords}/{page}")
     public ChallengeListResponseDto getChallengeSearchResult(@PathVariable int page,
                                                              @PathVariable String searchWords) {
         return challengeSearchService.getChallengeSearchResult(searchWords, page);
     }
 
-    @GetMapping("/api/guest/search/{categoryName}/{period}/{progress}/{page}") // 소팅 검색
+    /**
+     * 2. 소팅 검색
+     */
+    @GetMapping("/api/guest/search/{categoryName}/{period}/{progress}/{page}")
     public ChallengeListResponseDto getChallengeSearchByCategoryNameAndPeriod(@PathVariable String categoryName,
                                                                               @PathVariable int period,
                                                                               @PathVariable int progress,
                                                                               @PathVariable int page) {
         return challengeSearchService.getChallengeBySearch(categoryName, period, progress, page);
+    }
+
+    /**
+     * 3. 전체 검색
+     */
+    @GetMapping("/api/guest/challenges/{page}")
+    public ChallengeListResponseDto getChallenges(@PathVariable int page) {
+        return challengeSearchService.getChallengeBySearch("ALL", 0, 0, page);
     }
 }

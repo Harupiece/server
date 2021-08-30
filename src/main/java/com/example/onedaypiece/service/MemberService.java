@@ -5,12 +5,10 @@ import com.example.onedaypiece.security.TokenProvider;
 import com.example.onedaypiece.web.domain.challenge.Challenge;
 import com.example.onedaypiece.web.domain.challengeRecord.ChallengeRecord;
 import com.example.onedaypiece.web.domain.challengeRecord.ChallengeRecordQueryRepository;
-import com.example.onedaypiece.web.domain.challengeRecord.ChallengeRecordRepository;
 import com.example.onedaypiece.web.domain.member.Member;
 import com.example.onedaypiece.web.domain.member.MemberRepository;
 import com.example.onedaypiece.web.domain.point.Point;
 import com.example.onedaypiece.web.domain.point.PointRepository;
-import com.example.onedaypiece.web.domain.pointHistory.PointHistory;
 import com.example.onedaypiece.web.domain.pointHistory.PointHistoryRepository;
 import com.example.onedaypiece.web.domain.token.RefreshToken;
 import com.example.onedaypiece.web.domain.token.RefreshTokenRepository;
@@ -19,7 +17,6 @@ import com.example.onedaypiece.web.dto.request.mypage.ProfileUpdateRequestDto;
 import com.example.onedaypiece.web.dto.request.mypage.PwUpdateRequestDto;
 import com.example.onedaypiece.web.dto.request.signup.SignupRequestDto;
 import com.example.onedaypiece.web.dto.request.token.TokenRequestDto;
-import com.example.onedaypiece.web.dto.response.member.MemberResponseDto;
 import com.example.onedaypiece.web.dto.response.member.MemberTokenResponseDto;
 import com.example.onedaypiece.web.dto.response.member.reload.ReloadResponseDto;
 import com.example.onedaypiece.web.dto.response.mypage.MyPageResponseDto;
@@ -233,7 +230,6 @@ public class MemberService {
 
 
         for(int i = 0 ; i< pointList.size(); i++){
-            System.out.println("순위: "+ pointList.get(i).getAcquiredPoint()+ "아이디번호: "+ pointList.get(i).getPointId());
             if(member.getMemberId() == pointList.get(i).getPointId() && member.getPoint().getAcquiredPoint() == pointList.get(i).getAcquiredPoint()){
                 break;
             } else{

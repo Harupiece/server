@@ -18,10 +18,7 @@ import com.example.onedaypiece.web.dto.request.challenge.ChallengeRequestDto;
 import com.example.onedaypiece.web.dto.request.challenge.PutChallengeRequestDto;
 import com.example.onedaypiece.web.dto.response.challenge.*;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,7 +30,10 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.example.onedaypiece.web.domain.challenge.CategoryName.*;
-import static java.lang.Math.min;
+import static com.example.onedaypiece.web.domain.challenge.Challenge.createChallenge;
+import static com.example.onedaypiece.web.domain.challengeRecord.ChallengeRecord.createChallengeRecord;
+import static com.example.onedaypiece.web.dto.response.challenge.ChallengeDetailResponseDto.createChallengeDetailResponseDto;
+import static com.example.onedaypiece.web.dto.response.challenge.ChallengeSourceResponseDto.createChallengeSourceResponseDto;
 
 @Service
 @RequiredArgsConstructor
@@ -54,13 +54,10 @@ public class ChallengeService {
 
     private final LocalDateTime currentLocalDateTime = LocalDateTime.now();
 
-    public ChallengeResponseDto getChallengeDetail(Long challengeId) {
+    public ChallengeDetailResponseDto getChallengeDetail(Long challengeId) {
         Challenge challenge = challengeChecker(challengeId);
-        List<Long> memberList = challengeRecordQueryRepository.findAllByChallengeId(challengeId)
-                .stream()
-                .map(c -> c.getMember().getMemberId())
-                .collect(Collectors.toList());
-        return new ChallengeResponseDto(challenge, memberList);
+        List<ChallengeDetailResponseDtoMemberDto> memberList = challengeRecordQueryRepository.findAllByChallengeId(challengeId);
+        return createChallengeDetailResponseDto(challenge, memberList);
     }
 
     @Transactional
@@ -73,13 +70,15 @@ public class ChallengeService {
     }
 
     @Transactional
-    public Long createChallenge(ChallengeRequestDto requestDto, String email) {
+    public Long postChallenge(ChallengeRequestDto requestDto, String email) {
         Member member = memberChecker(email);
         createChallengeException(requestDto, member);
 
-        Challenge challenge = new Challenge(requestDto, member);
-        Long challengeId = challengeRepository.save(challenge).getChallengeId();
-        ChallengeRecord challengeRecord = new ChallengeRecord(challenge, member);
+        Challenge challenge = createChallenge(requestDto, member);
+        challengeRepository.save(challenge);
+
+        Long challengeId = challenge.getChallengeId();
+        ChallengeRecord challengeRecord = createChallengeRecord(challenge, member);
         challengeRecordRepository.save(challengeRecord);
 
         ChatRoom chatRoom = ChatRoom.createChatRoom(challengeId);
@@ -100,23 +99,12 @@ public class ChallengeService {
         challenge.putChallenge(requestDto);
     }
 
-    public List<ChallengeSourceResponseDto> getAllChallenge(int page) {
-        List<ChallengeRecord> records = challengeRecordQueryRepository.findAllByChallengeStatusTrueAndProgressNotStart();
-        List<Challenge> challenges = records.stream().map(ChallengeRecord::getChallenge).collect(Collectors.toList());
-
-        return challenges
-                .stream()
-                .distinct()
-                .map(c -> new ChallengeSourceResponseDto(c, records))
-                .collect(Collectors.toList());
-    }
-
-    public ChallengeMainResponseDto getMainPage(String email) {
+    public ChallengeMainResponseDto getMainPage() {
         ChallengeMainResponseDto responseDto = new ChallengeMainResponseDto();
         List<ChallengeRecord> records = challengeRecordQueryRepository.findAllByStatusTrue();
 
         sliderUpdate(responseDto, records);
-        popularUpdate(responseDto, email, records);
+        popularUpdate(responseDto, records);
 
         categoryCollector(EXERCISE, records).forEach(responseDto::addExercise);
         categoryCollector(LIVINGHABITS, records).forEach(responseDto::addLivingHabits);
@@ -130,16 +118,17 @@ public class ChallengeService {
 
         List<ChallengeSourceResponseDto> sliderSourceList = officialList
                 .stream()
-                .map(challenge -> new ChallengeSourceResponseDto(challenge, records))
+                .map(c -> createChallengeSourceResponseDto(c, records))
                 .collect(Collectors.toList());
 
         responseDto.addSlider(sliderSourceList);
     }
 
-    private void popularUpdate(ChallengeMainResponseDto responseDto, String email, List<ChallengeRecord> records) {
+    private void popularUpdate(ChallengeMainResponseDto responseDto, List<ChallengeRecord> records) {
         final int POPULAR_SIZE = 4;
 
-        List<ChallengeRecord> popularRecords = challengeRecordQueryRepository.findAllPopular(email, PageRequest.of(0, POPULAR_SIZE));
+        List<ChallengeRecord> popularRecords = challengeRecordQueryRepository
+                .findAllPopular(PageRequest.of(0, POPULAR_SIZE));
         responseDto.addPopular(popularRecords, records);
     }
 
@@ -148,29 +137,20 @@ public class ChallengeService {
 
         List<Challenge> challenges = records
                 .stream()
-                .filter(r -> r.getChallenge().getCategoryName().equals(category))
                 .map(ChallengeRecord::getChallenge)
+                .filter(challenge -> challenge.getCategoryName().equals(category))
                 .distinct()
                 .limit(CATEGORY_SIZE)
                 .collect(Collectors.toList());
 
         return challenges
                 .stream()
-                .map(c -> new ChallengeSourceResponseDto(c, records))
+                .map(c -> createChallengeSourceResponseDto(c, records))
                 .collect(Collectors.toList());
     }
 
-    private Page<ChallengeSourceResponseDto> listToPage(int page, List<ChallengeSourceResponseDto> sources) {
-        final int allChallengePageSize = 8;
-        Pageable paging = PageRequest.of(page - 1, allChallengePageSize);
-        final int start = min((int) paging.getOffset(), sources.size());
-        final int end = min((start + paging.getPageSize()), sources.size());
-
-        return new PageImpl<>(sources.subList(start, end), paging, sources.size());
-    }
-
     private Challenge challengeChecker(Long challengeId) {
-        return challengeRepository.findById(challengeId)
+        return challengeQueryRepository.findById(challengeId)
                 .orElseThrow(() -> new ApiRequestException("존재하지 않는 챌린지입니다"));
     }
 

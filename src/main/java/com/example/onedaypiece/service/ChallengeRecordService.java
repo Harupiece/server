@@ -15,7 +15,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.util.List;
 
 import static com.example.onedaypiece.web.domain.challenge.CategoryName.OFFICIAL;
@@ -37,7 +36,7 @@ public class ChallengeRecordService {
 
         requestChallengeException(challenge, member);
 
-        ChallengeRecord record = new ChallengeRecord(challenge, member);
+        ChallengeRecord record = ChallengeRecord.createChallengeRecord(challenge, member);
         challengeRecordRepository.save(record);
 
         ChatMember chatMember = ChatMember.createChatMember(member.getMemberId(), String.valueOf(challenge.getChallengeId()));
@@ -52,18 +51,6 @@ public class ChallengeRecordService {
         ChallengeRecord record = challengeRecordRepository.
                 findByChallengeAndMemberAndChallengeRecordStatusTrue(challenge, member);
         record.setStatusFalse();
-    }
-
-    @Transactional
-    public void preStartChallenge(Long challengeId, String username) {
-        Challenge challenge = challengeRepository.findById(challengeId).orElseThrow(
-                () -> new ApiRequestException("존재하지 않는 챌린지입니다.")
-        );
-        if (challenge.getChallengeStartDate().equals(LocalDate.now().atStartOfDay())) {
-            challenge.updateChallengeProgress(2L);
-        } else {
-            throw new ApiRequestException("시작 날짜가 아닙니다.");
-        }
     }
 
     private Challenge ChallengeChecker(Long challengeId) {
@@ -84,6 +71,9 @@ public class ChallengeRecordService {
         if (!challenge.getCategoryName().equals(OFFICIAL) &&
                 challengeRecordQueryRepository.countByChallenge(challenge) >= 10) {
             throw new ApiRequestException("챌린지는 10명까지만 참여 가능합니다.");
+        }
+        if (recordList.stream().anyMatch(r -> r.getChallenge().equals(challenge))) {
+            throw new ApiRequestException("이미 해당 챌린지에 참가하고 있는 유저입니다.");
         }
     }
 }

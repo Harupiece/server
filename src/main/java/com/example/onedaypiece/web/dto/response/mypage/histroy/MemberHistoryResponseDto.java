@@ -2,7 +2,6 @@ package com.example.onedaypiece.web.dto.response.mypage.histroy;
 
 
 import com.example.onedaypiece.web.domain.member.Member;
-import com.example.onedaypiece.web.dto.response.member.MemberResponseDto;
 import com.example.onedaypiece.web.dto.response.mypage.CalculLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -32,7 +31,6 @@ public class MemberHistoryResponseDto {
         // 포인트히스토리
         this.postingGetpoint = postingGetpoint;
         this.challengeGetpoint = challengeGetpoint;
-
         this.rank = rank;
     }
 }

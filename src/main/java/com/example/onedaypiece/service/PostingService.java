@@ -99,6 +99,7 @@ public class PostingService {
         Member member = getMemberByEmail(email);
         Posting posting = getPosting(postingId);
 
+
         // 작성자 검사
         validateMember(member, posting.getMember().getMemberId());
 
@@ -143,14 +144,23 @@ public class PostingService {
     }
 
     private void isApprovalTrue(Posting posting) {
-        if(posting.isPostingApproval()){
-            throw new ApiRequestException("이미 인증된 게시글은 삭제할 수 없습니다.");
+
+
+        if(posting.getPostingCount() != 1L) {
+            if (posting.isPostingApproval()) {
+                throw new ApiRequestException("이미 인증된 게시글은 삭제할 수 없습니다.");
+            }
+        }else{
+            posting.updateApproval(false);
+            PointHistory pointHistory = pointHistoryRepository.findByPosting(posting);
+            pointHistory.updateStatus();
+            posting.getMember().updatePoint(-1L);
         }
     }
 
     private void validateMember(Member member, Long memberId) {
         if (!memberId.equals(member.getMemberId())) {
-            throw new ApiRequestException("해당 게시물에 대한 수정 권한이 없습니다.");
+            throw new ApiRequestException("해당 게시물에 대한 권한이 없습니다.");
         }
     }
 
@@ -162,7 +172,7 @@ public class PostingService {
         boolean sun = 7 == now.getDayOfWeek().getValue();
 
         if ( sat || sun){
-            if (challenge.getChallengeHoliday().equals("") ){
+            if (challenge.getChallengeHoliday().equals("0,6") ){
                 throw new ApiRequestException("주말에 작성 불가능한 챌린지 입니다!");
             }
         }
@@ -172,14 +182,19 @@ public class PostingService {
         if(posting){
             throw new ApiRequestException("동일한 챌린지에는 한번의 인증글만 작성할 수 있습니다.");
         }
-
     }
 
     private void validateUpdatePosting(Posting posting) {
         LocalDateTime now = LocalDate.now().atStartOfDay();
 
-        if(posting.getCreatedAt().isBefore(now)){
-            throw new ApiRequestException("작성 후 하루가 지나면 수정 할 수 없습니다.");
+        if(posting.getPostingCount() != 1L ) {
+            if (posting.getCreatedAt().isBefore(now)) {
+                throw new ApiRequestException("작성 후 하루가 지나면 수정 할 수 없습니다.");
+            }
+
+            if (posting.isPostingApproval()) {
+                throw new ApiRequestException("인증된 게시글은 수정할 수 없습니다.");
+            }
         }
     }
 
@@ -189,7 +204,7 @@ public class PostingService {
                 PointHistory pointHistory = new PointHistory(1L, posting); // 몇점받는지 첫번쨰 파라미터로 들어가야함
                 pointHistoryRepository.save(pointHistory);
                 posting.getMember().updatePoint(1L);
-                posting.updateApproval();
+                posting.updateApproval(true);
                 posting.updatePoint();
             }
         }

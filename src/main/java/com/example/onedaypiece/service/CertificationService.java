@@ -15,7 +15,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-
 @RequiredArgsConstructor
 @Service
 public class CertificationService {
@@ -55,7 +54,7 @@ public class CertificationService {
                 PointHistory pointHistory = new PointHistory(1L, posting); // 몇점받는지 첫번쨰 파라미터로 들어가야함
                 pointHistoryRepository.save(pointHistory);
                 posting.getMember().updatePoint(1L);
-                posting.updateApproval();
+                posting.updateApproval(true);
                 posting.updatePoint();
             }
         }

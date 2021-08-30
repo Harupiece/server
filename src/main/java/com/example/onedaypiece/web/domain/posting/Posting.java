@@ -1,6 +1,5 @@
 package com.example.onedaypiece.web.domain.posting;
 
-import com.example.onedaypiece.web.domain.certification.Certification;
 import com.example.onedaypiece.web.domain.challenge.Challenge;
 import com.example.onedaypiece.web.domain.common.Timestamped;
 import com.example.onedaypiece.web.domain.member.Member;
@@ -57,8 +56,6 @@ public class Posting extends Timestamped {
         this.postingCount = 0L;
         this.member = member;
         this.challenge = challenge;
-
-
     }
 
     //==생성 메서드==//
@@ -89,10 +86,9 @@ public class Posting extends Timestamped {
         this.postingCount += 1;
     }
 
-
     // 인증 상태 로직
-    public void updateApproval() {
-        this.postingApproval = true;
+    public void updateApproval(boolean isApproval) {
+        this.postingApproval = isApproval;
     }
 
     // 포인트 지급 상태 로직

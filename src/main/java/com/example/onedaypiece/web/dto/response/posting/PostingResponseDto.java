@@ -1,6 +1,5 @@
 package com.example.onedaypiece.web.dto.response.posting;
 
-import com.example.onedaypiece.web.domain.certification.Certification;
 import com.example.onedaypiece.web.dto.query.certification.CertificationQueryDto;
 import com.example.onedaypiece.web.dto.query.posting.PostingListQueryDto;
 import lombok.Builder;
@@ -8,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,7 +26,7 @@ public class PostingResponseDto {
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
     private Long postingCount;
-    private List<Long> memberResponseDto;
+    private List<Long> memberResponseDto = new ArrayList<>();
 
     @Builder
     public PostingResponseDto(Long postingId, String nickName, Long memberId, String profileImg,
@@ -47,7 +47,7 @@ public class PostingResponseDto {
         this.memberResponseDto = memberResponseDto;
     }
 
-    public static PostingResponseDto of (PostingListQueryDto posting, List<CertificationQueryDto> certificationList) {
+    public static PostingResponseDto of(PostingListQueryDto posting, List<CertificationQueryDto> certificationList) {
         List<Long> certificationMember = certificationList.stream()
                 .filter(certification ->
                         certification.getPostingId().equals(posting.getPostingId()))

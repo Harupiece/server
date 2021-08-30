@@ -7,16 +7,11 @@ import com.example.onedaypiece.web.domain.challengeRecord.ChallengeRecord;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.Period;
-import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.stream.Collectors;
-
-
 
 
 @NoArgsConstructor
@@ -37,32 +32,32 @@ public class ProceedResponseDto {
     private List<String> participateImg;
     private int participateSize; // 챌린지에 참여인원
 
-    public ProceedResponseDto(Challenge challenge, List<ChallengeRecord> participate){
+    public ProceedResponseDto(Challenge challenge, List<ChallengeRecord> participate) {
         this.challengeId = challenge.getChallengeId();
         this.challengeTitle = challenge.getChallengeTitle();
         this.challengeContent = challenge.getChallengeContent();
         this.categoryName = challenge.getCategoryName();
         this.challengeProgress = challenge.getChallengeProgress();
         this.challengeImgUrl = challenge.getChallengeImgUrl();
-        this.challengeMember  = challenge.getMember().getMemberId();
+        this.challengeMember = challenge.getMember().getMemberId();
         this.challengeStartDate = challenge.getChallengeStartDate();
         this.challengeEndDate = challenge.getChallengeEndDate();
 
         this.participateImg = getImg(participate);
-        this.successPercent =  percentProcess(challenge.getChallengeStartDate(), challenge.getChallengeEndDate());
+        this.successPercent = percentProcess(challenge.getChallengeStartDate(), challenge.getChallengeEndDate());
         this.participateSize = participateImg.size();
     }
 
-    public List<String> getImg(List<ChallengeRecord> recordList){
+    public List<String> getImg(List<ChallengeRecord> recordList) {
         List<String> imageList = recordList.stream()
                 .map(challengeRecord -> challengeRecord.getMember().getProfileImg())
                 .collect(Collectors.toList());
         return imageList;
     }
 
-    public int percentProcess(LocalDateTime startDate, LocalDateTime endDate){
-        LocalDate  startDate2 = startDate.toLocalDate();
-        LocalDate  endDate2 = endDate.toLocalDate();
+    public int percentProcess(LocalDateTime startDate, LocalDateTime endDate) {
+        LocalDate startDate2 = startDate.toLocalDate();
+        LocalDate endDate2 = endDate.toLocalDate();
 
         Long period1 = ChronoUnit.DAYS.between(startDate2, endDate2);
         LocalDate nowTime = LocalDateTime.now().toLocalDate();
@@ -71,9 +66,9 @@ public class ProceedResponseDto {
         double mom = (double) period1;
         double son = (double) period2;
 
-        double result =  (son / mom)*100;
+        double result = (son / mom) * 100;
 
-        int processTime = (int) result ;
+        int processTime = (int) result;
         return processTime;
     }
 

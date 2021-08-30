@@ -2,12 +2,10 @@ package com.example.onedaypiece.chat.repository;
 
 import com.example.onedaypiece.chat.model.ChatRoom;
 import org.springframework.data.redis.core.HashOperations;
-import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class RedisRepository {
