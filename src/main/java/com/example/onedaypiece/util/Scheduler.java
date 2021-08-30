@@ -68,7 +68,7 @@ public class Scheduler {
 
         List<ChallengeRecord> challengeMember = schedulerQueryRepository.findAllByChallenge(week);
 
-        //진행중인 챌린지 리스트
+        // 진행중인 챌린지 리스트
         List<Long> challengeId = challengeMember.stream()
                 .map(challengeRecord -> challengeRecord.getChallenge().getChallengeId())
                 .distinct()

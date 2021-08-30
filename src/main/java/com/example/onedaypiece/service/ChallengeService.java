@@ -33,7 +33,6 @@ import static com.example.onedaypiece.web.domain.challenge.CategoryName.*;
 import static com.example.onedaypiece.web.domain.challenge.Challenge.createChallenge;
 import static com.example.onedaypiece.web.domain.challengeRecord.ChallengeRecord.createChallengeRecord;
 import static com.example.onedaypiece.web.dto.response.challenge.ChallengeDetailResponseDto.createChallengeDetailResponseDto;
-import static com.example.onedaypiece.web.dto.response.challenge.ChallengeMainResponseDto.createChallengeMainResponseDto;
 import static com.example.onedaypiece.web.dto.response.challenge.ChallengeSourceResponseDto.createChallengeSourceResponseDto;
 
 @Service
@@ -101,7 +100,7 @@ public class ChallengeService {
     }
 
     public ChallengeMainResponseDto getMainPage() {
-        ChallengeMainResponseDto responseDto = createChallengeMainResponseDto();
+        ChallengeMainResponseDto responseDto = new ChallengeMainResponseDto();
         List<ChallengeRecord> records = challengeRecordQueryRepository.findAllByStatusTrue();
 
         sliderUpdate(responseDto, records);
