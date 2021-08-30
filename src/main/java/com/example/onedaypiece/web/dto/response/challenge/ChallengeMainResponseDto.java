@@ -1,6 +1,7 @@
 package com.example.onedaypiece.web.dto.response.challenge;
 
 import com.example.onedaypiece.web.domain.challengeRecord.ChallengeRecord;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -11,36 +12,36 @@ import java.util.stream.Collectors;
 @Getter
 public class ChallengeMainResponseDto {
 
-    private final List<ChallengeSourceResponseDto> slider = new ArrayList<>();
-    private final List<ChallengeSourceResponseDto> popular = new ArrayList<>();
-    private final List<ChallengeSourceResponseDto> exercise = new ArrayList<>();
-    private final List<ChallengeSourceResponseDto> livinghabits = new ArrayList<>();
-    private final List<ChallengeSourceResponseDto> nodrinknosmoke = new ArrayList<>();
+    private List<ChallengeSourceResponseDto> slider = new ArrayList<>();
+    private List<ChallengeSourceResponseDto> popular = new ArrayList<>();
+    private List<ChallengeSourceResponseDto> exercise = new ArrayList<>();
+    private List<ChallengeSourceResponseDto> livinghabits = new ArrayList<>();
+    private List<ChallengeSourceResponseDto> nodrinknosmoke = new ArrayList<>();
 
-    public static ChallengeMainResponseDto createChallengeMainResponseDto() {
-        return new ChallengeMainResponseDto();
+    @Builder
+    public ChallengeMainResponseDto(List<ChallengeSourceResponseDto> slider,
+                                    List<ChallengeSourceResponseDto> popular,
+                                    List<ChallengeSourceResponseDto> exercise,
+                                    List<ChallengeSourceResponseDto> livinghabits,
+                                    List<ChallengeSourceResponseDto> nodrinknosmoke) {
+        this.slider = slider;
+        this.popular = popular;
+        this.exercise = exercise;
+        this.livinghabits = livinghabits;
+        this.nodrinknosmoke = nodrinknosmoke;
     }
 
-    public void addExercise(ChallengeSourceResponseDto responseDto) {
-        exercise.add(responseDto);
-    }
-
-    public void addLivingHabits(ChallengeSourceResponseDto responseDto) {
-        livinghabits.add(responseDto);
-    }
-
-    public void addNoDrinkNoSmoke(ChallengeSourceResponseDto responseDto) {
-        nodrinknosmoke.add(responseDto);
-    }
-
-    public void addPopular(List<ChallengeRecord> popularSource, List<ChallengeRecord> records) {
-        this.popular.addAll(popularSource
-                .stream()
-                .map(record -> (ChallengeSourceResponseDto.createChallengeSourceResponseDto(record.getChallenge(), records)))
-                .collect(Collectors.toList()));
-    }
-
-    public void addSlider(List<ChallengeSourceResponseDto> sliderSource) {
-        this.slider.addAll(sliderSource);
+    public static ChallengeMainResponseDto createChallengeMainResponseDto(List<ChallengeSourceResponseDto> slider,
+                                                                          List<ChallengeSourceResponseDto> popular,
+                                                                          List<ChallengeSourceResponseDto> exercise,
+                                                                          List<ChallengeSourceResponseDto> livinghabits,
+                                                                          List<ChallengeSourceResponseDto> nodrinknosmoke) {
+        return ChallengeMainResponseDto.builder()
+                .slider(slider)
+                .popular(popular)
+                .exercise(exercise)
+                .livinghabits(livinghabits)
+                .nodrinknosmoke(nodrinknosmoke)
+                .build();
     }
 }

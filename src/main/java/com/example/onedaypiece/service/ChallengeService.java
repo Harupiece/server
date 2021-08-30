@@ -33,6 +33,7 @@ import static com.example.onedaypiece.web.domain.challenge.CategoryName.*;
 import static com.example.onedaypiece.web.domain.challenge.Challenge.createChallenge;
 import static com.example.onedaypiece.web.domain.challengeRecord.ChallengeRecord.createChallengeRecord;
 import static com.example.onedaypiece.web.dto.response.challenge.ChallengeDetailResponseDto.createChallengeDetailResponseDto;
+import static com.example.onedaypiece.web.dto.response.challenge.ChallengeMainResponseDto.*;
 import static com.example.onedaypiece.web.dto.response.challenge.ChallengeSourceResponseDto.createChallengeSourceResponseDto;
 
 @Service
@@ -51,8 +52,6 @@ public class ChallengeService {
     @Resource(name = "redisTemplate")
     private HashOperations<String, String, ChatRoom> hashOpsChatRoom;
     private static final String CHAT_ROOMS = "CHAT_ROOM";
-
-    private final LocalDateTime currentLocalDateTime = LocalDateTime.now();
 
     public ChallengeDetailResponseDto getChallengeDetail(Long challengeId) {
         Challenge challenge = challengeChecker(challengeId);
@@ -100,36 +99,34 @@ public class ChallengeService {
     }
 
     public ChallengeMainResponseDto getMainPage() {
-        ChallengeMainResponseDto responseDto = new ChallengeMainResponseDto();
         List<ChallengeRecord> records = challengeRecordQueryRepository.findAllByStatusTrue();
 
-        sliderUpdate(responseDto, records);
-        popularUpdate(responseDto, records);
-
-        categoryCollector(EXERCISE, records).forEach(responseDto::addExercise);
-        categoryCollector(LIVINGHABITS, records).forEach(responseDto::addLivingHabits);
-        categoryCollector(NODRINKNOSMOKE, records).forEach(responseDto::addNoDrinkNoSmoke);
-
-        return responseDto;
+        return createChallengeMainResponseDto(
+                sliderCollector(records),
+                popularCollector(records),
+                categoryCollector(EXERCISE, records),
+                categoryCollector(LIVINGHABITS, records),
+                categoryCollector(NODRINKNOSMOKE, records));
     }
 
-    private void sliderUpdate(ChallengeMainResponseDto responseDto, List<ChallengeRecord> records) {
+    private List<ChallengeSourceResponseDto> sliderCollector(List<ChallengeRecord> records) {
         List<Challenge> officialList = challengeQueryRepository.findAllByOfficialChallenge();
 
-        List<ChallengeSourceResponseDto> sliderSourceList = officialList
+        return officialList
                 .stream()
                 .map(c -> createChallengeSourceResponseDto(c, records))
                 .collect(Collectors.toList());
-
-        responseDto.addSlider(sliderSourceList);
     }
 
-    private void popularUpdate(ChallengeMainResponseDto responseDto, List<ChallengeRecord> records) {
+    private List<ChallengeSourceResponseDto> popularCollector(List<ChallengeRecord> records) {
         final int POPULAR_SIZE = 4;
 
         List<ChallengeRecord> popularRecords = challengeRecordQueryRepository
                 .findAllPopular(PageRequest.of(0, POPULAR_SIZE));
-        responseDto.addPopular(popularRecords, records);
+        return popularRecords
+                .stream()
+                .map(r -> (ChallengeSourceResponseDto.createChallengeSourceResponseDto(r.getChallenge(), records)))
+                .collect(Collectors.toList());
     }
 
     private List<ChallengeSourceResponseDto> categoryCollector(CategoryName category, List<ChallengeRecord> records) {
@@ -175,7 +172,7 @@ public class ChallengeService {
         if (!challenge.getMember().getEmail().equals(username)) {
             throw new ApiRequestException("작성자가 아닙니다.");
         }
-        if (currentLocalDateTime.isBefore(challenge.getChallengeStartDate())) {
+        if (LocalDateTime.now().isBefore(challenge.getChallengeStartDate())) {
             challenge.setChallengeStatusFalse();
             challenge.updateChallengeProgress(3L);
         } else {
