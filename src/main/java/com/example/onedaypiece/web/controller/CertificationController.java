@@ -23,7 +23,6 @@ public class CertificationController {
     public Long createCertification(
             @RequestBody CertificationRequestDto certificationRequestDto,
             @AuthenticationPrincipal UserDetails userDetails){
-
         log.info("certificationRequestDto : {} ",certificationRequestDto);
         return certificationService.createCertification(certificationRequestDto,userDetails);
     }

@@ -6,10 +6,12 @@ import com.example.onedaypiece.web.dto.request.challenge.PutChallengeRequestDto;
 import com.example.onedaypiece.web.dto.response.challenge.ChallengeDetailResponseDto;
 import com.example.onedaypiece.web.dto.response.challenge.ChallengeMainResponseDto;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @RequiredArgsConstructor
 @RestController
 public class ChallengeController {
@@ -38,6 +40,7 @@ public class ChallengeController {
     @PostMapping("/api/member/challenge")
     public Long createChallenge(@RequestBody ChallengeRequestDto requestDto,
                                 @AuthenticationPrincipal UserDetails userDetails) {
+        log.info("POST challenge title : {} ", requestDto.getChallengeTitle());
         return challengeService.postChallenge(requestDto, userDetails.getUsername());
     }
 
@@ -47,6 +50,7 @@ public class ChallengeController {
     @PutMapping("/api/member/challenge")
     public void putChallenge(@RequestBody PutChallengeRequestDto requestDto,
                              @AuthenticationPrincipal UserDetails userDetails) {
+        log.info("PUT challenge id : {} ", requestDto.getChallengeId());
         challengeService.putChallenge(requestDto, userDetails.getUsername());
     }
 
@@ -54,7 +58,9 @@ public class ChallengeController {
      * 5. 챌린지 취소
      */
     @DeleteMapping("/api/member/challenge/{challengeId}")
-    public void deleteChallenge(@PathVariable Long challengeId, @AuthenticationPrincipal UserDetails userDetails) {
+    public void deleteChallenge(@PathVariable Long challengeId,
+                                @AuthenticationPrincipal UserDetails userDetails) {
+        log.info("DELETE challenge : {} ", challengeId);
         challengeService.deleteChallenge(challengeId, userDetails.getUsername());
     }
 }

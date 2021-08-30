@@ -53,12 +53,18 @@ public class ChallengeService {
     private HashOperations<String, String, ChatRoom> hashOpsChatRoom;
     private static final String CHAT_ROOMS = "CHAT_ROOM";
 
+    /**
+     * 챌린지 상세
+     */
     public ChallengeDetailResponseDto getChallengeDetail(Long challengeId) {
         Challenge challenge = challengeChecker(challengeId);
         List<ChallengeDetailResponseDtoMemberDto> memberList = challengeRecordQueryRepository.findAllByChallengeId(challengeId);
         return createChallengeDetailResponseDto(challenge, memberList);
     }
 
+    /**
+     * 챌린지 삭제
+     */
     @Transactional
     public void deleteChallenge(Long challengeId, String username) {
         Challenge challenge = challengeChecker(challengeId);
@@ -68,6 +74,9 @@ public class ChallengeService {
         recordList.forEach(ChallengeRecord::setStatusFalse);
     }
 
+    /**
+     * 챌린지 등록
+     */
     @Transactional
     public Long postChallenge(ChallengeRequestDto requestDto, String email) {
         Member member = memberChecker(email);
@@ -90,6 +99,9 @@ public class ChallengeService {
         return challengeId;
     }
 
+    /**
+     * 챌린지 수정
+     */
     @Transactional
     public void putChallenge(PutChallengeRequestDto requestDto, String email) {
         Member member = memberChecker(email);
@@ -98,6 +110,9 @@ public class ChallengeService {
         challenge.putChallenge(requestDto);
     }
 
+    /**
+     * 메인 페이지 챌린지
+     */
     public ChallengeMainResponseDto getMainPage() {
         List<ChallengeRecord> records = challengeRecordQueryRepository.findAllByStatusTrue();
 
