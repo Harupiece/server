@@ -29,6 +29,9 @@ public class ChallengeRecordService {
     private final MemberRepository memberRepository;
     private final ChatMemberRepository chatMemberRepository;
 
+    /**
+     * 챌린지 신청
+     */
     @Transactional
     public void requestChallenge(ChallengeRecordRequestDto requestDto, String email) {
         Challenge challenge = ChallengeChecker(requestDto.getChallengeId());
@@ -43,6 +46,9 @@ public class ChallengeRecordService {
         chatMemberRepository.save(chatMember);
     }
 
+    /**
+     * 챌린지 포기
+     */
     @Transactional
     public void giveUpChallenge(Long challengeId, String email) {
         Challenge challenge = ChallengeChecker(challengeId);

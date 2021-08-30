@@ -45,7 +45,7 @@ public class ChallengeSearchService {
     }
 
     /**
-     * 챌린지 카테고리, 태그별 검색
+     * 챌린지 소팅 검색 (조건에 따라 전체 검색)
      */
     public ChallengeListResponseDto getChallengeBySearch(String categoryName,
                                                          int period,

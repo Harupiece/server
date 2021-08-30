@@ -16,6 +16,9 @@ public class CategoryImageService {
 
     private final CategoryImageRepository categoryImageRepository;
 
+    /**
+     * 카테고리 이미지 등록
+     */
     @Transactional
     public void postCategoryImage(CategoryImageRequestDto requestDto) {
         if (!categoryImageRepository.existsByCategoryImageUrl(requestDto.getCategoryImageUrl())) {
@@ -23,15 +26,13 @@ public class CategoryImageService {
         } else throw new ApiRequestException("이미 존재하는 이미지입니다.");
     }
 
+    /**
+     * 카테고리 이미지 가져오기
+     */
     public CategoryImageResponseDto getCategoryImage(CategoryName categoryName) {
         CategoryImageResponseDto categoryImageResponseDto = new CategoryImageResponseDto();
         categoryImageRepository.findAllByCategoryName(categoryName).forEach(
                 value -> categoryImageResponseDto.addCategoryImageUrl(value.getCategoryImageUrl()));
         return categoryImageResponseDto;
-    }
-
-    @Transactional
-    public void deleteCategoryImage(String imgUrl) {
-        categoryImageRepository.deleteByCategoryImageUrl(imgUrl);
     }
 }
