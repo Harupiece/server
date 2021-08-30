@@ -10,7 +10,6 @@ import java.util.List;
 @NoArgsConstructor
 public class ChatRoomResponseDto {
 
-    private Long count; // 인원수
     private List<ChatMessageResponseDto> chatMessages;
     private boolean hasNext;
 

@@ -28,8 +28,10 @@ public class ChatMessageService {
     private final ChatMessageRepository chatMessageRepository;
     private final ChatMemberRepository chatMemberRepository;
 
-    // tcp
-    //destination정보에서 roomId 추출
+    /*
+        tcp
+        destination정보에서 roomId 추출
+     */
     public String getRoomId(Object destination) {
         String destinationToString = String.valueOf(destination);
 
@@ -40,7 +42,12 @@ public class ChatMessageService {
             return null;
     }
 
-    // 채팅방에 메세지 발송
+    /*
+        채팅방에 메세지 발송
+     */
+    /*
+        type이 talk일 때의 메서드
+     */
     @Transactional
     public void pubTalkMessage(ChatMessageRequestDto requestDto) {
         Member member = getMember(requestDto);
@@ -49,11 +56,16 @@ public class ChatMessageService {
         pubMessage(chatMessage);
     }
 
+    /*
+       type이 enter일 때의 메서드
+     */
     @Transactional
     public void pubEnterMessage(ChatMessageRequestDto requestDto) {
         Member member = getMember(requestDto);
         validateChatRoom(requestDto, member);
+        // 채팅방 최초 접근자임을 확인
         ChatMember chatMember = chatMemberRepository.findByMemberIdAndRoomId(member.getMemberId(), requestDto.getRoomId());
+        // 최초 접근자의 경우 알림 메세지 발송
         if(chatMember.isStatusFirst()) {
             ChatMessage chatMessage = ChatMessage.createENTERMessage(requestDto);
             pubMessage(chatMessage);
@@ -61,20 +73,29 @@ public class ChatMessageService {
         }
     }
 
+    /*
+        sub 하고 있는 이용자에게 메세지 pub
+     */
     public void pubMessage(ChatMessage chatMessage){
         chatMessageRepository.save(chatMessage);
         redisTemplate.convertAndSend(channelTopic.getTopic(), chatMessage);
     }
 
+    /*
+        회원 조회
+     */
     private Member getMember(ChatMessageRequestDto requestDto) {
         return memberRepository.findByNickname(requestDto.getNickname())
                 .orElseThrow(() -> new ApiRequestException("조회되지 않는 회원입니다."));
     }
 
+    /*
+       챌린지가 진행 중 또는 진행 예정일 경우와 챌린지를 참여한 경우에만 채팅방 접근 가능
+     */
     private void validateChatRoom(ChatMessageRequestDto requestDto, Member member) {
-        boolean b = challengeRecordRepository.existsByChallengeIdAndAndMember(
+        boolean validate = challengeRecordRepository.existsByChallengeIdAndAndMember(
                 Long.parseLong(requestDto.getRoomId()), member, 2L, 1L);
-        if (!b) {
+        if (!validate) {
             throw new ApiRequestException("입장 가능한 챌린지가 없습니다.");
         }
     }
