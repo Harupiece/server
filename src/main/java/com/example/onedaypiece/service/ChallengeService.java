@@ -34,6 +34,7 @@ import static com.example.onedaypiece.web.domain.challenge.Challenge.createChall
 import static com.example.onedaypiece.web.domain.challengeRecord.ChallengeRecord.createChallengeRecord;
 import static com.example.onedaypiece.web.dto.response.challenge.ChallengeDetailResponseDto.createChallengeDetailResponseDto;
 import static com.example.onedaypiece.web.dto.response.challenge.ChallengeMainResponseDto.createChallengeMainResponseDto;
+import static com.example.onedaypiece.web.dto.response.challenge.ChallengeSourceResponseDto.createChallengeSourceResponseDto;
 
 @Service
 @RequiredArgsConstructor
@@ -118,7 +119,7 @@ public class ChallengeService {
 
         List<ChallengeSourceResponseDto> sliderSourceList = officialList
                 .stream()
-                .map(challenge -> new ChallengeSourceResponseDto(challenge, records))
+                .map(c -> createChallengeSourceResponseDto(c, records))
                 .collect(Collectors.toList());
 
         responseDto.addSlider(sliderSourceList);
@@ -145,7 +146,7 @@ public class ChallengeService {
 
         return challenges
                 .stream()
-                .map(c -> new ChallengeSourceResponseDto(c, records))
+                .map(c -> createChallengeSourceResponseDto(c, records))
                 .collect(Collectors.toList());
     }
 
