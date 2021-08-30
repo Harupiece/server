@@ -4,6 +4,7 @@ import com.example.onedaypiece.web.dto.response.mypage.end.MyPageEndResponseDto;
 import com.example.onedaypiece.web.dto.response.mypage.histroy.MemberHistoryResponseDto;
 import com.example.onedaypiece.web.dto.response.mypage.proceed.MypageProceedResponseDto;
 import com.example.onedaypiece.web.dto.response.mypage.scheduled.MyPageScheduledResponseDto;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -17,6 +18,7 @@ public class MyPageResponseDto {
     private MyPageEndResponseDto myPageEndResponseDto; // 종료된 챌린지
 
 
+    @Builder
     public MyPageResponseDto(MemberHistoryResponseDto history, MypageProceedResponseDto proceed,
                              MyPageScheduledResponseDto schedule, MyPageEndResponseDto end){
 
@@ -24,5 +26,17 @@ public class MyPageResponseDto {
         this.mypageProceedResponseDto = proceed;
         this.myPageScheduledResponseDto = schedule;
         this.myPageEndResponseDto = end;
+    }
+
+    public static MyPageResponseDto createMyPageResponseDto(MemberHistoryResponseDto history,
+                                                            MypageProceedResponseDto proceed,
+                                                            MyPageScheduledResponseDto schedule,
+                                                            MyPageEndResponseDto end){
+
+        return MyPageResponseDto.builder().history(history)
+                .proceed(proceed)
+                .schedule(schedule)
+                .end(end)
+                .build();
     }
 }

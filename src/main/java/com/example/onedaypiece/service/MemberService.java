@@ -39,8 +39,18 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+
+
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static com.example.onedaypiece.web.dto.response.member.MemberTokenResponseDto.createMemberTokenResponseDto;
+import static com.example.onedaypiece.web.dto.response.member.reload.ReloadResponseDto.createReloadResponseDto;
+import static com.example.onedaypiece.web.dto.response.mypage.MyPageResponseDto.createMyPageResponseDto;
+import static com.example.onedaypiece.web.dto.response.mypage.end.MyPageEndResponseDto.createMyPageEndResponseDto;
+import static com.example.onedaypiece.web.dto.response.mypage.histroy.MemberHistoryResponseDto.createMemberHistoryResponseDto;
+import static com.example.onedaypiece.web.dto.response.mypage.proceed.MypageProceedResponseDto.createMypageProceedResponseDto;
+import static com.example.onedaypiece.web.dto.response.mypage.scheduled.MyPageScheduledResponseDto.createMyPageScheduledResponseDto;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -80,9 +90,9 @@ public class MemberService {
         requestDto.setPassword(password);
 
         Point point = new Point();
-//        point = pointRepository.save(point);
-        memberRepository.save(new Member(requestDto, pointRepository.save(point)));
-
+//        memberRepository.save(new Member(requestDto, pointRepository.save(point)));
+        Member member = Member.createMember(requestDto.getEmail(), requestDto.getPassword(), requestDto.getNickname(), requestDto.getProfileImg(), point);
+        memberRepository.save(member);
     }
 
     // 로그인
@@ -114,7 +124,7 @@ public class MemberService {
         // 완료된 챌린지 리스트
         List<ChallengeRecord> completeList = challengeRecordQueryRepository.findAllByMemberAndProgress(member,3L);
 
-        return new MemberTokenResponseDto(tokenDto, member, targetList1.size() + targetList2.size(), completeList.size());
+        return createMemberTokenResponseDto(tokenDto, member, targetList1.size() + targetList2.size(), completeList.size());
     }
 
     // 새로고침
@@ -130,7 +140,7 @@ public class MemberService {
         // 완료된 챌린지 리스트
         List<ChallengeRecord> completeList = challengeRecordQueryRepository.findAllByMemberAndProgress(member,3L);
 
-        return new ReloadResponseDto(member, targetList1.size() + targetList2.size(), completeList.size());
+        return createReloadResponseDto(member, targetList1.size() + targetList2.size(), completeList.size());
     }
 
 
@@ -171,7 +181,7 @@ public class MemberService {
         List<ChallengeRecord> completeList = challengeRecordQueryRepository.findAllByMemberAndProgress(member,3L);
 
         // 토큰 발급 수정해버렸음 나중에 Cookie 실험할거임
-        return new MemberTokenResponseDto(tokenDto, member, targetList1.size() + targetList2.size(), completeList.size());
+        return createMemberTokenResponseDto(tokenDto, member, targetList1.size() + targetList2.size(), completeList.size());
     }
 
     // 마이 페이지 비밀번호 수정
@@ -214,7 +224,7 @@ public class MemberService {
         MyPageScheduledResponseDto schedule = getSchduled(member);
         MyPageEndResponseDto end = getEnd(member);
 
-        return new MyPageResponseDto(history, proceed, schedule, end);
+        return createMyPageResponseDto(history, proceed, schedule, end);
     }
 
 
@@ -250,8 +260,9 @@ public class MemberService {
                 .map(memberHistory -> new PointHistoryDto(memberHistory))
                 .collect(Collectors.toList());
 
-        // 1파라미터 MemberResponseDto
-        return new MemberHistoryResponseDto(member, pointHistoryListP, pointHistoryListC, rank);
+
+//        return new MemberHistoryResponseDto(member, pointHistoryListP, pointHistoryListC, rank);
+        return createMemberHistoryResponseDto(member, pointHistoryListP, pointHistoryListC, rank);
     }
 
 
@@ -269,7 +280,7 @@ public class MemberService {
                 .map(challenge -> new ProceedResponseDto(challenge, challengeRecordQueryRepository.findAllByChallenge(challenge)))
                 .collect(Collectors.toList());
 
-        return new MypageProceedResponseDto(member, member.getPoint().getAcquiredPoint(), proceedingResult);
+        return createMypageProceedResponseDto(member, member.getPoint().getAcquiredPoint(), proceedingResult);
     }
 
     // 예정인
@@ -284,7 +295,7 @@ public class MemberService {
                 .map(challenge -> new ScheduledResponseDto(challenge, challengeRecordQueryRepository.findAllByChallenge(challenge)))
                 .collect(Collectors.toList());
 
-        return new MyPageScheduledResponseDto(member,  scheduledList);
+        return createMyPageScheduledResponseDto(member,  scheduledList);
     }
 
     // 종료된 챌린지
@@ -299,7 +310,7 @@ public class MemberService {
                 .map(challenge -> new EndResponseDto(challenge, challengeRecordQueryRepository.findAllByChallenge(challenge)))
                 .collect(Collectors.toList());
 
-        return new MyPageEndResponseDto(member, endList);
+        return createMyPageEndResponseDto(member, endList);
     }
 
 
