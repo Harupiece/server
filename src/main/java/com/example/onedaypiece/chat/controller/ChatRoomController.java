@@ -23,8 +23,10 @@ public class ChatRoomController {
     // 채팅방 생성
     // 챌린지와 함께 생성 redis 캐시에 저장
 
-    // 채팅방 입장
-    // 채팅방 대화 불러오기
+    /*
+       채팅방 입장
+       채팅방 대화 불러오기
+     */
     @GetMapping("/chat/messages/{roomId}")
     public ChatRoomResponseDto getEachChatRoom(@PathVariable String roomId,
                                                                @RequestParam("page") int page,
