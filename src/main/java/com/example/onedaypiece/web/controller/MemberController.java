@@ -21,48 +21,59 @@ public class MemberController {
 
     private final MemberService memberService;
 
-    //회원가입
+    /**
+     * 1. 회원가입
+     */
     @PostMapping("/signup")
     public void registerUser(@RequestBody SignupRequestDto signupRequestDto) {
         memberService.registMember(signupRequestDto);
     }
 
-    // 로그인 요청사항으로수정
+    /**
+     * 2. 로그인 요청사항으로 수정
+     */
     @PostMapping("/login")
     public MemberTokenResponseDto login(@RequestBody LoginRequestDto loginRequestDto) {
         return memberService.loginMember(loginRequestDto);
     }
 
-    // 새로고침
+    /**
+     * 3. 새로고침
+     */
     @GetMapping("/reload")
     public ReloadResponseDto reload(@AuthenticationPrincipal UserDetails userDetails) {
         return memberService.reload(userDetails.getUsername());
     }
 
-    // 재발급
+    /**
+     * 4. 재발급
+     */
     @PostMapping("/reissue")
     public MemberTokenResponseDto reissue(@RequestBody TokenRequestDto tokenRequestDto) {
         return memberService.reissue(tokenRequestDto);
     }
 
-    // 마이 페이지 수정 비밀번호변경만
+    /**
+     * 5. 마이 페이지 수정 비밀번호 변경만
+     */
     @PutMapping("/mypage/password")
     public void updateMyPageInfoPassword(@RequestBody PwUpdateRequestDto requestDto, @AuthenticationPrincipal UserDetails userDetails) {
         memberService.updatePassword(requestDto, userDetails.getUsername());
     }
 
-    // 마이 페이지 수정 프로필 + 닉네임
+    /**
+     * 6. 마이 페이지 수정 프로필 + 닉네임
+     */
     @PutMapping("/mypage/profile")
     public String updateMyPageInfoProfile(@RequestBody ProfileUpdateRequestDto requestDto, @AuthenticationPrincipal UserDetails userDetails) {
-        String afterProfileImg = memberService.updateProfile(requestDto, userDetails.getUsername());
-        return afterProfileImg;
+        return memberService.updateProfile(requestDto, userDetails.getUsername());
     }
 
-
-    // 마이페이지 종합선물세트
+    /**
+     * 7. 마이 페이지
+     */
     @GetMapping("/mypage")
     public MyPageResponseDto getMypage(@AuthenticationPrincipal UserDetails userDetails) {
-        MyPageResponseDto responseDto = memberService.getMyPage(userDetails.getUsername());
-        return responseDto;
+        return memberService.getMyPage(userDetails.getUsername());
     }
 }

@@ -51,7 +51,7 @@ public class Scheduler {
     @Resource(name = "redisTemplate")
     private HashOperations<String, String, ChatRoom> hashOpsChatRoom;
     private static final String CHAT_ROOMS = "CHAT_ROOM";
-    private final static String SCHEDULE_MODE = System.getProperty( "schedule.mode" );
+    private static final String SCHEDULE_MODE = System.getProperty("schedule.mode");
 
     LocalDateTime today;
 
@@ -59,7 +59,7 @@ public class Scheduler {
     @Transactional
     public void certificationKick() {
 
-        if ( isNotScheduleMode() ) {
+        if (isNotScheduleMode()) {
             return;
         }
         initializeToday();
@@ -81,7 +81,6 @@ public class Scheduler {
 
         int notWrittenChallengeRecordKick = challengeRecordRepository.kickMemberOnChallenge(notWrittenMember, notWrittenChallenge);
         log.info("포스팅 작성하지 않은 인원 update : {} ", notWrittenChallengeRecordKick);
-
     }
 
 
@@ -89,7 +88,7 @@ public class Scheduler {
     @Transactional
     public void changePostingApproval() {
 
-        if ( isNotScheduleMode() ) {
+        if (isNotScheduleMode()) {
             return;
         }
 
@@ -120,7 +119,7 @@ public class Scheduler {
     @Transactional
     public void postingStatusUpdate() {
 
-        if ( isNotScheduleMode() ) {
+        if (isNotScheduleMode()) {
             return;
         }
         List<Long> postingIdList = schedulerQueryRepository.findSchedulerUpdatePosting(today);
@@ -133,7 +132,7 @@ public class Scheduler {
     @Transactional
     public void challengeStatusUpdate() {
 
-        if ( isNotScheduleMode() ) {
+        if (isNotScheduleMode()) {
             return;
         }
         List<ChallengeRecord> recordList = schedulerQueryRepository.findAllByChallengeProgressLessThan(3L);
@@ -168,9 +167,9 @@ public class Scheduler {
     @Transactional
     public void createOfficialChallenge() {
 
-//        if ( isNotScheduleMode() ) {
-//            return;
-//        }
+        if (isNotScheduleMode()) {
+            return;
+        }
         Member member = memberRepository.findById(1L).orElseThrow(() -> new NullPointerException("없는 유저입니다."));
 
         final int CREATE_DELAY = 7;
@@ -322,7 +321,7 @@ public class Scheduler {
 
     private boolean isNotScheduleMode() {
 
-        if ( null != SCHEDULE_MODE && SCHEDULE_MODE.equals( "on" ) ) {
+        if (null != SCHEDULE_MODE && SCHEDULE_MODE.equals("on")) {
             return false;
         }
         return true;

@@ -14,19 +14,25 @@ public class CategoryImageController {
     private final CategoryImageService categoryImageService;
 
     /**
-     * 1. 카테고리 이미지등록
+     * 1. 카테고리 이미지 등록
      */
-    @PostMapping("/api/category-image") // 카테고리 이미지 등록
+    @PostMapping("/api/category-image")
     public void postCategoryImage(@RequestBody CategoryImageRequestDto requestDto) {
         categoryImageService.postCategoryImage(requestDto);
     }
 
-    @GetMapping("/api/category-image/{categoryName}") // 카테고리 이미지 조회
+    /**
+     * 2. 카테고리 이미지 조회
+     */
+    @GetMapping("/api/category-image/{categoryName}")
     public CategoryImageResponseDto getCategoryImage(@PathVariable CategoryName categoryName) {
         return categoryImageService.getCategoryImage(categoryName);
     }
 
-    @DeleteMapping("/api/category-image/{imgUrl}") // 카테고리 이미지 삭제
+    /**
+     * 3. 카테고리 이미지 조회
+     */
+    @DeleteMapping("/api/category-image/{imgUrl}")
     public void deleteCategoryImage(@PathVariable String imgUrl) {
         categoryImageService.deleteCategoryImage(imgUrl);
     }
