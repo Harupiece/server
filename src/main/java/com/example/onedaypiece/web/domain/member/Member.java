@@ -55,20 +55,21 @@ public class Member extends Timestamped implements Serializable {
         this.email = email;
         this.password = password;
         this.nickname = nickname;
-        this.role = role;
+        this.role = MemberRole.MEMBER;
         this.profileImg = profileImg;
-        this.memberStatus = memberStatus;
+        this.memberStatus = 1L;
         this.point = point;
     }
 
-    public Member(SignupRequestDto requestDto, Point point){
-        this.email = requestDto.getEmail();
-        this.password = requestDto.getPassword();
-        this.nickname = requestDto.getNickname();
-        this.profileImg = requestDto.getProfileImg();
-        this.memberStatus = 1L;
-        this.role = MemberRole.MEMBER;
-        this.point = point;
+    public static Member createMember(SignupRequestDto requestDto,
+                                      Point point){
+        return Member.builder()
+                .email(requestDto.getEmail())
+                .password(requestDto.getPassword())
+                .nickname(requestDto.getNickname())
+                .profileImg(requestDto.getProfileImg())
+                .point(point)
+                .build();
     }
 
     // 마이페이지 비밀번호 수정

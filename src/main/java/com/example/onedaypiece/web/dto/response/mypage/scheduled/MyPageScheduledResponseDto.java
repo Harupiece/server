@@ -2,6 +2,7 @@ package com.example.onedaypiece.web.dto.response.mypage.scheduled;
 
 import com.example.onedaypiece.web.domain.member.Member;
 import com.example.onedaypiece.web.dto.response.mypage.CalculLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -18,6 +19,7 @@ public class MyPageScheduledResponseDto {
     private Long level;
     private List<ScheduledResponseDto> challengeList;
 
+    @Builder
     public MyPageScheduledResponseDto(Member member, List<ScheduledResponseDto> challengeList){
         this.memberId = member.getMemberId();
         this.nickname = member.getNickname();
@@ -25,6 +27,15 @@ public class MyPageScheduledResponseDto {
         this.point = member.getPoint().getAcquiredPoint();
         this.challengeList = challengeList;
         this.level = CalculLevel.calculLevel(member.getPoint().getAcquiredPoint());
+    }
+
+    public static MyPageScheduledResponseDto createMyPageScheduledResponseDto(Member member,
+                                                                              List<ScheduledResponseDto> challengeList){
+
+        return MyPageScheduledResponseDto.builder()
+                .member(member)
+                .challengeList(challengeList)
+                .build();
     }
 
 }
