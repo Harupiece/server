@@ -47,13 +47,15 @@ public class ChallengeSearchService {
     /**
      * 챌린지 소팅 검색 (조건에 따라 전체 검색)
      */
-    public ChallengeListResponseDto getChallengeBySearch(String categoryName,
+    public ChallengeListResponseDto getChallengeBySearch(String word,
+                                                         String categoryName,
                                                          int period,
                                                          int progress,
                                                          int page) {
+
         Pageable pageable = PageRequest.of(page - 1, SEARCH_SIZE);
         Slice<Challenge> challengeList = challengeQueryRepository
-                .findAllBySearch(categoryName, period, progress, pageable);
+                .findAllBySearch(word, categoryName, period, progress, pageable);
 
         Map<Challenge, List<ChallengeRecord>> recordMap = challengeRecordQueryRepository
                 .findAllByChallengeList(challengeList).stream()

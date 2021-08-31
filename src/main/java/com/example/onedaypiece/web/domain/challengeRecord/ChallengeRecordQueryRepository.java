@@ -21,12 +21,6 @@ public class ChallengeRecordQueryRepository {
 
     private final JPAQueryFactory queryFactory;
 
-    /**
-     * @Query("select r from ChallengeRecord r " +
-     * "inner join fetch r.member " +
-     * "Where r.challengeRecordStatus = true and r.challenge = :challenge")
-     * List<ChallengeRecord> findAllByChallenge(Challenge challenge);
-     */
     public List<ChallengeRecord> findAllByChallenge(Challenge challenge) {
         return queryFactory
                 .select(challengeRecord)
@@ -50,14 +44,6 @@ public class ChallengeRecordQueryRepository {
                 .fetch();
     }
 
-    /**
-     * @Query("select c from ChallengeRecord c " +
-     * "inner join fetch c.challenge " +
-     * "inner join fetch c.member " +
-     * "Where c.challengeRecordStatus = true " +
-     * "and c.challenge.challengeId = :challengeId")
-     * List<ChallengeRecord> findAllByChallengeId(Long challengeId);
-     */
     public List<ChallengeDetailResponseDtoMemberDto> findAllByChallengeId(Long challengeId) {
         return queryFactory
                 .select(new QChallengeDetailResponseDtoMemberDto(
@@ -73,14 +59,6 @@ public class ChallengeRecordQueryRepository {
                 .fetch();
     }
 
-    /**
-     * @Query("select c " +
-     * "from ChallengeRecord c inner join fetch c.challenge " +
-     * "where c.challenge.challengeStatus = true and c.challenge.challengeProgress = 1 " +
-     * "and c.member.email not in :email group by c.challenge.challengeId " +
-     * "order by count(c.challenge.challengeId) desc")
-     * List<ChallengeRecord> findPopularOrderByDesc(String email, Pageable pageable);
-     */
     public List<ChallengeRecord> findAllPopular(Pageable page) {
         return queryFactory
                 .select(challengeRecord)
@@ -89,7 +67,8 @@ public class ChallengeRecordQueryRepository {
                 .where(challengeRecord.challengeRecordStatus.isTrue(),
                         challengeRecord.challenge.challengeStatus.isTrue(),
                         challengeRecord.challenge.challengeProgress.eq(1L),
-                        challengeRecord.challenge.categoryName.ne(CategoryName.OFFICIAL))
+                        challengeRecord.challenge.categoryName.ne(CategoryName.OFFICIAL),
+                        challengeRecord.challenge.challengePassword.eq(""))
                 .groupBy(challengeRecord.challenge.challengeId)
                 .orderBy(challengeRecord.challenge.challengeId.count().desc())
                 .offset(page.getOffset())
@@ -97,15 +76,6 @@ public class ChallengeRecordQueryRepository {
                 .fetch();
     }
 
-    /**
-     * @Query("select c " +
-     * "from ChallengeRecord c " +
-     * "inner join fetch c.challenge " +
-     * "inner join fetch c.member " +
-     * "Where c.challengeRecordStatus = true and c.challenge.challengeProgress = 1 " +
-     * "order by c.modifiedAt desc")
-     * List<ChallengeRecord> findAllByStatusTrueOrderByModifiedAtDesc();
-     */
     public List<ChallengeRecord> findAllByStatusTrue() {
         return queryFactory
                 .selectFrom(challengeRecord)
@@ -113,18 +83,12 @@ public class ChallengeRecordQueryRepository {
                 .join(challengeRecord.member).fetchJoin()
                 .where(challengeRecord.challengeRecordStatus.isTrue(),
                         challengeRecord.challenge.challengeStatus.isTrue(),
-                        challengeRecord.challenge.challengeProgress.eq(1L))
+                        challengeRecord.challenge.challengeProgress.eq(1L),
+                        challengeRecord.challenge.challengePassword.eq(""))
                 .orderBy(challengeRecord.modifiedAt.desc())
                 .fetch();
     }
 
-    /**
-     * @Query("select count(c.challengeRecordId) " +
-     * "from ChallengeRecord c " +
-     * "Where c.challengeRecordStatus = true " +
-     * "and c.challenge = :challenge")
-     * int countByChallenge(Challenge challenge);
-     */
     public Long countByChallenge(Challenge challenge) {
         return queryFactory
                 .select(challengeRecord.challengeRecordId)
@@ -135,14 +99,6 @@ public class ChallengeRecordQueryRepository {
                 .fetchCount();
     }
 
-    /**
-     * @Query("select c from ChallengeRecord c " +
-     * "Where c.challengeRecordStatus = true " +
-     * "and c.member = :member " +
-     * "and c.challenge.challengeProgress = :progress")
-     * List<ChallengeRecord> findAllByMemberAndProgress(Member member, Long progress);
-     */
-    // 1번과 2번인 챌린지 레코드
     public List<ChallengeRecord> findAllByMemberAndProgress(Member member, Long progress) {
         return queryFactory
                 .selectFrom(challengeRecord)
@@ -162,7 +118,6 @@ public class ChallengeRecordQueryRepository {
                         challengeRecord.challenge.challengeProgress.eq(challengeStatus))
                 .fetch();
     }
-
 
     public List<ChallengeRecord> findAllByMember(Member member) {
         return queryFactory
