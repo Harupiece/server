@@ -74,6 +74,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/swagger-resources/**").permitAll()
                 .antMatchers("/v2/api-docs").permitAll()
                 .antMatchers("/webjars").permitAll()
+                .antMatchers("/api/test").permitAll()
 
 
                 //여기에카카오 요청넣어보기

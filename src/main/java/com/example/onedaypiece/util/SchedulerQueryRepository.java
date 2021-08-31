@@ -5,18 +5,17 @@ import com.example.onedaypiece.web.domain.challengeRecord.ChallengeRecord;
 import com.example.onedaypiece.web.domain.challengeRecord.QChallengeRecord;
 import com.example.onedaypiece.web.domain.member.Member;
 import com.example.onedaypiece.web.domain.point.Point;
+import com.example.onedaypiece.web.domain.posting.Posting;
 import com.example.onedaypiece.web.dto.query.posting.QSchedulerIdListDto;
 import com.example.onedaypiece.web.dto.query.posting.SchedulerIdListDto;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -31,19 +30,18 @@ import static com.example.onedaypiece.web.domain.posting.QPosting.posting;
 @Transactional(readOnly = true)
 public class SchedulerQueryRepository {
 
-    @Autowired
-    EntityManager em;
 
     private final JPAQueryFactory queryFactory;
 
     /**
      *진행중인 챌린지
-     *
      */
-    public List<ChallengeRecord> findAllByChallenge(int week) {
+    public List<Long> findAllByChallenge(int week) {
         return queryFactory
-                .selectFrom(challengeRecord)
-                .innerJoin(challengeRecord.challenge,challenge)
+                .select(challengeRecord.challenge.challengeId)
+                .distinct()
+                .from(challengeRecord)
+                .join(challengeRecord.challenge,challenge)
                 .where(getEmpty(week),
                         challengeRecord.challengeRecordStatus.isTrue(),
                         challengeRecord.challenge.challengeStatus.isTrue(),
@@ -51,14 +49,22 @@ public class SchedulerQueryRepository {
                 .fetch();
     }
 
+    // 주말인지 아닌지 여부를 체크하기 위해서
+
     private BooleanExpression getEmpty(int week) {
+        // 0,6 자바스크립트 date의 주말
         BooleanExpression notEmpty = challengeRecord.challenge.challengeHoliday.isNotEmpty();
-        BooleanExpression empty = challengeRecord.challenge.challengeHoliday.eq("");
-        return week == 6 || week ==7 ? notEmpty:empty ;
+        // "" 주말 아닐경우.
+        BooleanExpression empty = challengeRecord.challenge.challengeHoliday.isEmpty();
+        // null 값이 들어올 일이 없기 때문에 3항연산자만  사용.
+       return week == 6 || week ==7 ? notEmpty:empty ;
     }
 
     /**
      *글 쓰지 않은 자
+     * left outer join으로 포스팅이 null인것까지 가져올 수 있게 함.
+     * on절에 and로 challengeRecord의 member와 posting의 member를 조인.
+     * posting.isNull()을 통해 posting이 null인것만 가져옴.
      */
     public List<SchedulerIdListDto> findNotWrittenList(List<Long> challengeId){
 
@@ -75,7 +81,12 @@ public class SchedulerQueryRepository {
                 .fetch();
     }
 
-    public List<RemainingMember> findChallengeMember(LocalDateTime today) {
+    /**
+     *
+     * 포스팅 작성자를 확인하기 위해 챌린지 아
+     * @return
+     */
+    public List<RemainingMember> findChallengeMember() {
         QChallengeRecord challengeRecordSub = new QChallengeRecord("challengeRecordSub");
 
         return queryFactory.select(new QRemainingMember(
@@ -83,8 +94,8 @@ public class SchedulerQueryRepository {
                 challengeRecord.challengeRecordId,
                 challengeRecord.challengeRecordStatus))
                 .from(challengeRecord)
-                .leftJoin(challengeRecord.challenge,challenge)
-                .leftJoin(challengeRecord.member, member)
+                .join(challengeRecord.challenge,challenge)
+                .join(challengeRecord.member, member)
                 .join(posting).on(posting.challenge.challengeId.eq(challenge.challengeId),
                         posting.member.eq(member))
                 .where(challengeRecord.challengeRecordStatus.isTrue(),
@@ -99,9 +110,34 @@ public class SchedulerQueryRepository {
     }
 
     /**
+     * 포스팅을 등록한 인원만 가져오기 위해 포스팅에서 가져옴.
+     * posting 의 challenge과 challengeRecord 의 challenge , posting의 member와 challengeRecord의 member를 조인(포스팅 작성자)
+     * 서브쿼리를 이용해서 postingCount가  challengeRecord의 멤버 count의 50%이상인 포스팅만 가져옴.
+     */
+    public List<Posting> findChallengeMember2() {
+        QChallengeRecord challengeRecordSub = new QChallengeRecord("challengeRecordSub");
+
+        return queryFactory.select(posting)
+                .from(posting)
+                .join(challengeRecord).on(challengeRecord.challenge.eq(posting.challenge),
+                        posting.member.eq(challengeRecord.member))
+                .join(posting.challenge,challenge)
+                .where(challengeRecord.challengeRecordStatus.isTrue(),
+                        challenge.challengeStatus.isTrue(),
+                        challenge.challengeProgress.eq(2L),
+                        posting.postingApproval.isFalse(),
+                        posting.postingCount.goe(
+                                JPAExpressions.select(challengeRecordSub.challengeRecordId.count().divide(2))
+                                        .from(challengeRecordSub)
+                                        .where(challengeRecordSub.challenge.challengeId.eq(challengeRecord.challenge.challengeId))
+                        ))
+                .fetch();
+    }
+
+    /**
      * 수정 가능 여부 (당일만 가능)
      */
-    public List<Long> findSchedulerUpdatePosting(LocalDateTime today) {
+    public List<Long> findSchedulerUpdatePostingModifyOk(LocalDateTime today) {
         return queryFactory
                 .select(posting.postingId)
                 .from(posting)

@@ -21,6 +21,7 @@ public interface ChallengeRecordRepository extends JpaRepository<ChallengeRecord
             "and c.challenge.challengeId in :kickChallenge")
     int kickMemberOnChallenge(List<Long> kickMember, List<Long> kickChallenge);
 
+
     @Query("select CASE WHEN count(c.challengeRecordId) > 0 then true else false end " +
             "from ChallengeRecord c " +
             "Where c.challengeRecordStatus = true " +

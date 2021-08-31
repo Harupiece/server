@@ -4,6 +4,7 @@ import com.example.onedaypiece.web.domain.challengeRecord.ChallengeRecord;
 import com.example.onedaypiece.web.domain.common.Timestamped;
 import com.example.onedaypiece.web.domain.posting.Posting;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -36,16 +37,28 @@ public class PointHistory extends Timestamped {
     @Column
     private boolean status;
 
-    public PointHistory(Long getPoint, Posting posting){
+
+    @Builder
+    public PointHistory(Long pointHistoryId, Long getPoint, Posting posting, ChallengeRecord challengeRecord, boolean status) {
+        this.pointHistoryId = pointHistoryId;
         this.getPoint = getPoint;
         this.posting = posting;
-        this.status = true;
+        this.challengeRecord = challengeRecord;
+        this.status = status;
     }
 
-    public PointHistory(Long getPoint, ChallengeRecord challengeRecord) {
-        this.getPoint = getPoint;
-        this.challengeRecord = challengeRecord;
-        this.status = true;
+    public static PointHistory createPostingPointHistory(Long getPoint, Posting posting) {
+        return PointHistory.builder()
+                .getPoint(getPoint)
+                .posting(posting)
+                .build();
+    }
+
+    public static PointHistory createChallengePointHistory(Long resultPoint, ChallengeRecord r) {
+        return PointHistory.builder()
+                .getPoint(resultPoint)
+                .challengeRecord(r)
+                .build();
     }
 
     public void updateStatus() {
