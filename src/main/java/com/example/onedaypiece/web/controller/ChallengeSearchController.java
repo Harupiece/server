@@ -28,19 +28,20 @@ public class ChallengeSearchController {
     /**
      * 2. 소팅 검색
      */
-    @GetMapping("/api/guest/search/{categoryName}/{period}/{progress}/{page}")
-    public ChallengeListResponseDto getChallengeSearchByCategoryNameAndPeriod(@PathVariable String categoryName,
+    @GetMapping("/api/guest/search/{word}/{categoryName}/{period}/{progress}/{page}")
+    public ChallengeListResponseDto getChallengeSearchByCategoryNameAndPeriod(@PathVariable String word,
+                                                                              @PathVariable String categoryName,
                                                                               @PathVariable int period,
                                                                               @PathVariable int progress,
                                                                               @PathVariable int page) {
-        return challengeSearchService.getChallengeBySearch(categoryName, period, progress, page);
+        return challengeSearchService.getChallengeBySearch(word, categoryName, period, progress, page);
     }
 
     /**
-     * 3. 전체 검색
+     * 3. 전체 보기
      */
     @GetMapping("/api/guest/challenges/{page}")
     public ChallengeListResponseDto getChallenges(@PathVariable int page) {
-        return challengeSearchService.getChallengeBySearch("ALL", 0, 0, page);
+        return challengeSearchService.getChallengeBySearch("ALL", "ALL", 0, 0, page);
     }
 }
