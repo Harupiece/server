@@ -231,6 +231,7 @@ public class MemberService {
 
     // 마이 페이지 히스토리
     public MemberHistoryResponseDto getHistory(String email){
+        //??????????? 지워야ㅕ할듯
         Member member = getMemberByEmail(email);
 
         // 포인트 번호
@@ -240,10 +241,10 @@ public class MemberService {
         List<Point> pointList = pointRepository.findAllByOrderByAcquiredPointDesc();
 
 
-        for(int i = 0 ; i< pointList.size(); i++){
-            if(member.getMemberId() == pointList.get(i).getPointId() && member.getPoint().getAcquiredPoint() == pointList.get(i).getAcquiredPoint()){
+        for (Point point : pointList) {
+            if (member.getMemberId() == point.getPointId() && member.getPoint().getAcquiredPoint() == point.getAcquiredPoint()) {
                 break;
-            } else{
+            } else {
                 rank++;
             }
         }
@@ -276,6 +277,8 @@ public class MemberService {
         List<Challenge> proceeding = targetList.stream()
                 .map(challengeRecord -> challengeRecord.getChallenge()).collect(Collectors.toList());
 
+        // ???????? 스트림에서 쿼리를 날리네 ;; 쿼리도 수정해야할듯
+        // 챌린지 가져올 때 n+1
         // 본인이 참여한 챌린지 리스트 -> 가공
         List<ProceedResponseDto> proceedingResult = proceeding.stream()
                 .map(challenge -> new ProceedResponseDto(challenge, challengeRecordQueryRepository.findAllByChallenge(challenge)))
@@ -292,6 +295,8 @@ public class MemberService {
         List<Challenge> scheduled = targetList.stream()
                 .map(challengeRecord -> challengeRecord.getChallenge()).collect(Collectors.toList());
 
+        // 스트림 안에서 포문 ;;
+        // 챌린지 불러올 때 n+1
         List<ScheduledResponseDto> scheduledList = scheduled.stream()
                 .map(challenge -> new ScheduledResponseDto(challenge, challengeRecordQueryRepository.findAllByChallenge(challenge)))
                 .collect(Collectors.toList());

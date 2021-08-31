@@ -9,6 +9,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -128,5 +129,25 @@ public class ChallengeRecordQueryRepository {
                         challengeRecord.challenge.challengeProgress.lt(3L),
                         challengeRecord.member.eq(member))
                 .fetch();
+    }
+
+
+    /**
+    채팅
+    @Query("select CASE WHEN count(c.challengeRecordId) > 0 then true else false end " +
+            "from ChallengeRecord c " +
+            "Where c.challengeRecordStatus = true " +
+            "and c.challenge.challengeId = :challengeId " +
+            "and c.member = :member " +
+            "and c.challenge.challengeProgress in (:progress, :expected) ")
+     */
+    public boolean existsByChallengeIdAndAndMember(Long challengeId, Member member, Long progress, Long expected){
+        return queryFactory.select(challengeRecord.challengeRecordId)
+                .from(challengeRecord)
+                .where(challengeRecord.challengeRecordStatus.isTrue(),
+                        challengeRecord.challenge.challengeId.eq(challengeId),
+                        challengeRecord.member.eq(member),
+                        challengeRecord.challenge.challengeProgress.in(progress,expected))
+                .fetchFirst() != null;
     }
 }

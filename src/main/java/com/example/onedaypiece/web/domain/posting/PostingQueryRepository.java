@@ -43,8 +43,8 @@ public class PostingQueryRepository  {
                 .join(posting.challenge)
                 .join(posting.member)
                 .where(
-                        eqChallengeId(challengeId),
-                        postingStatusIsTrue())
+                        posting.challenge.challengeId.eq(challengeId),
+                        posting.postingStatus.isTrue())
                 .orderBy(posting.createdAt.desc())
                 .offset(page.getOffset())
                 .limit(page.getPageSize()+1)
@@ -52,28 +52,17 @@ public class PostingQueryRepository  {
 
         return RepositoryHelper.toSlice(postingList,page);
     }
-
     /**
      * 하루 1개 포스팅
      */
-    public boolean existsTodayPosting(LocalDateTime now, Long member, Long challenge) {
+    public boolean existsTodayPosting(LocalDateTime now, Long memberId, Long challengeId) {
         return queryFactory
                 .select(posting.postingId)
                 .from(posting)
-                .where(posting.member.memberId.eq(member),
-                        eqChallengeId(challenge),
-                        postingStatusIsTrue(),
+                .where(posting.member.memberId.eq(memberId),
+                        posting.challenge.challengeId.eq(challengeId),
+                        posting.postingStatus.isTrue(),
                         posting.createdAt.gt(now))
                 .fetchFirst() != null;
     }
-
-    private BooleanExpression eqChallengeId(Long challengeId) {
-        return challengeId != null ? posting.challenge.challengeId.eq(challengeId) : null;
-    }
-
-    private BooleanExpression postingStatusIsTrue() {
-        return posting.postingStatus.isTrue();
-    }
-
-
 }
