@@ -39,7 +39,6 @@ public class ChallengeRecordQueryRepository {
                 .join(challengeRecord.member).fetchJoin()
                 .distinct()
                 .where(challengeRecord.challengeRecordStatus.isTrue(),
-                        challengeRecord.challenge.challengeStatus.isTrue(),
                         challengeRecord.challenge.in(challengeList.getContent()))
                 .fetch();
     }
@@ -129,4 +128,6 @@ public class ChallengeRecordQueryRepository {
                         challengeRecord.member.eq(member))
                 .fetch();
     }
+
+
 }

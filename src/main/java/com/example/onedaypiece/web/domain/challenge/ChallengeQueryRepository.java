@@ -90,7 +90,7 @@ public class ChallengeQueryRepository {
                             challenge.challengeProgress.lt(3L),
                             challenge.categoryName.eq(CategoryName.valueOf(categoryName)),
                             challenge.categoryName.ne(CategoryName.OFFICIAL),
-                            challenge.tag.eq(getPeriodString(period))
+                            challenge.tag.contains(period)
                     };
                 } else if (period.equals("0")) { // 카테고리x, 기간x
                     predicates = new Predicate[]{challenge.challengeStatus.isTrue(),
@@ -101,7 +101,7 @@ public class ChallengeQueryRepository {
                     predicates = new Predicate[]{challenge.challengeStatus.isTrue(),
                             challenge.challengeProgress.lt(3L),
                             challenge.categoryName.ne(CategoryName.OFFICIAL),
-                            challenge.tag.eq(getPeriodString(period))
+                            challenge.tag.contains(period)
                     };
                 }
             } else {
@@ -116,7 +116,7 @@ public class ChallengeQueryRepository {
                             challenge.challengeProgress.eq(longNum),
                             challenge.categoryName.eq(CategoryName.valueOf(categoryName)),
                             challenge.categoryName.ne(CategoryName.OFFICIAL),
-                            challenge.tag.eq(getPeriodString(period))};
+                            challenge.tag.contains(period),};
                 } else if (period.equals("0")) { // 카테고리x, 기간x
                     predicates = new Predicate[]{challenge.challengeStatus.isTrue(),
                             challenge.challengeProgress.eq(longNum),
@@ -125,7 +125,7 @@ public class ChallengeQueryRepository {
                     predicates = new Predicate[]{challenge.challengeStatus.isTrue(),
                             challenge.challengeProgress.eq(longNum),
                             challenge.categoryName.ne(CategoryName.OFFICIAL),
-                            challenge.tag.eq(getPeriodString(period))};
+                            challenge.tag.contains(period),};
                 }
             }
         } else {
@@ -143,7 +143,7 @@ public class ChallengeQueryRepository {
                             challenge.challengeProgress.lt(3L),
                             challenge.categoryName.eq(CategoryName.valueOf(categoryName)),
                             challenge.categoryName.ne(CategoryName.OFFICIAL),
-                            challenge.tag.eq(getPeriodString(period)),
+                            challenge.tag.contains(period),
                             challenge.challengeTitle.contains(word)
                     };
                 } else if (period.equals("0")) { // 카테고리x, 기간x
@@ -156,7 +156,7 @@ public class ChallengeQueryRepository {
                     predicates = new Predicate[]{challenge.challengeStatus.isTrue(),
                             challenge.challengeProgress.lt(3L),
                             challenge.categoryName.ne(CategoryName.OFFICIAL),
-                            challenge.tag.eq(getPeriodString(period)),
+                            challenge.tag.contains(period),
                             challenge.challengeTitle.contains(word)
                     };
                 }
@@ -174,7 +174,7 @@ public class ChallengeQueryRepository {
                             challenge.challengeProgress.eq(longNum),
                             challenge.categoryName.eq(CategoryName.valueOf(categoryName)),
                             challenge.categoryName.ne(CategoryName.OFFICIAL),
-                            challenge.tag.eq(getPeriodString(period)),
+                            challenge.tag.contains(period),
                             challenge.challengeTitle.contains(word)
                     };
                 } else if (period.equals("0")) { // 카테고리x, 기간x
@@ -187,7 +187,7 @@ public class ChallengeQueryRepository {
                     predicates = new Predicate[]{challenge.challengeStatus.isTrue(),
                             challenge.challengeProgress.eq(longNum),
                             challenge.categoryName.ne(CategoryName.OFFICIAL),
-                            challenge.tag.eq(getPeriodString(period)),
+                            challenge.tag.contains(period),
                             challenge.challengeTitle.contains(word)
                     };
                 }
