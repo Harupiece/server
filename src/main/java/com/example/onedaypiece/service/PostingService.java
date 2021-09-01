@@ -128,6 +128,8 @@ public class PostingService {
         // 인증 검사.
         isApprovalTrue(posting);
 
+        System.out.println("posting = " + posting.getPostingId());
+
         posting.deletePosting();
 
         afterDeletePosting(posting);
@@ -177,11 +179,13 @@ public class PostingService {
      * 포스팅 삭제 후 포인트 관련 로직 처리
      */
     private void afterDeletePosting(Posting posting) {
-        posting.updateApproval(false);
-        PointHistory pointHistory = pointHistoryRepository.findByPosting(posting);
-        pointHistory.updateStatus();
-        posting.getMember().updatePoint(-1L);
 
+        PointHistory pointHistory = pointHistoryRepository.findByPosting(posting);
+        if(pointHistory != null) {
+            posting.updateApproval(false);
+            pointHistory.updateStatus();
+            posting.getMember().updatePoint(-1L);
+        }
     }
 
 
