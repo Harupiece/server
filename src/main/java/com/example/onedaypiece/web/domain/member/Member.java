@@ -2,6 +2,7 @@ package com.example.onedaypiece.web.domain.member;
 
 import com.example.onedaypiece.web.domain.common.Timestamped;
 import com.example.onedaypiece.web.domain.point.Point;
+import com.example.onedaypiece.web.domain.pointHistory.PointHistory;
 import com.example.onedaypiece.web.dto.request.mypage.ProfileUpdateRequestDto;
 import com.example.onedaypiece.web.dto.request.mypage.PwUpdateRequestDto;
 import com.example.onedaypiece.web.dto.request.signup.SignupRequestDto;

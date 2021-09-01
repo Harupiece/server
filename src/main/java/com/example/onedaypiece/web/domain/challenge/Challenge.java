@@ -27,7 +27,7 @@ public class Challenge extends Timestamped implements Serializable {
     @Column(nullable = false)
     private String challengeTitle;
 
-    @Column(nullable = false)
+    @Column(columnDefinition="TEXT")
     private String challengeContent;
 
     @Column(name = "category_name", nullable = false)

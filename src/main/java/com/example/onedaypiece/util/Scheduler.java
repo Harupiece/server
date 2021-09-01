@@ -59,72 +59,83 @@ public class Scheduler {
     @Transactional
     public void certificationKick() {
 
+        // nginx 사용시에 여러 인스턴스 모두에서 update 되는 것을 방지.
         if (isNotScheduleMode()) {
             return;
         }
+        // today 호출, 스케줄러 실행시의 시간으로 변경.
         initializeToday();
 
+        // 주말 여부 체크를 위한 week 변수 생성
         int week = today.getDayOfWeek().getValue();
 
-        List<ChallengeRecord> challengeMember = schedulerQueryRepository.findAllByChallenge(week);
+        // 주말 여부를 체크해서 챌린지 레코드를 가져옴.
+        List<Long> challengeId = schedulerQueryRepository.findAllByChallenge(week);
 
-        // 진행중인 챌린지 리스트
-        List<Long> challengeId = challengeMember.stream()
-                .map(challengeRecord -> challengeRecord.getChallenge().getChallengeId())
-                .distinct()
-                .collect(Collectors.toList());
-
+        // 작성하지 않은 인원 가져옴
         List<SchedulerIdListDto> notWrittenList = schedulerQueryRepository.findNotWrittenList(challengeId);
 
         List<Long> notWrittenMember = getKickMember(notWrittenList);
         List<Long> notWrittenChallenge = getKickChallenge(notWrittenList);
 
+        // 벌크쿼리로 challengeRecordStatus false로 변경.
         int notWrittenChallengeRecordKick = challengeRecordRepository.kickMemberOnChallenge(notWrittenMember, notWrittenChallenge);
         log.info("포스팅 작성하지 않은 인원 update : {} ", notWrittenChallengeRecordKick);
     }
 
 
+    /**
+     * 강퇴당한 인원을 제외한 남은 인원을 위해 postingApproval 업데이트 해줌.
+     */
     @Scheduled(cron = "04 0 0 * * *") // 초, 분, 시, 일, 월, 주 순서
     @Transactional
     public void changePostingApproval() {
-
+        // nginx 사용시에 여러 인스턴스 모두에서 update 되는 것을 방지.
         if (isNotScheduleMode()) {
             return;
         }
 
-        LocalDateTime today = LocalDate.now().atStartOfDay();
-        List<RemainingMember> challengeRecords = schedulerQueryRepository.findChallengeMember(today);
-        List<Posting> approvalPostingList = challengeRecords.stream()
-                .map(RemainingMember::getPosting)
-                .collect(Collectors.toList());
+        // 진행중인 챌린지에서 포스팅 작성을 한 사람을 찾아온다.
+        // 그 후에 서브쿼리로 챌린지 참여 인원을 체크하고 포스팅의 인증카운트가 전체 멤버의 50%가 넘는 인원을 가져온다.
+        List<RemainingMember> challengeRecords = schedulerQueryRepository.findChallengeMember();
 
+
+        // 진행중인 챌린지에서 포스팅 작성을 한 사람을 찾아온다.
+        // 그 후에 서브쿼리로 챌린지 참여 인원을 체크하고 포스팅의 인증카운트가 전체 멤버의 50%가 넘는 인원을 가져온다.
+        List<Posting> approvalPostingList = schedulerQueryRepository.findChallengeMember2();
+
+        // 포스팅의 인증여부 업데이트.
         int postingApprovalUpdate = postingRepository.updatePostingApproval(approvalPostingList);
         log.info("postingApprovalUpdate 벌크 연산 result: {} ", postingApprovalUpdate);
 
+        // 포인트가 인증되었으니 히스토리 추가.
         List<PointHistory> pointHistoryList = approvalPostingList.stream()
-                .map(posting -> new PointHistory(1L, posting))
+                .map(posting -> PointHistory.createPostingPointHistory(1L,posting))
                 .collect(Collectors.toList());
 
         pointHistoryRepository.saveAll(pointHistoryList);
 
+        //포인트 업데이트해줄 멤버 id 가져옴.
         List<Long> memberList = approvalPostingList.stream()
                 .map(posting -> posting.getMember().getMemberId())
                 .collect(Collectors.toList());
 
+        // 포인트 업데이트.
         int updatePoint = pointRepository.updatePoint(memberList);
         log.info("updatePoint 벌크 연산 result: {} ", updatePoint);
     }
 
     @Scheduled(cron = "05 0 0 * * *") // 초, 분, 시, 일, 월, 주 순서
     @Transactional
-    public void postingStatusUpdate() {
+    public void updatePostingModifyOk() {
 
         if (isNotScheduleMode()) {
             return;
         }
-        List<Long> postingIdList = schedulerQueryRepository.findSchedulerUpdatePosting(today);
+        // 작성 당일이 지나면 수정 불가능하게 만드는 쿼리
+        List<Long> postingIdList = schedulerQueryRepository.findSchedulerUpdatePostingModifyOk(today);
         // 벌크성 쿼리 업데이트
-        long updateResult = postingRepository.updatePostingStatus(postingIdList);
+        long updateResult = postingRepository.updatePostingModifyOk(postingIdList);
         log.info("updateResult 벌크 연산 result: {} ", updateResult);
     }
 
@@ -281,7 +292,7 @@ public class Scheduler {
             if (resultPoint != 0L) {
                 List<PointHistory> pointHistoryList = recordList
                         .stream()
-                        .map(r -> new PointHistory(resultPoint, r))
+                        .map(r -> PointHistory.createChallengePointHistory(resultPoint,r))
                         .collect(Collectors.toList());
                 pointHistoryRepository.saveAll(pointHistoryList);
 

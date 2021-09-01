@@ -39,19 +39,22 @@ public class CertificationService {
 
         certificationRepository.save(certification);
 
-        //50% 이상 여기에 pointHistory추가되는거임
+        // 포인트 지급 체크
         checkMemberCountAndAddPoint(posting, memberCount);
 
         return posting.getPostingId();
     }
 
 
-    // 인증 인원 50% 넘으면 승인
+    /**
+     * 포인트 지급. 인증이 50% 이상일 때, 포스팅이 승인 상태인지 아닌지의 여부 판단 후  포인트 지급.
+     *
+     **/
     private void checkMemberCountAndAddPoint(Posting posting, Long memberCount) {
 
         if(memberCount /2 <= posting.getPostingCount()){
             if(!posting.isPostingApproval()){
-                PointHistory pointHistory = new PointHistory(1L, posting); // 몇점받는지 첫번쨰 파라미터로 들어가야함
+                PointHistory pointHistory = PointHistory.createPostingPointHistory(1L, posting); // 몇점받는지 첫번쨰 파라미터로 들어가야함
                 pointHistoryRepository.save(pointHistory);
                 posting.getMember().updatePoint(1L);
                 posting.updateApproval(true);
