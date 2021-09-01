@@ -22,9 +22,9 @@ public class Posting extends Timestamped {
     @Id
     @Column(name = "posting_id")
     private Long postingId;
-    @Column
+    @Column(columnDefinition="TEXT")
     private String postingImg;
-    @Column
+    @Column(columnDefinition="TEXT")
     private String postingContent;
     @Column
     private boolean postingStatus;
