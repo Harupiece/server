@@ -197,7 +197,7 @@ public class ChallengeQueryRepository {
     }
 
     private String getPeriodString(String period) {
-        return period.equals("4") ? period + "주 이상" : period + "주";
+        return period + "주";
     }
 
     public Optional<Challenge> findById(Long challengeId) {
