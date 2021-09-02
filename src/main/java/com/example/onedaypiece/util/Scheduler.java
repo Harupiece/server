@@ -57,7 +57,7 @@ public class Scheduler {
 
     @Scheduled(cron = "01 0 0 * * *") // 초, 분, 시, 일, 월, 주 순서
     @Transactional
-    public void certificationKick() {
+    public void notWrittenMemberKick() {
 
         // nginx 사용시에 여러 인스턴스 모두에서 update 되는 것을 방지.
         if (isNotScheduleMode()) {
@@ -94,15 +94,9 @@ public class Scheduler {
         if (isNotScheduleMode()) {
             return;
         }
-
         // 진행중인 챌린지에서 포스팅 작성을 한 사람을 찾아온다.
         // 그 후에 서브쿼리로 챌린지 참여 인원을 체크하고 포스팅의 인증카운트가 전체 멤버의 50%가 넘는 인원을 가져온다.
-        List<RemainingMember> challengeRecords = schedulerQueryRepository.findChallengeMember();
-
-
-        // 진행중인 챌린지에서 포스팅 작성을 한 사람을 찾아온다.
-        // 그 후에 서브쿼리로 챌린지 참여 인원을 체크하고 포스팅의 인증카운트가 전체 멤버의 50%가 넘는 인원을 가져온다.
-        List<Posting> approvalPostingList = schedulerQueryRepository.findChallengeMember2();
+        List<Posting> approvalPostingList = schedulerQueryRepository.findChallengeMember();
 
         // 포스팅의 인증여부 업데이트.
         int postingApprovalUpdate = postingRepository.updatePostingApproval(approvalPostingList);
