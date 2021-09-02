@@ -82,6 +82,7 @@ public class ChallengeService {
         Member member = memberChecker(email);
         createChallengeException(requestDto, member);
 
+        //챌린지 생성
         Challenge challenge = createChallenge(requestDto, member);
         challengeRepository.save(challenge);
 
@@ -89,6 +90,7 @@ public class ChallengeService {
         ChallengeRecord challengeRecord = createChallengeRecord(challenge, member);
         challengeRecordRepository.save(challengeRecord);
 
+        // 채팅방 생성
         ChatRoom chatRoom = ChatRoom.createChatRoom(challengeId);
         chatRoomRepository.save(chatRoom);
         hashOpsChatRoom.put(CHAT_ROOMS, chatRoom.getRoomId(), chatRoom);

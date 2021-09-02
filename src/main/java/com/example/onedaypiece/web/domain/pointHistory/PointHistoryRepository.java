@@ -25,10 +25,8 @@ public interface PointHistoryRepository extends JpaRepository<PointHistory, Long
             "left join p.posting.member.point " +
             "left join p.posting.challenge " +
             "where p.posting.member.email =:email " +
-            "and p.status =true ")
+            "and p.status = true ")
     List<MemberHistoryDto> findHistoryPosting(String email);
-
-
 
     @Query("select new com.example.onedaypiece.web.dto.response.mypage.histroy.MemberHistoryDto( " +
             "p.pointHistoryId," +
@@ -46,9 +44,8 @@ public interface PointHistoryRepository extends JpaRepository<PointHistory, Long
             "left join p.challengeRecord.member.point " +
             "left join p.challengeRecord.challenge " +
             "where p.challengeRecord.member.email = :email " +
-            "and p.status =true ")
+            "and p.status = true ")
     List<MemberHistoryDto> findHistoryChallenge(String email);
 
     PointHistory findByPosting(Posting posting);
-
 }
