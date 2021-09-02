@@ -48,7 +48,7 @@ https://harupiece.com/
 
 #### Challenge - <a href="" >상세보기 이동</a>
 - Challenge GET / POST / PUT / DELETE
-- 제목 검색, 소팅 검색(+전체 보기) with Paging using Slice
+- paging applied 제목 검색, 소팅 검색(+전체 보기) 
 - QueryDSL 적용
 
 #### Posting - <a href="" >상세보기 이동</a>
