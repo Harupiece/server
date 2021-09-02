@@ -51,3 +51,6 @@ https://harupiece.com/
 #### Posting - <a href="" >상세보기 이동</a>
 
 #### 채팅 - <a href="" >상세보기 이동</a>
+- WebSocket
+- Stomp
+- Redis
