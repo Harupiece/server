@@ -56,7 +56,7 @@ https://harupiece.com/
 
 #### 채팅 - <a href="" >상세보기 이동</a>
 
-###이슈 관련
+### 이슈 관련
 
  - [채팅 서버 공유로 인한 메세지 중복 이슈](https://succulent-cadmium-bc4.notion.site/e5c0caab55834dd2a7e49361f045b558)
  - [설정파일을 Github에 안올리는 build하는방법](https://succulent-cadmium-bc4.notion.site/Github-build-29d71ec5870747228c42c962f6541862)
