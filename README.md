@@ -22,7 +22,7 @@ https://harupiece.com/
 - [팀원 소개 페이지](https://little-viper-dae.notion.site/fe1d19c624bc4746b505b50e03b396b8 )
     
 ### 📕 테이블
-- **테이블 설계** - <a href="https://github.com/choiwanggyu/pracprac/wiki/%EB%8B%A4%EC%9D%B4%EC%96%B4%EA%B7%B8%EB%9E%A8%EC%9D%B8%EB%93%AF-%EC%9D%B4%EB%A6%84-%EB%AA%85%ED%99%95%ED%9E%88%ED%95%98%EA%B8%B0" >상세보기 이동</a>  
+- **테이블 설계** - <a href="https://github.com/OneDayPiece/server/wiki/ERDiaGram" >상세보기 이동</a>  
 <!-- - **API 설계** - <a href="" >상세보기 이동</a> -->
 
 ### ⛏ 개발 환경
@@ -36,7 +36,7 @@ https://harupiece.com/
 
 
 ### 🧱 Architecture ###
-- <a href="https://github.com/choiwanggyu/pracprac/wiki/Architecture" >상세보기 이동</a>  
+- <a href="https://github.com/OneDayPiece/server/wiki/Architecture" >상세보기 이동</a>  
 
 ### 💡 기능 💡
 #### Security + 로그인 + Member - <a href="https://github.com/choiwanggyu/pracprac/wiki/%EC%A3%BC%EC%9A%94%EA%B8%B0%EB%8A%A5-%EB%A1%9C%EA%B7%B8%EC%9D%B8---Member" >상세보기 이동</a>
