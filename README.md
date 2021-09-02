@@ -49,7 +49,7 @@
 #### Challenge
 - Challenge GET / POST / PUT / DELETE
 - paging applied 제목 검색, 소팅 검색(+전체 보기) 
-- QueryDSL 적용
+- QueryDSL 적용 (간단한 쿼리는 바닐라 JPA 이용)
 - 스케줄러를 이용한 챌린지 일정 변경
 - 스케줄러를 이용한 주기적인 공식 챌린지 자동 생성 및 일정 변경
 
