@@ -54,10 +54,11 @@
 - 스케줄러를 이용한 주기적인 공식 챌린지 자동 생성 및 일정 변경
 
 #### Posting 
-- 인증샷 게시
-- 인증
-- 포인트 지급
-- 강퇴
+- Posting GET / POST / PUT / DELETE
+- QueryDSL 적용
+- 상태관리를 위한 Scheduler (벌크 쿼리)
+- 참여 의지가 없는 인원 강퇴.
+
 
 #### 채팅 
 - WebSocket
