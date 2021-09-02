@@ -53,11 +53,12 @@
 - 스케줄러를 이용한 챌린지 일정 변경
 - 스케줄러를 이용한 주기적인 공식 챌린지 자동 생성 및 일정 변경
 
-#### Posting 
+#### Posting + Certification
 - Posting GET / POST / PUT / DELETE
+- Certification POST 
 - QueryDSL 적용
+- 인증여부에 따른 포인트 지급.
 - 상태관리를 위한 Scheduler (벌크 쿼리)
-- 참여 의지가 없는 인원 강퇴.
 
 
 #### 채팅 
