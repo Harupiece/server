@@ -17,6 +17,7 @@ import javax.validation.Valid;
 @RestController
 @RequestMapping("/api/posting")
 public class PostingController {
+
     private final PostingService postingService;
 
     /**
@@ -64,5 +65,4 @@ public class PostingController {
         String email = userDetails.getUsername();
         return postingService.deletePosting(postingId, email);
     }
-
 }
