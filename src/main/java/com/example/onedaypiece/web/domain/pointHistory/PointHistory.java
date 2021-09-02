@@ -51,6 +51,7 @@ public class PointHistory extends Timestamped {
         return PointHistory.builder()
                 .getPoint(getPoint)
                 .posting(posting)
+                .status(true)
                 .build();
     }
 

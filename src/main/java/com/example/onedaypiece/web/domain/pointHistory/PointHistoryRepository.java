@@ -1,11 +1,7 @@
 package com.example.onedaypiece.web.domain.pointHistory;
 
 import com.example.onedaypiece.web.domain.posting.Posting;
-import com.example.onedaypiece.web.dto.response.mypage.histroy.MemberHistoryDto;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-
-import java.util.List;
 
 public interface PointHistoryRepository extends JpaRepository<PointHistory, Long> {
 

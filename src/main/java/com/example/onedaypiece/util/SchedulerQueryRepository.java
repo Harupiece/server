@@ -21,7 +21,6 @@ import java.util.List;
 
 import static com.example.onedaypiece.web.domain.challenge.QChallenge.challenge;
 import static com.example.onedaypiece.web.domain.challengeRecord.QChallengeRecord.challengeRecord;
-import static com.example.onedaypiece.web.domain.member.QMember.member;
 import static com.example.onedaypiece.web.domain.point.QPoint.point;
 import static com.example.onedaypiece.web.domain.posting.QPosting.posting;
 
@@ -42,7 +41,7 @@ public class SchedulerQueryRepository {
                 .distinct()
                 .from(challengeRecord)
                 .join(challengeRecord.challenge,challenge)
-                .where(getEmpty(week),
+                .where(isHoliday(week),
                         challengeRecord.challengeRecordStatus.isTrue(),
                         challengeRecord.challenge.challengeStatus.isTrue(),
                         challengeRecord.challenge.challengeProgress.eq(2L))
@@ -51,13 +50,11 @@ public class SchedulerQueryRepository {
 
     // 주말인지 아닌지 여부를 체크하기 위해서
 
-    private BooleanExpression getEmpty(int week) {
+    private BooleanExpression isHoliday(int week) {
         // 0,6 자바스크립트 date의 주말
         BooleanExpression notEmpty = challengeRecord.challenge.challengeHoliday.isNotEmpty();
-        // "" 주말 아닐경우.
-        BooleanExpression empty = challengeRecord.challenge.challengeHoliday.isEmpty();
         // null 값이 들어올 일이 없기 때문에 3항연산자만  사용.
-       return week == 6 || week ==7 ? notEmpty:empty ;
+       return week == 6 || week ==7 ? notEmpty:null ;
     }
 
     /**
@@ -80,41 +77,12 @@ public class SchedulerQueryRepository {
                         posting.isNull())
                 .fetch();
     }
-
-    /**
-     *
-     * 포스팅 작성자를 확인하기 위해 챌린지 아
-     * @return
-     */
-    public List<RemainingMember> findChallengeMember() {
-        QChallengeRecord challengeRecordSub = new QChallengeRecord("challengeRecordSub");
-
-        return queryFactory.select(new QRemainingMember(
-                posting,
-                challengeRecord.challengeRecordId,
-                challengeRecord.challengeRecordStatus))
-                .from(challengeRecord)
-                .join(challengeRecord.challenge,challenge)
-                .join(challengeRecord.member, member)
-                .join(posting).on(posting.challenge.challengeId.eq(challenge.challengeId),
-                        posting.member.eq(member))
-                .where(challengeRecord.challengeRecordStatus.isTrue(),
-                        challenge.challengeStatus.isTrue(),
-                        challenge.challengeProgress.eq(2L),
-                        posting.postingCount.goe(
-                                JPAExpressions.select(challengeRecordSub.challengeRecordId.count().divide(2))
-                                        .from(challengeRecordSub)
-                                        .where(challengeRecordSub.challenge.challengeId.eq(challengeRecord.challenge.challengeId))
-                        ))
-                .fetch();
-    }
-
     /**
      * 포스팅을 등록한 인원만 가져오기 위해 포스팅에서 가져옴.
      * posting 의 challenge과 challengeRecord 의 challenge , posting의 member와 challengeRecord의 member를 조인(포스팅 작성자)
      * 서브쿼리를 이용해서 postingCount가  challengeRecord의 멤버 count의 50%이상인 포스팅만 가져옴.
      */
-    public List<Posting> findChallengeMember2() {
+    public List<Posting> findChallengeMember() {
         QChallengeRecord challengeRecordSub = new QChallengeRecord("challengeRecordSub");
 
         return queryFactory.select(posting)
@@ -129,7 +97,8 @@ public class SchedulerQueryRepository {
                         posting.postingCount.goe(
                                 JPAExpressions.select(challengeRecordSub.challengeRecordId.count().divide(2))
                                         .from(challengeRecordSub)
-                                        .where(challengeRecordSub.challenge.challengeId.eq(challengeRecord.challenge.challengeId))
+                                        .where(challengeRecordSub.challenge.challengeId.eq(challengeRecord.challenge.challengeId),
+                                                challengeRecordSub.challengeRecordStatus.isTrue())
                         ))
                 .fetch();
     }
