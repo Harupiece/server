@@ -33,8 +33,6 @@ public class PostingController {
 
     /**
      * 2.포스트 리스트
-     *
-     * @return
      */
     @GetMapping("/{page}/{challengeId}")
     public PostingListDto getPosting(@PathVariable int page,
