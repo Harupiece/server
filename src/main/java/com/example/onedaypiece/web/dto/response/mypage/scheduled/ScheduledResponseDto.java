@@ -39,14 +39,15 @@ public class ScheduledResponseDto {
         this.challengeMember = challenge.getMember().getMemberId();
         this.challengeStartDate = challenge.getChallengeStartDate();
         this.challengeEndDate = challenge.getChallengeEndDate();
-        this.participateImg = getImg(participate);
+        this.participateImg = getImg(participate,challenge);
         this.successPercent = 0;
         this.participateSize = participateImg.size();
 
     }
 
-    public List<String> getImg(List<ChallengeRecord> recordList) {
+    public List<String> getImg(List<ChallengeRecord> recordList,Challenge challenge) {
         List<String> imageList = recordList.stream()
+                .filter(challengeRecord -> challengeRecord.getChallenge().equals(challenge))
                 .map(challengeRecord -> challengeRecord.getMember().getProfileImg())
                 .collect(Collectors.toList());
         return imageList;
