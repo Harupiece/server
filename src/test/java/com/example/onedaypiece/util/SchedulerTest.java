@@ -1,20 +1,15 @@
 //package com.example.onedaypiece.util;
 //
-//import com.example.onedaypiece.exception.ApiRequestException;
-//import com.example.onedaypiece.web.domain.challenge.ChallengeRepository;
 //import com.example.onedaypiece.web.domain.challengeRecord.ChallengeRecordRepository;
-//import com.example.onedaypiece.web.domain.member.MemberRepository;
 //import com.example.onedaypiece.web.domain.point.PointRepository;
 //import com.example.onedaypiece.web.domain.pointHistory.PointHistory;
 //import com.example.onedaypiece.web.domain.pointHistory.PointHistoryRepository;
 //import com.example.onedaypiece.web.domain.posting.Posting;
 //import com.example.onedaypiece.web.domain.posting.PostingRepository;
-//import com.querydsl.jpa.impl.JPAQueryFactory;
-//import org.junit.jupiter.api.Assertions;
+//import com.example.onedaypiece.web.dto.query.posting.SchedulerIdListDto;
 //import org.junit.jupiter.api.Test;
 //import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.boot.test.context.SpringBootTest;
-//import org.springframework.test.annotation.Rollback;
 //import org.springframework.transaction.annotation.Transactional;
 //
 //import java.time.LocalDate;
@@ -33,6 +28,9 @@
 //    private  SchedulerQueryRepository schedulerQueryRepository;
 //
 //    @Autowired
+//    private ChallengeRecordRepository challengeRecordRepository;
+//
+//    @Autowired
 //    private  PointRepository pointRepository;
 //
 //
@@ -41,17 +39,16 @@
 //
 //        LocalDateTime today = LocalDate.now().atStartOfDay();
 //
-//        List<RemainingMember> challengeRecords =  schedulerQueryRepository.findChallengeMember(today);
 //
-//        List<Posting> approvalPostingList = challengeRecords.stream()
-//                .map(RemainingMember::getPosting)
-//                .collect(Collectors.toList());
+//
+//        List<Posting> approvalPostingList = schedulerQueryRepository.findChallengeMember();
+//
 //
 //        int postingApprovalUpdate = postingRepository.updatePostingApproval(approvalPostingList);
 //
 //
 //        List<PointHistory> pointHistoryList = approvalPostingList.stream()
-//                .map(posting -> new PointHistory(1L, posting))
+//                .map(posting -> PointHistory.createPostingPointHistory(1L,posting))
 //                .collect(Collectors.toList());
 //
 //        pointHistoryRepository.saveAll(pointHistoryList);
@@ -69,7 +66,37 @@
 //
 //    @Test
 //    public void test(){
+//        LocalDateTime today = LocalDate.now().atStartOfDay();
 //
+//        int week = today.getDayOfWeek().getValue();
+//
+//        System.out.println("week = " + week);
+////        week = 7;
+//
+//        // 주말 여부를 체크해서 챌린지 레코드를 가져옴.
+//        List<Long> challengeId = schedulerQueryRepository.findAllByChallenge(week);
+//
+//        // 작성하지 않은 인원 가져옴
+//        List<SchedulerIdListDto> notWrittenList = schedulerQueryRepository.findNotWrittenList(challengeId);
+//
+//        List<Long> notWrittenMember = getKickMember(notWrittenList);
+//        List<Long> notWrittenChallenge = getKickChallenge(notWrittenList);
+//
+//        // 벌크쿼리로 challengeRecordStatus false로 변경.
+//        int notWrittenChallengeRecordKick = challengeRecordRepository.kickMemberOnChallenge(notWrittenMember, notWrittenChallenge);
+//
+//    }
+//
+//    private List<Long> getKickChallenge(List<SchedulerIdListDto> postingList) {
+//        return postingList.stream()
+//                .map(SchedulerIdListDto::getChallengeId).distinct()
+//                .collect(Collectors.toList());
+//    }
+//
+//    private List<Long> getKickMember(List<SchedulerIdListDto> postingList) {
+//        return postingList.stream()
+//                .map(SchedulerIdListDto::getMemberId).distinct()
+//                .collect(Collectors.toList());
 //    }
 //
 //    /**벌크 연산 적용 전
