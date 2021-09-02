@@ -50,6 +50,8 @@ https://harupiece.com/
 - Challenge GET / POST / PUT / DELETE
 - paging applied 제목 검색, 소팅 검색(+전체 보기) 
 - QueryDSL 적용
+- 스케줄러를 이용한 챌린지 일정 변경
+- 스케줄러를 이용한 주기적인 공식 챌린지 자동 생성 및 일정 변경
 
 #### Posting 
 
