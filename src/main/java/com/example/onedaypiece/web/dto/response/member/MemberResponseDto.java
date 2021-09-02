@@ -32,7 +32,6 @@ public class MemberResponseDto {
         this.nickname = responseDto.getNickname();
         this.memberId = responseDto.getMemberId();
         this.profileImg = responseDto.getProfileImg();
-        this.point = responseDto.getAcquiredPoint();
     }
 
     // 획득한게 없을경우

@@ -13,6 +13,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+import static com.example.onedaypiece.web.domain.challenge.QChallenge.challenge;
 import static com.example.onedaypiece.web.domain.challengeRecord.QChallengeRecord.challengeRecord;
 
 @Repository
@@ -21,16 +22,18 @@ public class ChallengeRecordQueryRepository {
 
     private final JPAQueryFactory queryFactory;
 
-    public List<ChallengeRecord> findAllByChallenge(Challenge challenge) {
+    public List<ChallengeRecord> findAllByChallenge(List<Challenge> challengeList) {
         return queryFactory
                 .select(challengeRecord)
                 .from(challengeRecord)
+                .join(challengeRecord.challenge,challenge)
                 .join(challengeRecord.member).fetchJoin()
                 .where(challengeRecord.challengeRecordStatus.isTrue(),
                         challengeRecord.challenge.challengeStatus.isTrue(),
-                        challengeRecord.challenge.eq(challenge))
+                        challengeRecord.challenge.in(challengeList))
                 .fetch();
     }
+
 
     public List<ChallengeRecord> findAllByChallengeList(Slice<Challenge> challengeList) {
         return queryFactory
@@ -102,6 +105,7 @@ public class ChallengeRecordQueryRepository {
     public List<ChallengeRecord> findAllByMemberAndProgress(Member member, Long progress) {
         return queryFactory
                 .selectFrom(challengeRecord)
+                .join(challengeRecord.challenge, challenge).fetchJoin()
                 .where(challengeRecord.challengeRecordStatus.isTrue(),
                         challengeRecord.challenge.challengeStatus.isTrue(),
                         challengeRecord.member.eq(member),
