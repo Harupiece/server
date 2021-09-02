@@ -39,21 +39,21 @@ https://harupiece.com/
 - <a href="https://github.com/OneDayPiece/server/wiki/Architecture" >상세보기 이동</a>  
 
 ### 💡 기능 💡
-#### Security + 로그인 + Member - <a href="https://github.com/choiwanggyu/pracprac/wiki/%EC%A3%BC%EC%9A%94%EA%B8%B0%EB%8A%A5-%EB%A1%9C%EA%B7%B8%EC%9D%B8---Member" >상세보기 이동</a>
+#### Security + 로그인 + Member 
 - SSL
 - CORS 
 - Spring Security + JWT 기반 일반 로그인
 
-<!-- #### Member - <a href="" >상세보기 이동</a> -->
 
-#### Challenge - <a href="" >상세보기 이동</a>
+
+#### Challenge
 - Challenge GET / POST / PUT / DELETE
 - paging applied 제목 검색, 소팅 검색(+전체 보기) 
 - QueryDSL 적용
 
-#### Posting - <a href="" >상세보기 이동</a>
+#### Posting 
 
-#### 채팅 - <a href="" >상세보기 이동</a>
+#### 채팅 
 - WebSocket
 - Stomp
 - Redis
