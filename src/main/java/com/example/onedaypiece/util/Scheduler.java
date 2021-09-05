@@ -326,10 +326,7 @@ public class Scheduler {
 
     private boolean isNotScheduleMode() {
 
-        if (null != SCHEDULE_MODE && SCHEDULE_MODE.equals("on")) {
-            return false;
-        }
-        return true;
+        return null == SCHEDULE_MODE || !SCHEDULE_MODE.equals("on");
 
     }
 }

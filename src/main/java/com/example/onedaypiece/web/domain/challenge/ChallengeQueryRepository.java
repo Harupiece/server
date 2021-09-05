@@ -58,8 +58,8 @@ public class ChallengeQueryRepository {
         List<Challenge> challengeList = queryFactory
                 .selectFrom(challenge)
                 .distinct()
-                .join(challengeRecord).on(challenge.challengeId.eq(challengeRecord.challenge.challengeId),
-                        challengeRecord.challengeRecordStatus.isTrue())
+                .join(challengeRecord).on(challengeRecord.challengeRecordStatus.isTrue(),
+                        challenge.challengeId.eq(challengeRecord.challenge.challengeId))
                 .where(
                         predicateByCategoryNameAndPeriod(word, categoryName, progress, String.valueOf(period)))
                 .orderBy(challenge.challengeProgress.asc(),
